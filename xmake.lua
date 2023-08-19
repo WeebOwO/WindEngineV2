@@ -1,10 +1,13 @@
 set_project("WindVK")
 
 add_rules("mode.debug", "mode.release")
-set_languages("c++20")
-add_includedirs("Core")
+add_requires("vulkansdk")
+add_includedirs("Core/")
 
-includes("Example/Triangle/")
+set_languages("c++20")
+set_runtimes("MD")
+
+includes("Example/")
 
 target("WindVK")
     set_kind("static")
