@@ -1,6 +1,0 @@
-export module Example;
-
-export namespace Example_NS
-{
-   int f();
-}
