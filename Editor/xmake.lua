@@ -1,0 +1,5 @@
+target("WindEditor")
+    set_kind("binary")
+    add_files("/**.cpp")
+    add_packages("vulkansdk")
+    add_deps("WindRuntime")
