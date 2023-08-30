@@ -1,18 +1,15 @@
-﻿export module BackendVK:Device;
-
-import <vector>;
+#pragma once
 
 #include <vulkan/vulkan.hpp>
 
 namespace wind {
-export class GPUDevice {
-public:
+class GPUDevice {
+private:
     GPUDevice();
     ~GPUDevice();
-private:
+public:
     vk::Instance m_instance;
-    vk::Device m_device;
     vk::PhysicalDevice m_physicalDevice;
+    vk::Device m_device;
 };
-}
-
+} // namespace wind
