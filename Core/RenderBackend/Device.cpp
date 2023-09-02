@@ -2,8 +2,6 @@
 
 #include <GLFW/glfw3.h>
 
-import <vector>;
-
 namespace wind {
 
 std::vector<const char*> GetRequiredExtensions() {
@@ -18,10 +16,10 @@ std::vector<const char*> GetRequiredExtensions() {
 }
 
 GPUDevice::GPUDevice() {
-    vk::ApplicationInfo appInfo {"WindEngine", 1, "Wind", VK_API_VERSION_1_3};
+    vk::ApplicationInfo appInfo {"WindEngine", 1, "Wind", VK_MAKE_VERSION(1, 0, 3)};
     vk::InstanceCreateInfo instanceCreateInfo{{}, &appInfo};
 
-    m_instance = vk::createInstance(instanceCreateInfo);
+    m_instance = vk::createInstance(instanceCreateInfo);    
 
     m_physicalDevice = m_instance.enumeratePhysicalDevices().front();
 }

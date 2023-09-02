@@ -12,4 +12,4 @@ public:
     vk::PhysicalDevice m_physicalDevice;
     vk::Device m_device;
 };
-} // namespace wind
+} // namespace wind 
