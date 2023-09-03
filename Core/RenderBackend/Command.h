@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <vulkan/vulkan.hpp>
 
 namespace wind {
 // this file define render command, all command is stateless which is very easy for cache
@@ -29,8 +28,8 @@ struct RenderCommand {
 
 template<RenderCommandType Type, RenderCommandQueueType QueueType> 
 struct RenderCommandTyped : RenderCommand {
-    static const RenderCommandType type = Type;
-    static const RenderCommandQueueType queueType = QueueType;
+    static constexpr RenderCommandType type = Type;
+    static constexpr RenderCommandQueueType queueType = QueueType;
     RenderCommandTyped() {this->type = type;}
 };
 
@@ -42,7 +41,13 @@ struct RenderCommandDraw : public RenderCommandTyped<RenderCommandType::Draw, Re
 };
 
 struct RenderCommandDispatch : public RenderCommandTyped<RenderCommandType::DisPatch, RenderCommandQueueType::Compute> {
+    uint32_t dispatchX;
+    uint32_t dispatchY;
+    uint32_t dispatchZ;
+};
 
+struct RenderCommandIndexDraw : public RenderCommandTyped<RenderCommandType::Draw, RenderCommandQueueType::Graphics> {
+    
 };
 
 } // namespace wind
