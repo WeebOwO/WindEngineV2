@@ -1,17 +1,22 @@
 #pragma once
 
 namespace wind {
+
+class Window;
 class Engine {
 public:
-    Engine();
+    Engine(Window* window);
     ~Engine();
-    void Init();
-    void Quit();
-    
+
     void Run();
+
 private:
+    void Init(Window* window);
+    void Quit();
     void RenderTick();
     void LogicTick();
+
+    Window* m_window;
 };
 
 } // namespace wind
