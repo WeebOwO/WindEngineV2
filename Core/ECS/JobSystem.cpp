@@ -1,7 +1,6 @@
 #include "JobSystem.h"
 
 #include "Base/Log.h"
-#include "JobSystem/JobSystem.h"
 #include <mutex>
 #include <sstream>
 

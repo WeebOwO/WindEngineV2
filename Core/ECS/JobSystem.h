@@ -10,7 +10,6 @@
 #include <unordered_set>
 
 #include "Base/Log.h"
-#include "JobSystem/JobSystem.h"
 
 namespace wind {
 

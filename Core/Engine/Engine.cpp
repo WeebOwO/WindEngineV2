@@ -1,11 +1,13 @@
 #include "Engine.h"
 
+#include <thread>
+
 #include "Base/Log.h"
 #include "GLFW/glfw3.h"
-#include "JobSystem/JobSystem.h"
+#include "ECS/JobSystem.h"
 #include "RenderBackend/Backend.h"
+
 #include "Window.h"
-#include <thread>
 
 namespace wind {
 
@@ -35,7 +37,7 @@ namespace wind {
         JobEntry(Func3, 3, {1, 2});
         JobEntry(Func1, 1);
         JobEntry(Func2, 2);
-        
+
         while(!glfwWindowShouldClose(m_window->GetWindow())) {
             LogicTick();
             RenderTick();
