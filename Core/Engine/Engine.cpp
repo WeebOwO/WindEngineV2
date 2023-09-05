@@ -2,6 +2,7 @@
 
 #include "Base/Log.h"
 #include "GLFW/glfw3.h"
+#include "JobSystem/JobSystem.h"
 #include "RenderBackend/Backend.h"
 #include "Window.h"
 
@@ -25,11 +26,13 @@ namespace wind {
         Log::Init();
         WIND_CORE_INFO("Init the engine core!");
         Backend::Init();
+        JobSystem::Init();
         m_window = window;
     }
 
     void Engine::Quit() {
-        
+        JobSystem::Quit();
+        WIND_CORE_INFO("Shutdown engine");
     }
 
     void Engine::RenderTick() {

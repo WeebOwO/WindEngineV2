@@ -7,5 +7,8 @@ enum class CullingMethod {
     Compute, // using Compute shader culling
 };
 
+class CullingManager {
+    
+};
 
 }

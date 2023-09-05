@@ -45,9 +45,4 @@ struct RenderCommandDispatch : public RenderCommandTyped<RenderCommandType::DisP
     uint32_t dispatchY;
     uint32_t dispatchZ;
 };
-
-struct RenderCommandIndexDraw : public RenderCommandTyped<RenderCommandType::Draw, RenderCommandQueueType::Graphics> {
-    
-};
-
 } // namespace wind

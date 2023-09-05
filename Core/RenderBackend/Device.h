@@ -16,15 +16,19 @@ struct QueueIndices {
 
 class GPUDevice {
 public:
+    friend class Backend;
     GPUDevice();
     ~GPUDevice();
 
-private:
-    void                     CreateInstance();
-    void                     PickupPhysicalDevice();
-    void                     CreateDevice();
-    void                     QueryQueueFamilyIndices();
+    vk::Queue GetGraphicsQueue() { return m_graphicsQueue; }
+    vk::Queue GetComputeQueue() { return m_computeQueue; }
     
+private:
+    void CreateInstance();
+    void PickupPhysicalDevice();
+    void CreateDevice();
+    void QueryQueueFamilyIndices();
+
     std::vector<const char*> GetRequiredExtensions();
 
     QueueIndices m_queueIndices;
@@ -39,7 +43,9 @@ private:
     vk::DynamicLoader          m_vkLoader{};
 
     std::unordered_set<std::string> m_supportedExtensions;
-    std::vector<const char*> m_enableExtensions;
+    std::vector<const char*>        m_enableExtensions;
+
+    
 
     bool m_enableDebug{true};
 };

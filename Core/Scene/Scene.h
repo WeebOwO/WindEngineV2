@@ -1,11 +1,10 @@
 #pragma once
 
 namespace wind {
-class Camera {
+class Scene {
 public:
-    
+
 private:
     
 };
-
 } // namespace wind
