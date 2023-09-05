@@ -5,8 +5,24 @@
 #include "JobSystem/JobSystem.h"
 #include "RenderBackend/Backend.h"
 #include "Window.h"
+#include <thread>
 
 namespace wind {
+
+    void Func1() {
+        WIND_CORE_INFO("Run func 1");
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+    
+    void Func2() {
+        WIND_CORE_INFO("Run func 2");
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+
+    void Func3() {
+        WIND_CORE_INFO("Run func 3");
+    }
+
     Engine::Engine(Window* window) {
         Init(window);
     }
@@ -16,6 +32,10 @@ namespace wind {
     }
     
     void Engine::Run() {
+        JobEntry(Func3, 3, {1, 2});
+        JobEntry(Func1, 1);
+        JobEntry(Func2, 2);
+        
         while(!glfwWindowShouldClose(m_window->GetWindow())) {
             LogicTick();
             RenderTick();
