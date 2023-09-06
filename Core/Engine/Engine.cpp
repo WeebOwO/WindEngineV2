@@ -34,10 +34,6 @@ namespace wind {
     }
     
     void Engine::Run() {
-        JobEntry(Func3, 3, {1, 2});
-        JobEntry(Func1, 1);
-        JobEntry(Func2, 2);
-
         while(!glfwWindowShouldClose(m_window->GetWindow())) {
             LogicTick();
             RenderTick();

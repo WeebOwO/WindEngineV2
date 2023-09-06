@@ -2,18 +2,25 @@
 
 #include <memory>
 
-#include "VulkanHeader.h"
 #include "RenderBackend/Device.h"
+#include "VulkanHeader.h"
 
 namespace wind {
 // one command encoder to one thread recording
+
+class RenderPassEncoder {
+public:
+
+private:
+
+};
+
 class CommandEncoder {
 public:
-    CommandEncoder(GPUDevice& deivce);
+    
 private:
-    vk::CommandBufferBeginInfo m_beginInfo;
-    vk::UniqueCommandBuffer m_handle;
-    vk::CommandPool m_commandPool;
+    vk::CommandBuffer m_handle;
+    vk::CommandPool   m_cmdPool;
 };
 
 } // namespace wind

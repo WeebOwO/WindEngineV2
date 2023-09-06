@@ -9,7 +9,7 @@ public:
     ~Engine();
 
     void Run();
-
+    
 private:
     void Init(Window* window);
     void Quit();

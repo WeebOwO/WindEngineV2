@@ -22,7 +22,10 @@ public:
 
     vk::Queue GetGraphicsQueue() { return m_graphicsQueue; }
     vk::Queue GetComputeQueue() { return m_computeQueue; }
-    
+
+    auto  GetQueueIndices() { return m_queueIndices; }
+    auto& GetDevice() { return m_device; }
+
 private:
     void CreateInstance();
     void PickupPhysicalDevice();
@@ -44,8 +47,6 @@ private:
 
     std::unordered_set<std::string> m_supportedExtensions;
     std::vector<const char*>        m_enableExtensions;
-
-    
 
     bool m_enableDebug{true};
 };
