@@ -1,7 +1,7 @@
 #include "Device.h"
+
 #include "Base/Log.h"
-#include "RenderBackend/Device.h"
-#include "vulkan/vulkan_structs.hpp"
+#include "RenderBackend/Encoder.h"
 
 #include <GLFW/glfw3.h>
 #include <algorithm>
@@ -147,10 +147,13 @@ GPUDevice::GPUDevice() {
 
 GPUDevice::~GPUDevice() {
     m_device.waitIdle();
-
     m_device.destroy();
     m_vkInstance.destroyDebugUtilsMessengerEXT(m_dubugMessenger);
     m_vkInstance.destroy();
+}
+
+void GPUDevice::DestroyCommandEncoder(CommandEncoder& encoder) {
+   
 }
 
 }; // namespace wind

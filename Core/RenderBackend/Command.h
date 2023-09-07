@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include "VulkanHeader.h"
+
 namespace wind {
 // this file define render command, all command is stateless which is very easy for cache
 
@@ -44,5 +46,9 @@ struct RenderCommandDispatch : public RenderCommandTyped<RenderCommandType::DisP
     uint32_t dispatchX;
     uint32_t dispatchY;
     uint32_t dispatchZ;
+};
+
+struct CommandBuffer {
+
 };
 } // namespace wind

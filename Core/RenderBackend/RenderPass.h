@@ -1,7 +1,12 @@
 #pragma ocne
 
 namespace wind {
-    struct RenderPassDesc {
-        
-    };
-}
+struct RenderPassDesc {
+
+};
+
+class RenderPass {
+    
+};
+
+} // namespace wind

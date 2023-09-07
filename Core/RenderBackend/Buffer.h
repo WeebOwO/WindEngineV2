@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vulkan/vulkan.hpp>
+#include "VulkanHeader.h"
 
 namespace wind {
     
@@ -11,6 +11,5 @@ private:
     vk::Buffer m_handle;
     vk::DeviceMemory m_memory;
 };
-
 
 } // namespace wind

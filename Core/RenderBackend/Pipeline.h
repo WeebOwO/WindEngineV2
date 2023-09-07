@@ -25,8 +25,6 @@ enum class DepthCompareOperator {
 
 struct PipelineDesc {
     PrimitiveTopology    Topology      = PrimitiveTopology::Triangles;
-    DepthCompareOperator DepthOperator = DepthCompareOperator::LessOrEqual;
-    
-    
+    DepthCompareOperator DepthOperator = DepthCompareOperator::LessOrEqual;  
 };
 } // namespace wind
