@@ -1,30 +1,13 @@
 #include "Engine.h"
 
-#include <thread>
-
 #include "Base/Log.h"
-#include "GLFW/glfw3.h"
 #include "ECS/JobSystem.h"
 #include "RenderBackend/Backend.h"
 
+#include "Renderer/SceneRenderer.h"
 #include "Window.h"
 
 namespace wind {
-
-    void Func1() {
-        WIND_CORE_INFO("Run func 1");
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
-    
-    void Func2() {
-        WIND_CORE_INFO("Run func 2");
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
-
-    void Func3() {
-        WIND_CORE_INFO("Run func 3");
-    }
-
     Engine::Engine(Window* window) {
         Init(window);
     }
@@ -46,6 +29,7 @@ namespace wind {
         Backend::Init();
         JobSystem::Init();
         m_window = window;
+        m_sceneRenderer = std::make_unique<SceneRenderer>(window);
     }
 
     void Engine::Quit() {
@@ -54,8 +38,8 @@ namespace wind {
     }
 
     void Engine::RenderTick() {
-
-    }
+        
+    }   
 
     void Engine::LogicTick() {
         glfwPollEvents();

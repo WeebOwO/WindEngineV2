@@ -27,7 +27,10 @@ public:
     vk::Queue GetComputeQueue() { return m_computeQueue; }
 
     auto GetQueueIndices() { return m_queueIndices; }
-    auto GetVkDeviceHandle() { return m_device; }
+
+    auto GetVkDeviceHandle() { return *m_device; }
+    auto GetVkPhysicalDevice() { return m_physicalDevice; }
+    auto GetVkInstance() { return *m_vkInstance; }
 
     std::unique_ptr<CommandEncoder>
     CreateCommandEncoder(RenderCommandQueueType queueType = RenderCommandQueueType::Graphics);
@@ -47,12 +50,12 @@ private:
     vk::Queue    m_graphicsQueue;
     vk::Queue    m_computeQueue;
 
-    vk::Instance       m_vkInstance;
+    vk::UniqueInstance m_vkInstance;
     vk::PhysicalDevice m_physicalDevice;
-    vk::Device         m_device;
+    vk::UniqueDevice   m_device;
 
-    vk::DebugUtilsMessengerEXT m_dubugMessenger;
-    vk::DynamicLoader          m_vkLoader{};
+    vk::UniqueDebugUtilsMessengerEXT m_dubugMessenger;
+    vk::DynamicLoader                m_vkLoader{};
 
     std::unordered_set<std::string> m_supportedExtensions;
     std::vector<const char*>        m_enableExtensions;

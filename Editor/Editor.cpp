@@ -2,6 +2,8 @@
 #include "Engine/Window.h"
 #include "GLFW/glfw3.h"
 
+#include "Renderer/SceneRenderer.h"
+
 class Editor : public wind::Application {
 public:
     Editor() {
@@ -17,6 +19,7 @@ public:
 
 private:
     std::unique_ptr<wind::Window> m_window;
+    
 };
 
 std::unique_ptr<wind::Application> wind::CreateClientApplication() { 

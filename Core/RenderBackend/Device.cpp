@@ -59,15 +59,15 @@ void GPUDevice::CreateInstance() {
                                               layers.data(), (uint32_t)extensions.size(),
                                               extensions.data());
 
-    m_vkInstance = vk::createInstance(instanceCreateInfo, nullptr);
-    VULKAN_HPP_DEFAULT_DISPATCHER.init(m_vkInstance);
+    m_vkInstance = vk::createInstanceUnique(instanceCreateInfo, nullptr);
+    VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_vkInstance);
 
-    m_dubugMessenger =
-        m_vkInstance.createDebugUtilsMessengerEXT(MakeDebugUtilsMessengerCreateInfoEXT(), nullptr);
+    m_dubugMessenger = m_vkInstance->createDebugUtilsMessengerEXTUnique(
+        MakeDebugUtilsMessengerCreateInfoEXT(), nullptr);
 }
 
 void GPUDevice::PickupPhysicalDevice() {
-    m_physicalDevice = m_vkInstance.enumeratePhysicalDevices().front();
+    m_physicalDevice = m_vkInstance->enumeratePhysicalDevices().front();
     WIND_CORE_INFO(m_physicalDevice.getProperties().deviceName);
 
     auto supportedExtensions = m_physicalDevice.enumerateDeviceExtensionProperties();
@@ -131,11 +131,11 @@ void GPUDevice::CreateDevice() {
     deviceCreateInfo.setQueueCreateInfos(queueCreateInfos)
         .setPEnabledExtensionNames(m_enableExtensions);
 
-    m_device = m_physicalDevice.createDevice(deviceCreateInfo);
-    VULKAN_HPP_DEFAULT_DISPATCHER.init(m_device);
+    m_device = m_physicalDevice.createDeviceUnique(deviceCreateInfo);
+    VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_device);
     // Get queue
-    m_graphicsQueue = m_device.getQueue(m_queueIndices.graphicsQueueIndex.value(), 0);
-    m_computeQueue  = m_device.getQueue(m_queueIndices.computeQueueIndex.value(), 0);
+    m_graphicsQueue = m_device->getQueue(m_queueIndices.graphicsQueueIndex.value(), 0);
+    m_computeQueue  = m_device->getQueue(m_queueIndices.computeQueueIndex.value(), 0);
 }
 
 GPUDevice::GPUDevice() {
@@ -145,15 +145,8 @@ GPUDevice::GPUDevice() {
     CreateDevice();
 }
 
-GPUDevice::~GPUDevice() {
-    m_device.waitIdle();
-    m_device.destroy();
-    m_vkInstance.destroyDebugUtilsMessengerEXT(m_dubugMessenger);
-    m_vkInstance.destroy();
-}
+GPUDevice::~GPUDevice() { m_device->waitIdle(); }
 
-void GPUDevice::DestroyCommandEncoder(CommandEncoder& encoder) {
-   
-}
+void GPUDevice::DestroyCommandEncoder(CommandEncoder& encoder) {}
 
 }; // namespace wind

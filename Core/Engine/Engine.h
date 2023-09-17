@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Renderer/SceneRenderer.h"
+
 namespace wind {
 
 class Window;
@@ -17,6 +19,7 @@ private:
     void LogicTick();
 
     Window* m_window;
+    std::unique_ptr<SceneRenderer> m_sceneRenderer;
 };
 
 } // namespace wind
