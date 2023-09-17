@@ -6,6 +6,8 @@
 
 #include "Renderer/SceneRenderer.h"
 #include "Window.h"
+#include "tracy/Tracy.hpp"
+#include <thread>
 
 namespace wind {
     Engine::Engine(Window* window) {
@@ -17,9 +19,14 @@ namespace wind {
     }
     
     void Engine::Run() {
+        #ifdef TRACY_ENABLE
+            WIND_CORE_INFO("Start Tracy");
+        #endif
         while(!glfwWindowShouldClose(m_window->GetWindow())) {
+            ZoneScoped;
             LogicTick();
             RenderTick();
+            FrameMark;
         }
     }
 
@@ -38,10 +45,11 @@ namespace wind {
     }
 
     void Engine::RenderTick() {
-        
+        ZoneScopedN("RenderTick");
     }   
 
     void Engine::LogicTick() {
+        ZoneScopedN("LogicTick");
         glfwPollEvents();
     }
 }

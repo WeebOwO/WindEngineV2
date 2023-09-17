@@ -6,7 +6,7 @@
 namespace wind {
 
 struct RenderPassDesc {
-
+    
 };
 
 class RenderPass {    

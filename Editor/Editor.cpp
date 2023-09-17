@@ -1,4 +1,5 @@
 #include "Engine/EntryPoint.h"
+
 #include "Engine/Window.h"
 #include "GLFW/glfw3.h"
 
@@ -13,13 +14,13 @@ public:
     }
 
     void Run() override {
+                
         wind::Engine engine(m_window.get());       
         engine.Run(); 
     }
 
 private:
     std::unique_ptr<wind::Window> m_window;
-    
 };
 
 std::unique_ptr<wind::Application> wind::CreateClientApplication() { 
