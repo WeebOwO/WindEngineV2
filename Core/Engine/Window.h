@@ -16,11 +16,6 @@ public:
     void OnUpdate(float fs);
 
 private:
-    enum class InputMode : uint8_t {
-        None,
-        RotatingView,
-    };
-
     struct WindowInfo {
         uint32_t    width, height;
         std::string title;
@@ -28,6 +23,5 @@ private:
 
     GLFWwindow* m_window{nullptr};
     WindowInfo  m_windowInfo{};
-
 };
 } // namespace wind

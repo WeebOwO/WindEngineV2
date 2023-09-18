@@ -13,16 +13,16 @@ class Swapchain {
 public:
     static constexpr uint32_t MAX_FRAME_IN_FLIGHT = 2;
 
-    Swapchain(GPUDevice* device, Window* window);
+    Swapchain(const GPUDevice& device, const Window& window);
     ~Swapchain();
     void Resize();
 
 private:
     void QuerySurfaceProperty();
 
-    GPUDevice*                       m_device;
+    const GPUDevice& m_device;
 
-    std::vector<GPUTexture>          m_swapchainImages;
+    std::vector<GPUTexture>    m_swapchainImages;
     std::vector<vk::Semaphore> m_semaphores;
     std::vector<vk::Fence>     m_fences;
 

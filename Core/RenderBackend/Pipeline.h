@@ -1,6 +1,9 @@
 #pragma once
 
+#include <memory>
+
 #include "VulkanHeader.h"
+#include "Device.h"
 
 namespace wind {
 enum class PrimitiveTopology {
@@ -25,16 +28,22 @@ enum class DepthCompareOperator {
     Always,
 };
 
+enum class PipelineType { None = 0, Graphic, Compute };
+
 struct PipelineDesc {
     PrimitiveTopology    topology      = PrimitiveTopology::Triangles;
-    DepthCompareOperator depthOperator = DepthCompareOperator::LessOrEqual;  
+    DepthCompareOperator depthOperator = DepthCompareOperator::LessOrEqual;
 };
 
-struct Pipeline {
-    vk::PipelineBindPoint bindPoint;
+template<PipelineType pipelineType>
+class Pipeline {    
+public:
     
+private:
+    PipelineDesc          m_pipelineDesc;
+
+    vk::PipelineBindPoint m_bindPoint;
+    vk::PipelineLayout    m_pipelineLayout;
 };
-
-
 
 } // namespace wind

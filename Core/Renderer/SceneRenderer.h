@@ -8,9 +8,9 @@
 namespace wind {
 class SceneRenderer {
 public: 
-    SceneRenderer(Window* window);
+    SceneRenderer(const Window& window);
     void Render();
-
+    
 private:
     std::unique_ptr<Swapchain> m_swapchain;
 };

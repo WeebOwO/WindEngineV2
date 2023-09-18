@@ -14,8 +14,7 @@ public:
     }
 
     void Run() override {
-                
-        wind::Engine engine(m_window.get());       
+        wind::Engine engine(*m_window);       
         engine.Run(); 
     }
 

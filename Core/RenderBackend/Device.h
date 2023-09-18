@@ -1,12 +1,17 @@
 #pragma once
 
+#include <memory>
 #include <optional>
 #include <thread>
 #include <unordered_set>
 
+#include "RenderBackend/Image.h"
+#include "VulkanHeader.h"
+
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Encoder.h"
-#include "VulkanHeader.h"
+#include "RenderBackend/Pipeline.h"
+#include "RenderBackend/Buffer.h"
 
 namespace wind {
 
@@ -28,13 +33,16 @@ public:
 
     auto GetQueueIndices() { return m_queueIndices; }
 
-    auto GetVkDeviceHandle() { return *m_device; }
-    auto GetVkPhysicalDevice() { return m_physicalDevice; }
-    auto GetVkInstance() { return *m_vkInstance; }
+    auto GetVkDeviceHandle() const { return *m_device; }
+    auto GetVkPhysicalDevice() const { return m_physicalDevice; }
+    auto GetVkInstance() const { return *m_vkInstance; }
 
+    // Crate interface
     std::unique_ptr<CommandEncoder>
     CreateCommandEncoder(RenderCommandQueueType queueType = RenderCommandQueueType::Graphics);
-
+    
+    std::unique_ptr<GPUTexture> CreateTexture(const TextureDesc& textureDesc);
+    std::unique_ptr<GPUBuffer> CreateBuffer();
     // Destory Interface
     void DestroyCommandEncoder(CommandEncoder& encoder);
 

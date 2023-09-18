@@ -7,21 +7,21 @@
 #include "RenderBackend/SwapChain.h"
 
 namespace wind {
-Swapchain::Swapchain(GPUDevice* device, Window* window) : m_device(device) {
+Swapchain::Swapchain(const GPUDevice& device, const Window& window) : m_device(device) {
     VkSurfaceKHR rawSurface;
-    glfwCreateWindowSurface(static_cast<VkInstance>(device->GetVkInstance()), window->GetWindow(),
+    glfwCreateWindowSurface(static_cast<VkInstance>(m_device.GetVkInstance()), window.GetWindow(),
                             nullptr, &rawSurface);
     m_surface = rawSurface;
 
-    auto physicalDevice = device->GetVkPhysicalDevice();
-    auto vkDevice = device->GetVkDeviceHandle();
+    auto physicalDevice = m_device.GetVkPhysicalDevice();
+    auto vkDevice = m_device.GetVkDeviceHandle();
 
     auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(m_surface);
 
     m_surfaceExtent =
-        vk::Extent2D(std::clamp(window->width(), surfaceCapabilities.minImageExtent.width,
+        vk::Extent2D(std::clamp(window.width(), surfaceCapabilities.minImageExtent.width,
                                 surfaceCapabilities.maxImageExtent.width),
-                     std::clamp(window->height(), surfaceCapabilities.minImageExtent.height,
+                     std::clamp(window.height(), surfaceCapabilities.minImageExtent.height,
                                 surfaceCapabilities.maxImageExtent.height));
 
     vk::SwapchainCreateInfoKHR swapchainCreateInfo;
@@ -47,7 +47,7 @@ Swapchain::Swapchain(GPUDevice* device, Window* window) : m_device(device) {
 }
 
 void Swapchain::QuerySurfaceProperty() {
-    auto physicalDevice      = m_device->GetVkPhysicalDevice();
+    auto physicalDevice      = m_device.GetVkPhysicalDevice();
     auto presentModes        = physicalDevice.getSurfacePresentModesKHR(m_surface);
     auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(m_surface);
     auto surfaceFormats      = physicalDevice.getSurfaceFormatsKHR(m_surface);
@@ -66,8 +66,8 @@ void Swapchain::QuerySurfaceProperty() {
 }
 
 Swapchain::~Swapchain() {
-    auto vkdevice = m_device->GetVkDeviceHandle();
-    auto vkInstance = m_device->GetVkInstance();
+    auto vkdevice = m_device.GetVkDeviceHandle();
+    auto vkInstance = m_device.GetVkInstance();
 
     vkdevice.destroySwapchainKHR(m_swapchain);
     vkInstance.destroySurfaceKHR(m_surface);

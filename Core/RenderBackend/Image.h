@@ -3,19 +3,22 @@
 #include "VulkanHeader.h"
 
 namespace wind {
-struct ImageFormat {
-    
+
+enum class ImageOptions : uint8_t {
+    Default = 1 << 0,
+    MipMap = 1 << 1,
+    CubeMap = 1 << 2
 };
 
-class GPUTextureView {
-
+struct TextureDesc {
+    uint32_t width;
+    uint32_t height;
+    vk::Format format;
+    ImageOptions createOptions = ImageOptions::Default;
 };
 
-class GPUTexture {
-public:
-    
-private:
-    vk::Image m_handle;
-    vk::ImageView m_imageView;
+struct GPUTexture {
+    vk::Image     handle;
+    vk::ImageView imageView;
 };
 } // namespace wind

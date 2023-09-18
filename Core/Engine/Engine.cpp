@@ -7,49 +7,59 @@
 #include "Renderer/SceneRenderer.h"
 #include "Window.h"
 #include "tracy/Tracy.hpp"
-#include <thread>
 
 namespace wind {
-    Engine::Engine(Window* window) {
-        Init(window);
-    }
+Engine::Engine(Window& window): m_window(window) { Init(); }
 
-    Engine::~Engine() {
-        Quit();
-    }
-    
-    void Engine::Run() {
-        #ifdef TRACY_ENABLE
-            WIND_CORE_INFO("Start Tracy");
-        #endif
-        while(!glfwWindowShouldClose(m_window->GetWindow())) {
-            ZoneScoped;
-            LogicTick();
-            RenderTick();
-            FrameMark;
-        }
-    }
+Engine::~Engine() { Quit(); }
 
-    void Engine::Init(Window* window) {
-        Log::Init();
-        WIND_CORE_INFO("Init the engine core!");
-        Backend::Init();
-        JobSystem::Init();
-        m_window = window;
-        m_sceneRenderer = std::make_unique<SceneRenderer>(window);
-    }
-
-    void Engine::Quit() {
-        JobSystem::Quit();
-        WIND_CORE_INFO("Shutdown engine");
-    }
-
-    void Engine::RenderTick() {
-        ZoneScopedN("RenderTick");
-    }   
-
-    void Engine::LogicTick() {
-        ZoneScopedN("LogicTick");
-        glfwPollEvents();
+void Engine::Run() {
+#ifdef TRACY_ENABLE
+    WIND_CORE_INFO("Start Tracy");
+#endif
+    while (!glfwWindowShouldClose(m_window.GetWindow())) {
+        ZoneScoped;
+        float fs = CalcDeltaTime();
+        LogicTick(fs);
+        RenderTick(fs);
+        FrameMark;
     }
 }
+
+void Engine::Init() {
+    Log::Init();
+    WIND_CORE_INFO("Init the engine core!");
+    Backend::Init();
+    JobSystem::Init();
+
+    m_sceneRenderer = std::make_unique<SceneRenderer>(m_window);
+}
+
+float Engine::CalcDeltaTime() {
+    float dalta;
+    {
+        using namespace std::chrono;
+        steady_clock::time_point tickTimePoint = steady_clock::now();
+        auto timeSpan = duration_cast<duration<float>>(tickTimePoint - m_lastTickTimePoint);
+        dalta         = timeSpan.count();
+
+        m_lastTickTimePoint = tickTimePoint;
+    }
+    return dalta;
+}
+
+void Engine::Quit() {
+    JobSystem::Quit();
+    WIND_CORE_INFO("Shutdown engine");
+}
+
+void Engine::RenderTick(float delta) { 
+    ZoneScopedN("RenderTick");
+    m_sceneRenderer->Render();
+}
+
+void Engine::LogicTick(float delta) {
+    ZoneScopedN("LogicTick");
+    m_window.OnUpdate(delta);
+}
+} // namespace wind
