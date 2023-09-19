@@ -4,11 +4,11 @@
 #include "RenderBackend/Backend.h"
 
 namespace wind {
-    SceneRenderer::SceneRenderer(const Window& window) {
-        m_swapchain = std::make_unique<Swapchain>(Backend::GetGPUDevice(), window);
+    SceneRenderer::SceneRenderer() {
+        
     }
     
-    void SceneRenderer::Render() {
-
+    void SceneRenderer::Render(Swapchain& swapchain) {
+        
     }
 }

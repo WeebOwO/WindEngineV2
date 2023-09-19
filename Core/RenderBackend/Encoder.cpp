@@ -4,7 +4,6 @@
 
 namespace wind {
 CommandEncoder::~CommandEncoder() {
-    auto& device = Backend::GetGPUDevice();
-    device.DestroyCommandEncoder(*this);
+    
 }
 } // namespace wind

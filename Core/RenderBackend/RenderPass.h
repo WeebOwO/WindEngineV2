@@ -12,7 +12,7 @@ struct RenderPassDesc {
 class RenderPass {    
 public:
     // create interface
-    static std::shared_ptr<RenderPass> Create(GPUDevice* device, const RenderPassDesc& desc);
+    static std::unique_ptr<RenderPass> Create(GPUDevice* device, const RenderPassDesc& desc);
 
 private:
     vk::RenderPass m_handle;

@@ -2,6 +2,9 @@
 
 #include "VulkanHeader.h"
 
-namespace wind {    
+namespace wind {
+class ComputeShader {
+private:
     
+};
 } // namespace wind

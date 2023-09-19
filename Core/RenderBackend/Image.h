@@ -18,7 +18,10 @@ struct TextureDesc {
 };
 
 struct GPUTexture {
-    vk::Image     handle;
-    vk::ImageView imageView;
+public:
+    auto GetTextureView() -> vk::ImageView;
+private:
+    vk::Image     m_handle;
+    vk::ImageView m_imageView;
 };
 } // namespace wind

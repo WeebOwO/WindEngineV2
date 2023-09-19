@@ -3,25 +3,20 @@
 #include "Engine/Window.h"
 #include "GLFW/glfw3.h"
 
-#include "Renderer/SceneRenderer.h"
-
 class Editor : public wind::Application {
 public:
-    Editor() {
-        uint32_t width = 1920, height = 1080;
-        std::string title = "WindEngineV2";
-        m_window = std::make_unique<wind::Window>(width, height, title);
-    }
+    Editor() {}
 
     void Run() override {
-        wind::Engine engine(*m_window);       
-        engine.Run(); 
-    }
+        uint32_t                      width = 1920, height = 1080;
+        std::string                   title  = "WindEngineV2";
+        std::unique_ptr<wind::Window> window = std::make_unique<wind::Window>(width, height, title);
 
-private:
-    std::unique_ptr<wind::Window> m_window;
+        wind::Engine engine(std::move(window));
+        engine.Run();
+    }
 };
 
-std::unique_ptr<wind::Application> wind::CreateClientApplication() { 
-    return std::make_unique<Editor>(); 
+std::unique_ptr<wind::Application> wind::CreateClientApplication() {
+    return std::make_unique<Editor>();
 }

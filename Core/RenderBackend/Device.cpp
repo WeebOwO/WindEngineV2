@@ -147,6 +147,4 @@ GPUDevice::GPUDevice() {
 
 GPUDevice::~GPUDevice() { m_device->waitIdle(); }
 
-void GPUDevice::DestroyCommandEncoder(CommandEncoder& encoder) {}
-
 }; // namespace wind

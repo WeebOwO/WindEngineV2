@@ -2,16 +2,17 @@
 
 #include <memory>
 
-#include "Scene/Scene.h"
 #include "RenderBackend/SwapChain.h"
+#include "Scene/Scene.h"
 
 namespace wind {
 class SceneRenderer {
-public: 
-    SceneRenderer(const Window& window);
-    void Render();
-    
+public:
+    SceneRenderer();
+    auto Render(Swapchain& swapchain) -> void;
+
 private:
-    std::unique_ptr<Swapchain> m_swapchain;
+    void                       InitView();
+    void                       BasePassRendering();
 };
 } // namespace wind

@@ -9,7 +9,10 @@
 #include "tracy/Tracy.hpp"
 
 namespace wind {
-Engine::Engine(Window& window): m_window(window) { Init(); }
+Engine::Engine(std::unique_ptr<Window> window) : m_window(std::move(window)) {
+    Init();
+    PostInit();
+}
 
 Engine::~Engine() { Quit(); }
 
@@ -17,7 +20,7 @@ void Engine::Run() {
 #ifdef TRACY_ENABLE
     WIND_CORE_INFO("Start Tracy");
 #endif
-    while (!glfwWindowShouldClose(m_window.GetWindow())) {
+    while (!glfwWindowShouldClose(m_window->GetWindow())) {
         ZoneScoped;
         float fs = CalcDeltaTime();
         LogicTick(fs);
@@ -32,7 +35,7 @@ void Engine::Init() {
     Backend::Init();
     JobSystem::Init();
 
-    m_sceneRenderer = std::make_unique<SceneRenderer>(m_window);
+    m_sceneRenderer = std::make_unique<SceneRenderer>();
 }
 
 float Engine::CalcDeltaTime() {
@@ -48,18 +51,20 @@ float Engine::CalcDeltaTime() {
     return dalta;
 }
 
+void Engine::PostInit() { m_window->PostInit(); }
+
 void Engine::Quit() {
     JobSystem::Quit();
     WIND_CORE_INFO("Shutdown engine");
 }
 
-void Engine::RenderTick(float delta) { 
+void Engine::RenderTick(float delta) {
     ZoneScopedN("RenderTick");
-    m_sceneRenderer->Render();
+    m_sceneRenderer->Render(*m_window->GetSwapChain());
 }
 
 void Engine::LogicTick(float delta) {
     ZoneScopedN("LogicTick");
-    m_window.OnUpdate(delta);
+    m_window->OnUpdate(delta);
 }
 } // namespace wind

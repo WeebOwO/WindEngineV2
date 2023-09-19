@@ -1,5 +1,8 @@
 #pragma once
 
+#include <chrono>
+#include <memory>
+
 #include "Renderer/SceneRenderer.h"
 
 namespace wind {
@@ -7,20 +10,21 @@ namespace wind {
 class Window;
 class Engine {
 public:
-    Engine(Window& window);
+    Engine(std::unique_ptr<Window> window); // here use unique ptr to transfer ownership from editor to engine
     ~Engine();
 
     void Run();
     
 private:
     void Init();
+    void PostInit();
     void Quit();
     void RenderTick(float delta);
     void LogicTick(float delta);
 
     float CalcDeltaTime();
 
-    Window& m_window;
+    std::unique_ptr<Window> m_window;
     
     std::unique_ptr<SceneRenderer> m_sceneRenderer;
     std::chrono::steady_clock::time_point m_lastTickTimePoint{std::chrono::steady_clock::now()};

@@ -1,9 +1,12 @@
 #pragma once
 
+#include <GLFW/glfw3.h>
+
+#include <memory>
 #include <string_view>
-#include "GLFW/glfw3.h"
 
 namespace wind {
+class Swapchain;
 class Window {
 public:
     Window(uint32_t width, uint32_t height, std::string_view title);
@@ -13,7 +16,10 @@ public:
     [[nodiscard]] auto width() const { return m_windowInfo.width; }
     [[nodiscard]] auto height() const { return m_windowInfo.height; }
 
-    void OnUpdate(float fs);
+    Swapchain* GetSwapChain() const { return m_swapchain.get(); }
+    
+    void       PostInit();
+    void       OnUpdate(float fs);
 
 private:
     struct WindowInfo {
@@ -21,7 +27,8 @@ private:
         std::string title;
     };
 
-    GLFWwindow* m_window{nullptr};
-    WindowInfo  m_windowInfo{};
+    GLFWwindow*                m_window{nullptr};
+    WindowInfo                 m_windowInfo{};
+    std::unique_ptr<Swapchain> m_swapchain;
 };
 } // namespace wind
