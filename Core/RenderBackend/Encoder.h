@@ -1,7 +1,6 @@
 #pragma once
 
-#include <functional>
-#include <memory>
+#include "std.h"
 
 #include "RenderBackend/Command.h"
 #include "VulkanHeader.h"

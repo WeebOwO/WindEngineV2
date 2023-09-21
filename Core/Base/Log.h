@@ -1,8 +1,8 @@
 #pragma once
 
-#include <memory>
+#include <spdlog/spdlog.h>
 
-#include "spdlog/spdlog.h"
+#include "std.h"
 
 namespace wind {
 class Log {

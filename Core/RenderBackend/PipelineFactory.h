@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "Device.h"
 #include "VulkanHeader.h"
 

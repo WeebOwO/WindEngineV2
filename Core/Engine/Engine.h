@@ -1,8 +1,6 @@
 #pragma once
 
-#include <chrono>
-#include <memory>
-
+#include "std.h"
 #include "Renderer/SceneRenderer.h"
 
 namespace wind {

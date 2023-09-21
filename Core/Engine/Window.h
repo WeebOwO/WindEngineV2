@@ -2,8 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include <memory>
-#include <string_view>
+#include "std.h"
 
 namespace wind {
 class Swapchain;

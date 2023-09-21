@@ -1,9 +1,6 @@
 #pragma once
 
-#include <memory>
-#include <optional>
-#include <thread>
-#include <unordered_set>
+#include "std.h"
 
 #include "VulkanHeader.h"
 
