@@ -5,9 +5,9 @@
 #include <thread>
 #include <unordered_set>
 
-#include "RenderBackend/Image.h"
 #include "VulkanHeader.h"
 
+#include "RenderBackend/Image.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Encoder.h"
 #include "RenderBackend/Buffer.h"
@@ -21,6 +21,7 @@ struct QueueIndices {
     bool IsComplete() { return graphicsQueueIndex.has_value() && computeQueueIndex.has_value(); }
 };
 
+class VkAllocator;
 class GPUDevice {
 public:
     friend class Backend;
@@ -37,6 +38,7 @@ public:
     auto GetVkInstance() const { return *m_vkInstance; }
 
 private:
+    void InitAllocator();
     void CreateInstance();
     void PickupPhysicalDevice();
     void CreateDevice();
@@ -58,6 +60,7 @@ private:
     std::unordered_set<std::string> m_supportedExtensions;
     std::vector<const char*>        m_enableExtensions;
 
+    std::unique_ptr<VkAllocator> m_allocator;
     bool m_enableDebug{true};
 };
 } // namespace wind

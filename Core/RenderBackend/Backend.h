@@ -18,7 +18,7 @@ private:
 
     std::unique_ptr<GPUDevice> m_device;
 
-    static std::shared_ptr<Backend> s_instance;
+    static std::unique_ptr<Backend> s_instance;
 };
 
 using RenderAPI = Backend;

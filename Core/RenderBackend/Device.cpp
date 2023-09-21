@@ -1,10 +1,13 @@
 #include "Device.h"
 
-#include "Base/Log.h"
-#include "RenderBackend/Encoder.h"
-
-#include <GLFW/glfw3.h>
 #include <algorithm>
+#include <GLFW/glfw3.h>
+#include <memory>
+
+#include "Base/Log.h"
+#include "RenderBackend/Device.h"
+#include "RenderBackend/Encoder.h"
+#include "RenderBackend/Allocator.h"
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
@@ -138,11 +141,16 @@ void GPUDevice::CreateDevice() {
     m_computeQueue  = m_device->getQueue(m_queueIndices.computeQueueIndex.value(), 0);
 }
 
+void GPUDevice::InitAllocator() {
+    m_allocator = std::make_unique<VkAllocator>(*this);
+}
+
 GPUDevice::GPUDevice() {
     CreateInstance();
     PickupPhysicalDevice();
     QueryQueueFamilyIndices();
     CreateDevice();
+    InitAllocator();
 }
 
 GPUDevice::~GPUDevice() { m_device->waitIdle(); }

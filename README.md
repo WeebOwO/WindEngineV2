@@ -9,4 +9,5 @@ Using command below to generate project file
 
 ## Reference
 * [WebGPU](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API)
+* [LuisaCompute](https://github.com/WeebOwO/LuisaCompute/tree/next/src/backends/vk)
 

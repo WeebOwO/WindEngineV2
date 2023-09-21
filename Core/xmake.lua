@@ -6,6 +6,7 @@ option("tracy")
     add_defines("TRACY_ENABLE")
 
 target("WindRuntime")
+    set_pcxxheader("pch.h")
     add_options("tracy")
     set_kind("static")
     add_files("/**.cpp")
