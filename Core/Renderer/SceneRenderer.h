@@ -12,7 +12,8 @@ public:
     auto Render(Swapchain& swapchain) -> void;
 
 private:
-    void                       InitView();
-    void                       BasePassRendering();
+    void InitView();
+    void ComputeTest();
+    void BasePassRendering();
 };
 } // namespace wind

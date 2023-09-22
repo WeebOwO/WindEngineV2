@@ -46,7 +46,4 @@ struct RenderCommandDispatch : public RenderCommandTyped<RenderCommandType::DisP
     uint32_t dispatchZ;
 };
 
-struct CommandBuffer {
-
-};
 } // namespace wind

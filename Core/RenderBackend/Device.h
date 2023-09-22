@@ -4,11 +4,6 @@
 
 #include "VulkanHeader.h"
 
-#include "RenderBackend/Image.h"
-#include "RenderBackend/Command.h"
-#include "RenderBackend/Encoder.h"
-#include "RenderBackend/Buffer.h"
-
 namespace wind {
 
 struct QueueIndices {

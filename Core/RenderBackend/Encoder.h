@@ -10,13 +10,13 @@ namespace wind {
 class CommandEncoder {
 public:
     void BeginEncoding();
-    
+
     ~CommandEncoder();
-    
+
 private:
     friend class GPUDevice;
-    CommandBuffer   m_handle;
-    vk::CommandPool m_cmdPool;
+    vk::CommandBuffer m_cmdBuffer;
+    vk::CommandPool   m_cmdPool;
 };
 
 } // namespace wind

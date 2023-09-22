@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RenderBackend/RenderResource.h"
 #include "VulkanHeader.h"
 
 namespace wind {
@@ -17,7 +18,7 @@ struct TextureDesc {
     ImageOptions createOptions = ImageOptions::Default;
 };
 
-struct GPUTexture {
+struct GPUTexture : public RenderResource<RenderResourceType::Texture> {
 public:
     auto GetTextureView() -> vk::ImageView;
 private:
