@@ -14,7 +14,7 @@ Swapchain::Swapchain(const GPUDevice& device, const Window& window) : m_device(d
     m_surface = rawSurface;
 
     auto physicalDevice = m_device.GetVkPhysicalDevice();
-    auto vkDevice = m_device.GetVkDeviceHandle();
+    auto vkDevice       = m_device.GetVkDeviceHandle();
 
     auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(m_surface);
 
@@ -24,23 +24,21 @@ Swapchain::Swapchain(const GPUDevice& device, const Window& window) : m_device(d
                      std::clamp(window.height(), surfaceCapabilities.minImageExtent.height,
                                 surfaceCapabilities.maxImageExtent.height));
 
-    vk::SwapchainCreateInfoKHR swapchainCreateInfo;
     QuerySurfaceProperty();
-
-    swapchainCreateInfo.setSurface(m_surface)
-        .setMinImageCount(MAX_FRAME_IN_FLIGHT)
-        .setImageFormat(m_surfaceFormat.format)
-        .setImageColorSpace(m_surfaceFormat.colorSpace)
-        .setImageExtent(m_surfaceExtent)
-        .setImageArrayLayers(1)
-        .setImageUsage(vk::ImageUsageFlagBits::eColorAttachment |
-                       vk::ImageUsageFlagBits::eTransferDst)
-        .setImageSharingMode(vk::SharingMode::eExclusive)
-        .setPreTransform(surfaceCapabilities.currentTransform)
-        .setCompositeAlpha(vk::CompositeAlphaFlagBitsKHR::eOpaque)
-        .setPresentMode(m_surfacePresentMode)
-        .setClipped(true)
-        .setOldSwapchain(nullptr);
+    vk::SwapchainCreateInfoKHR swapchainCreateInfo{
+        .surface          = m_surface,
+        .minImageCount    = MAX_FRAME_IN_FLIGHT,
+        .imageFormat      = m_surfaceFormat.format,
+        .imageColorSpace  = m_surfaceFormat.colorSpace,
+        .imageExtent      = m_surfaceExtent,
+        .imageArrayLayers = 1,
+        .imageUsage       = vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferDst,
+        .imageSharingMode = vk::SharingMode::eExclusive,
+        .preTransform     = surfaceCapabilities.currentTransform,
+        .compositeAlpha   = vk::CompositeAlphaFlagBitsKHR::eOpaque,
+        .presentMode      = m_surfacePresentMode,
+        .clipped          = true,
+        .oldSwapchain     = nullptr};
 
     m_swapchain = vkDevice.createSwapchainKHR(swapchainCreateInfo);
     WIND_INFO("Create swapchain");
@@ -66,7 +64,7 @@ void Swapchain::QuerySurfaceProperty() {
 }
 
 Swapchain::~Swapchain() {
-    auto vkdevice = m_device.GetVkDeviceHandle();
+    auto vkdevice   = m_device.GetVkDeviceHandle();
     auto vkInstance = m_device.GetVkInstance();
 
     vkdevice.destroySwapchainKHR(m_swapchain);
