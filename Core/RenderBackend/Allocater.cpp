@@ -1,6 +1,7 @@
 #define VMA_IMPLEMENTATION
 
 #include "Allocator.h"
+
 #include "Base/Log.h"
 
 namespace wind {
@@ -22,4 +23,13 @@ VkAllocator::VkAllocator(GPUDevice& device) {
 }
 
 VkAllocator::~VkAllocator() { vmaDestroyAllocator(m_allocator); }
+
+AllocatedBuffer VkAllocator::AllocateBuffer(const vk::BufferCreateInfo&    bufferCreateInfo,
+                                            const VmaAllocationCreateInfo& allocationCreateInfo) {
+    AllocatedBuffer buffer;
+    vmaCreateBuffer(m_allocator, (VkBufferCreateInfo*)&bufferCreateInfo, &allocationCreateInfo,
+                    (VkBuffer*)&buffer.buffer, &buffer.allocation, nullptr);
+    return buffer;
+}
+
 } // namespace wind

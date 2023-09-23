@@ -1,13 +1,13 @@
 #include "Device.h"
 
-#include <algorithm>
 #include <GLFW/glfw3.h>
+#include <algorithm>
 #include <memory>
 
 #include "Base/Log.h"
+#include "RenderBackend/Allocator.h"
 #include "RenderBackend/Device.h"
 #include "RenderBackend/Encoder.h"
-#include "RenderBackend/Allocator.h"
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
@@ -27,13 +27,13 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugUtilsMessengerCallback(
 }
 
 vk::DebugUtilsMessengerCreateInfoEXT MakeDebugUtilsMessengerCreateInfoEXT() {
-    return {{},
-            vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
-                vk::DebugUtilsMessageSeverityFlagBitsEXT::eError,
-            vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
-                vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
-                vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation,
-            &DebugUtilsMessengerCallback};
+    return {.sType           = vk::StructureType::eDebugUtilsMessengerCreateInfoEXT,
+            .messageSeverity = vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
+                               vk::DebugUtilsMessageSeverityFlagBitsEXT::eError,
+            .messageType = vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
+                           vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
+                           vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation,
+            .pfnUserCallback = &DebugUtilsMessengerCallback};
 }
 
 std::vector<const char*> GPUDevice::GetRequiredExtensions() {
@@ -55,12 +55,22 @@ void GPUDevice::CreateInstance() {
         m_vkLoader.getProcAddress<PFN_vkGetInstanceProcAddr>("vkGetInstanceProcAddr");
     VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
 
-    vk::ApplicationInfo applicationInfo("App", 1, "Engine", 1, VK_API_VERSION_1_3);
+    vk::ApplicationInfo applicationInfo{.pApplicationName   = "App",
+                                        .applicationVersion = 1,
+                                        .pEngineName        = "Engine",
+                                        .engineVersion      = 1,
+                                        .apiVersion         = VK_API_VERSION_1_3};
 
-    auto                   extensions = GetRequiredExtensions();
-    vk::InstanceCreateInfo instanceCreateInfo({}, &applicationInfo, uint32_t(layers.size()),
-                                              layers.data(), (uint32_t)extensions.size(),
-                                              extensions.data());
+    auto extensions = GetRequiredExtensions();
+
+    vk::InstanceCreateInfo instanceCreateInfo{
+        .flags                   = {},
+        .pApplicationInfo        = &applicationInfo,
+        .enabledLayerCount       = (u32)layers.size(),
+        .ppEnabledLayerNames     = layers.data(),
+        .enabledExtensionCount   = (u32)extensions.size(),
+        .ppEnabledExtensionNames = extensions.data(),
+    };
 
     m_vkInstance = vk::createInstanceUnique(instanceCreateInfo, nullptr);
     VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_vkInstance);
@@ -126,8 +136,10 @@ void GPUDevice::CreateDevice() {
     float queuePriority = 1.0f;
 
     for (auto index : uniqueQueueIndices) {
-        vk::DeviceQueueCreateInfo queueCreateInfo{vk::DeviceQueueCreateFlags{}, index, 1,
-                                                  &queuePriority};
+        vk::DeviceQueueCreateInfo queueCreateInfo{
+            .queueFamilyIndex = index, 
+            .queueCount = 1, 
+            .pQueuePriorities = &queuePriority};
         queueCreateInfos.push_back(queueCreateInfo);
     }
 
@@ -141,9 +153,9 @@ void GPUDevice::CreateDevice() {
     m_computeQueue  = m_device->getQueue(m_queueIndices.computeQueueIndex.value(), 0);
 }
 
-void GPUDevice::InitAllocator() {
-    m_allocator = std::make_unique<VkAllocator>(*this);
-}
+void GPUDevice::InitAllocator() { m_allocator = std::make_unique<VkAllocator>(*this); }
+
+VkAllocator GPUDevice::GetAllocator() const { return *m_allocator; }
 
 GPUDevice::GPUDevice() {
     CreateInstance();

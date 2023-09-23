@@ -29,6 +29,8 @@ public:
     auto GetVkPhysicalDevice() const { return m_physicalDevice; }
     auto GetVkInstance() const { return *m_vkInstance; }
 
+    VkAllocator GetAllocator() const ;
+
 private:
     void InitAllocator();
     void CreateInstance();
@@ -53,6 +55,6 @@ private:
     std::vector<const char*>        m_enableExtensions;
 
     std::unique_ptr<VkAllocator> m_allocator;
-    bool m_enableDebug{true};
+    bool                         m_enableDebug{true};
 };
 } // namespace wind
