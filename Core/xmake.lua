@@ -4,8 +4,10 @@ option("tracy")
     set_default(true)
     set_showmenu(true)
     add_defines("TRACY_ENABLE")
-
+    
 target("WindRuntime")
+    before_build("before_build")
+    after_build("after_build")
     set_pcxxheader("std.h")
     add_options("tracy")
     set_kind("static")

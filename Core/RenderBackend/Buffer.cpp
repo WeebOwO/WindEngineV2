@@ -4,10 +4,14 @@ namespace wind {
 GPUBuffer::GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,
                      const VmaAllocationCreateInfo& AllocationCreateInfo)
     : m_byteSize(byteSize) {
-    auto                 allocator        = device.GetAllocator();
+
     vk::BufferCreateInfo BufferCreateInfo = {
         .size = byteSize, .usage = usageFlags, .sharingMode = vk::SharingMode::eExclusive};
-    m_buffer = allocator.AllocateBuffer(BufferCreateInfo, AllocationCreateInfo);
+    m_buffer = device.AllocateBuffer(BufferCreateInfo, AllocationCreateInfo);
+}
+
+GPUBuffer::~GPUBuffer() {
+    device.DeAllocateBuffer(m_buffer);
 }
 
 UploadBuffer::UploadBuffer(u32 byteSize)
@@ -35,4 +39,27 @@ ReadBackBuffer::ReadBackBuffer(u32 byteSize)
                     .usage    = VMA_MEMORY_USAGE_AUTO,
                     .priority = 1.0f,
                 }) {}
+
+u8* ReadBackBuffer::MapMemory() {
+    auto NativeHandle = device.GetAllocator().NativeHandle();
+
+    if (m_mapMemory == nullptr) {
+        void* memory = nullptr;
+        vmaMapMemory(NativeHandle, GetAllocatedBuffer().allocation, &memory);
+        m_mapMemory = (u8*)memory;
+    }
+
+    return m_mapMemory;
+}
+
+void ReadBackBuffer::UnmapMemory() {
+    auto NativeHandle = device.GetAllocator().NativeHandle();
+    vmaUnmapMemory(NativeHandle, GetAllocatedBuffer().allocation);
+}
+
+ReadBackBuffer::~ReadBackBuffer() {
+    if(m_mapMemory != nullptr) {
+        UnmapMemory();
+    }
+}
 } // namespace wind

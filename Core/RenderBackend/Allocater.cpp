@@ -3,6 +3,7 @@
 #include "Allocator.h"
 
 #include "Base/Log.h"
+#include "RenderBackend/Device.h"
 
 namespace wind {
 VkAllocator::VkAllocator(GPUDevice& device) {
@@ -32,4 +33,7 @@ AllocatedBuffer VkAllocator::AllocateBuffer(const vk::BufferCreateInfo&    buffe
     return buffer;
 }
 
+void VkAllocator::DeAllocateBuffer(AllocatedBuffer& buffer) {
+    vmaDestroyBuffer(m_allocator, buffer.buffer, buffer.allocation);
+}
 } // namespace wind

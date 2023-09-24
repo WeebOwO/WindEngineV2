@@ -3,6 +3,7 @@
 #include "std.h"
 
 #include "VulkanHeader.h"
+#include "RenderBackend/Allocator.h"
 
 namespace wind {
 
@@ -29,8 +30,11 @@ public:
     auto GetVkPhysicalDevice() const { return m_physicalDevice; }
     auto GetVkInstance() const { return *m_vkInstance; }
 
-    VkAllocator GetAllocator() const ;
+    auto GetAllocator() const -> VkAllocator;
 
+    AllocatedBuffer AllocateBuffer(const vk::BufferCreateInfo& bufferCreateInfo, const VmaAllocationCreateInfo& allocationCreateInfo);
+    void DeAllocateBuffer(AllocatedBuffer& buffer);
+    
 private:
     void InitAllocator();
     void CreateInstance();

@@ -2,7 +2,6 @@
 
 #include <vk_mem_alloc.h>
 
-#include "RenderBackend/Device.h"
 #include "VulkanHeader.h"
 
 namespace wind {
@@ -16,13 +15,15 @@ struct AllocatedImage {
     VmaAllocation allocation;
 };
 
+class GPUDevice;
 class VkAllocator {
 public:
-    auto allocator() const { return m_allocator; }
+    auto NativeHandle() const { return m_allocator; }
     VkAllocator(GPUDevice& device);
     ~VkAllocator();
 
     AllocatedBuffer AllocateBuffer(const vk::BufferCreateInfo& bufferCreateInfo, const VmaAllocationCreateInfo& allocationCreateInfo);
+    void DeAllocateBuffer(AllocatedBuffer& buffer);
     
 private:
     VmaAllocator m_allocator;

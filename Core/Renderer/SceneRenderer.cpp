@@ -2,13 +2,17 @@
 
 #include "Base/Log.h"
 #include "Scene/Scene.h"
-#include "RenderBackend/Backend.h"
+#include "RenderBackend/Buffer.h"
 
 namespace wind {
 static bool test = true;
+SceneRenderer::~SceneRenderer() {
+
+}
 
 SceneRenderer::SceneRenderer() {
-     
+    testVec.resize(4);
+    m_readBackBuffer = std::make_unique<ReadBackBuffer>(sizeof(u32) * testVec.size());
 }
 
 void SceneRenderer::Render(Swapchain& swapchain) {
@@ -18,5 +22,8 @@ void SceneRenderer::Render(Swapchain& swapchain) {
     }
 }
 
-void SceneRenderer::ComputeTest() { WIND_CORE_INFO("ComputeTestBegin"); }
+void SceneRenderer::ComputeTest() { 
+    WIND_CORE_INFO("ComputeTestBegin"); 
+    
+}
 } // namespace wind

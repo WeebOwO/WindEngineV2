@@ -1,11 +1,12 @@
 #pragma once
 
 #include "std.h"
-#include "Renderer/SceneRenderer.h"
+
 
 namespace wind {
-
+class SceneRenderer;
 class Window;
+
 class Engine {
 public:
     Engine(std::unique_ptr<Window> window); // here use unique ptr to transfer ownership from editor to engine

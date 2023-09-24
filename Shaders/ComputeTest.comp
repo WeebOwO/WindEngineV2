@@ -1,0 +1,13 @@
+#version 450 core
+
+layout(local_size_x = 4) in;
+
+layout(set = 0, binding = 0) buffer Buffer {
+    uint value[4];
+} buf;
+
+void main() {
+    buf.value[0] = gl_NumWorkGroups.x;
+    buf.value[1] = gl_NumWorkGroups.y;
+    buf.value[2] = gl_NumWorkGroups.z;
+}

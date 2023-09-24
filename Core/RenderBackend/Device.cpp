@@ -136,9 +136,7 @@ void GPUDevice::CreateDevice() {
 
     for (auto index : uniqueQueueIndices) {
         vk::DeviceQueueCreateInfo queueCreateInfo{
-            .queueFamilyIndex = index, 
-            .queueCount = 1, 
-            .pQueuePriorities = &queuePriority};
+            .queueFamilyIndex = index, .queueCount = 1, .pQueuePriorities = &queuePriority};
         queueCreateInfos.push_back(queueCreateInfo);
     }
 
@@ -166,4 +164,11 @@ GPUDevice::GPUDevice() {
 
 GPUDevice::~GPUDevice() { m_device->waitIdle(); }
 
+// buffer interface
+AllocatedBuffer GPUDevice::AllocateBuffer(const vk::BufferCreateInfo&    bufferCreateInfo,
+                                          const VmaAllocationCreateInfo& allocationCreateInfo) {
+    return m_allocator->AllocateBuffer(bufferCreateInfo, allocationCreateInfo);
+}
+
+void GPUDevice::DeAllocateBuffer(AllocatedBuffer& buffer) { m_allocator->DeAllocateBuffer(buffer); }
 }; // namespace wind

@@ -12,7 +12,7 @@ public:
         ComputeShader = 0,
         RasterShader,
     };
-
+    
 private:
     vk::PipelineLayout m_layout;
     vk::Pipeline       m_pipeline;
