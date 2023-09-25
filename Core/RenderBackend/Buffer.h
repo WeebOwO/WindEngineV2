@@ -4,7 +4,6 @@
 
 #include "VulkanHeader.h"
 #include "RenderBackend/Allocator.h"
-#include "RenderBackend/Device.h"
 #include "RenderBackend/RenderResource.h"
 
 namespace wind {

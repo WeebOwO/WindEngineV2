@@ -3,8 +3,12 @@
 #include "VulkanHeader.h"
 
 namespace wind {
-// this file define render command, all command is stateless which is very easy for cache
 
+// fwd def
+class ComputeShader;
+class RasterShader;
+
+// this file define render command, all command is stateless which is very easy for cache
 enum class RenderCommandType : uint8_t {
     Draw = 0,
     DrawIndiret,
@@ -14,6 +18,7 @@ enum class RenderCommandType : uint8_t {
     Count
 };
 
+// render queue type def
 enum class RenderCommandQueueType : uint8_t {
     None = 0x00,
     Copy = 0x01,
@@ -34,6 +39,7 @@ struct RenderCommandTyped : RenderCommand {
 };
 
 struct RenderCommandDraw : public RenderCommandTyped<RenderCommandType::Draw, RenderCommandQueueType::Graphics> {
+    
     uint32_t vertexCount;
     uint32_t instanceCount;
     uint32_t firstVertex;
@@ -41,6 +47,7 @@ struct RenderCommandDraw : public RenderCommandTyped<RenderCommandType::Draw, Re
 };
 
 struct RenderCommandDispatch : public RenderCommandTyped<RenderCommandType::DisPatch, RenderCommandQueueType::Compute> {
+    std::shared_ptr<ComputeShader> m_bindShader; 
     uint32_t dispatchX;
     uint32_t dispatchY;
     uint32_t dispatchZ;

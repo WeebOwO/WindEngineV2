@@ -1,9 +1,8 @@
 #pragma once
 
-#include <stdint.h>
+#include <span>
 #include <string>
 #include <vector>
-
 
 #include <condition_variable>
 #include <functional>

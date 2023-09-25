@@ -7,7 +7,7 @@
 namespace wind {
 static bool test = true;
 SceneRenderer::~SceneRenderer() {
-
+    WIND_CORE_INFO("Destory {}", "Scene Renderer");
 }
 
 SceneRenderer::SceneRenderer() {

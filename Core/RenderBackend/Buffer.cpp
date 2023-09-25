@@ -41,11 +41,11 @@ ReadBackBuffer::ReadBackBuffer(u32 byteSize)
                 }) {}
 
 u8* ReadBackBuffer::MapMemory() {
-    auto NativeHandle = device.GetAllocator().NativeHandle();
+    auto nativeHandle = device.GetAllocator().NativeHandle();
 
     if (m_mapMemory == nullptr) {
         void* memory = nullptr;
-        vmaMapMemory(NativeHandle, GetAllocatedBuffer().allocation, &memory);
+        vmaMapMemory(nativeHandle, GetAllocatedBuffer().allocation, &memory);
         m_mapMemory = (u8*)memory;
     }
 
@@ -53,8 +53,8 @@ u8* ReadBackBuffer::MapMemory() {
 }
 
 void ReadBackBuffer::UnmapMemory() {
-    auto NativeHandle = device.GetAllocator().NativeHandle();
-    vmaUnmapMemory(NativeHandle, GetAllocatedBuffer().allocation);
+    auto nativeHandle = device.GetAllocator().NativeHandle();
+    vmaUnmapMemory(nativeHandle, GetAllocatedBuffer().allocation);
 }
 
 ReadBackBuffer::~ReadBackBuffer() {
