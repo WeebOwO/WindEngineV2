@@ -24,6 +24,5 @@ void SceneRenderer::Render(Swapchain& swapchain) {
 
 void SceneRenderer::ComputeTest() { 
     WIND_CORE_INFO("ComputeTestBegin"); 
-    
 }
 } // namespace wind

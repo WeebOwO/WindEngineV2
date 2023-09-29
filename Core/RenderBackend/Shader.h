@@ -2,8 +2,8 @@
 
 #include "std.h"
 
-#include "VulkanHeader.h"
 #include "RenderBackend/RenderResource.h"
+#include "VulkanHeader.h"
 
 namespace wind {
 class Shader : public RenderResource<RenderResourceType::Shader> {
@@ -12,9 +12,9 @@ public:
         ComputeShader = 0,
         RasterShader,
     };
-    
+    void CollectMetaData();
 private:
-    vk::PipelineLayout m_layout;
-    vk::Pipeline       m_pipeline;
+    vk::PipelineBindPoint m_bindPoint;
+    vk::PipelineLayout    m_layout;
 };
 } // namespace wind

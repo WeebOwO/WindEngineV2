@@ -16,7 +16,8 @@ private:
     void InitView();
     void ComputeTest();
     void BasePassRendering();
-
+    void UploadPass();
+    
     std::unique_ptr<ReadBackBuffer> m_readBackBuffer;
     std::vector<u32> testVec;
 };
