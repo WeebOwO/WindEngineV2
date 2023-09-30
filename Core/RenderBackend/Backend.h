@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 
 #include "RenderBackend/Device.h"
 
@@ -21,5 +22,4 @@ private:
     static std::unique_ptr<Backend> s_instance;
 };
 
-using RenderAPI = Backend;
-}; // namespace wind
+} // namespace wind

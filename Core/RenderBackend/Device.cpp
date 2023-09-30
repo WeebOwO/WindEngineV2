@@ -6,7 +6,6 @@
 
 #include "Base/Log.h"
 #include "RenderBackend/Allocator.h"
-#include "RenderBackend/Encoder.h"
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 

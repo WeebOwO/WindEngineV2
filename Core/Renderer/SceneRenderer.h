@@ -5,13 +5,14 @@
 
 namespace wind {
 class ReadBackBuffer;
+class ComputeShader;
 
 class SceneRenderer {
 public:
     SceneRenderer();
     ~SceneRenderer();
     auto Render(Swapchain& swapchain) -> void;
-
+    
 private:
     void InitView();
     void ComputeTest();
@@ -20,5 +21,7 @@ private:
     
     std::unique_ptr<ReadBackBuffer> m_readBackBuffer;
     std::vector<u32> testVec;
+
+    std::unique_ptr<ComputeShader> m_computeTestShader;
 };
 } // namespace wind

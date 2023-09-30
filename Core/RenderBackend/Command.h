@@ -39,7 +39,6 @@ struct RenderCommandTyped : RenderCommand {
 };
 
 struct RenderCommandDraw : public RenderCommandTyped<RenderCommandType::Draw, RenderCommandQueueType::Graphics> {
-    
     uint32_t vertexCount;
     uint32_t instanceCount;
     uint32_t firstVertex;
@@ -47,7 +46,7 @@ struct RenderCommandDraw : public RenderCommandTyped<RenderCommandType::Draw, Re
 };
 
 struct RenderCommandDispatch : public RenderCommandTyped<RenderCommandType::DisPatch, RenderCommandQueueType::Compute> {
-    std::shared_ptr<ComputeShader> m_bindShader; 
+    std::shared_ptr<ComputeShader> computerShader; 
     uint32_t dispatchX;
     uint32_t dispatchY;
     uint32_t dispatchZ;

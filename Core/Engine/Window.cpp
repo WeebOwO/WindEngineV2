@@ -14,7 +14,7 @@ Window::Window(uint32_t width, uint32_t height, std::string_view title): m_windo
 }
 
 void Window::PostInit() {
-    auto& Device = RenderAPI::GetGPUDevice();
+    auto& Device = Backend::GetGPUDevice();
     m_swapchain = std::make_unique<Swapchain>(Device, *this);
 }
 
