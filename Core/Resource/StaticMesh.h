@@ -1,8 +1,7 @@
 #pragma once
 
 namespace wind {
-class RenderGraph {
-private:
+class StaticMesh {
     
 };
 } // namespace wind

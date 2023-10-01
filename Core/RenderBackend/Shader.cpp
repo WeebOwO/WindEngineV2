@@ -43,15 +43,75 @@ void Shader::CollectMetaData(const std::vector<u32>& spirvCode, vk::ShaderStageF
     }
 
     for (const auto& resource : resources.push_constant_buffers) {
-        std::string_view             resourceName = resource.name;
+        std::string                  resourceName = resource.name;
         const spirv_cross::SPIRType& type         = compiler.get_type(resource.type_id);
         uint32_t                     size         = compiler.get_declared_struct_size(type);
-        if (!m_pushConstantMeta.has_value()) {
-            PushConstantBinding meta{size, 0, flag};
-            m_pushConstantMeta = std::optional<PushConstantBinding>(meta);
+        if (!m_pushConstantBinding.contains(resourceName)) {
+            m_pushConstantBinding[resourceName] =
+                PushConstantBinding{.size = size, .offset = 0, .shadeshaderStageFlag = flag};
         } else {
-            m_pushConstantMeta->shadeshaderStageFlag |= flag;
+            m_pushConstantBinding[resourceName].shadeshaderStageFlag |= flag;
         }
+    }
+}
+
+void Shader::GeneratePipelineLayout() {
+    auto vkDevice = device.GetVkDeviceHandle();
+
+    std::vector<vk::DescriptorSetLayoutCreateInfo> descriptorSetLayoutCreateInfos;
+    std::vector<vk::DescriptorSetLayoutBinding>    layoutBindings;
+
+    std::map<u32, std::vector<vk::DescriptorSetLayoutBinding>> m_setGroups;
+
+    for (const auto& [resourceName, metaData] : m_bindings) {
+        vk::DescriptorSetLayoutBinding binding;
+        vk::ShaderStageFlags           stageFlags = metaData.shaderStageFlag;
+        u32                            set        = metaData.set;
+
+        binding.setBinding(metaData.binding)
+            .setDescriptorCount(metaData.count)
+            .setDescriptorType(metaData.descriptorType)
+            .setStageFlags(stageFlags);
+
+        layoutBindings.push_back(binding);
+        m_setGroups[set].push_back(binding);
+    }
+
+    for (const auto& [setIndex, bindingVecs] : m_setGroups) {
+        vk::DescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo;
+        descriptorSetLayoutCreateInfo.setBindingCount(bindingVecs.size()).setBindings(bindingVecs);
+        vk::DescriptorSetLayout setLayout =
+            vkDevice.createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
+
+        m_descriptorSetLayouts.push_back(setLayout);
+        // m_descriptorSets.push_back(allocater->Allocate(setLayout));
+    }
+
+    for (const auto& [resourceName, pushBinding] : m_pushConstantBinding) {
+        vk::PushConstantRange range {
+            .stageFlags = pushBinding.shadeshaderStageFlag, .offset = pushBinding.offset,
+            .size = pushBinding.size
+        };
+        m_pushRanges.push_back(range);
+    }
+
+    vk::PipelineLayoutCreateInfo layoutCreateInfo {
+        .setLayoutCount = (u32)m_descriptorSetLayouts.size(),
+        .pSetLayouts = m_descriptorSetLayouts.data(),
+        .pushConstantRangeCount = (u32)m_pushRanges.size(),
+        .pPushConstantRanges = m_pushRanges.data()
+    };
+
+    m_layout = vkDevice.createPipelineLayout(layoutCreateInfo);
+}
+
+Shader::~Shader() {
+    auto vkDevice = device.GetVkDeviceHandle();
+
+    vkDevice.destroyPipelineLayout(m_layout);
+
+    for(auto& setlayout : m_descriptorSetLayouts) {
+        vkDevice.destroyDescriptorSetLayout(setlayout);
     }
 }
 } // namespace wind

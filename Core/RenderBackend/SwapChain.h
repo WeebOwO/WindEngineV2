@@ -13,12 +13,14 @@ public:
     static constexpr uint32_t MAX_FRAME_IN_FLIGHT = 2;
 
     Swapchain(const GPUDevice& device, const Window& window);
+    
     ~Swapchain();
     void Resize();
 
 private:
     void QuerySurfaceProperty();
-
+    void CreateSyncObject();
+    
     const GPUDevice& m_device;
 
     std::vector<GPUTexture>    m_swapchainImages;

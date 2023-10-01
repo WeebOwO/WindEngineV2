@@ -11,6 +11,7 @@ class SceneRenderer {
 public:
     SceneRenderer();
     ~SceneRenderer();
+
     auto Render(Swapchain& swapchain) -> void;
     
 private:

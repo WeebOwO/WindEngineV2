@@ -3,7 +3,7 @@
 namespace wind {
 enum class CullingMethod {
     None = 0,
-    Normal,  // do traditional cpu culling
+    Normal,  // Do traditional cpu culling
     Compute, // using Compute shader culling
 };
 

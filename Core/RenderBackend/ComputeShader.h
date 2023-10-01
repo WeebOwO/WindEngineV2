@@ -1,7 +1,8 @@
 #pragma once
 
-#include "RenderBackend/Shader.h"
 #include "std.h"
+
+#include "RenderBackend/Shader.h"
 
 namespace wind {
 
@@ -16,6 +17,5 @@ private:
     static constexpr auto bindPoint = {ShaderTag::ComputeShader};
     vk::ShaderModule      m_computeModule;
     vk::Pipeline          m_pipeline;
-    vk::Pipeline          m_layout;
 };
 } // namespace wind

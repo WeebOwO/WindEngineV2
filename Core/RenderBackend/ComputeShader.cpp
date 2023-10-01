@@ -1,5 +1,7 @@
 #include "ComputeShader.h"
 
+#include "Base/Log.h"
+
 namespace wind {
 ComputeShader::ComputeShader(const std::vector<u32>& spirvCode) {
     auto                       vkDevice = device.GetVkDeviceHandle();
@@ -8,10 +10,23 @@ ComputeShader::ComputeShader(const std::vector<u32>& spirvCode) {
     m_computeModule = vkDevice.createShaderModule(shaderCreateInfo);
 
     CollectMetaData(spirvCode, vk::ShaderStageFlagBits::eCompute);
+    GeneratePipelineLayout();
+
+    vk::PipelineShaderStageCreateInfo shaderStage{
+        .stage  = vk::ShaderStageFlagBits::eCompute,
+        .module = m_computeModule,
+        .pName  = "main",
+    };
+
+    vk::ComputePipelineCreateInfo pipelineCreateInfo{.stage = shaderStage, .layout = m_layout};
+
+    m_pipeline = vkDevice.createComputePipeline(nullptr, pipelineCreateInfo).value;
+    
 }
 
 ComputeShader::~ComputeShader() {
     auto vkDevice = device.GetVkDeviceHandle();
     vkDevice.destroyShaderModule(m_computeModule);
+    vkDevice.destroyPipeline(m_pipeline);
 }
 } // namespace wind
