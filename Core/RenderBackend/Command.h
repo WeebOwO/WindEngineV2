@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RenderBackend/RenderResource.h"
 #include "VulkanHeader.h"
 
 namespace wind {
@@ -20,37 +21,48 @@ enum class RenderCommandType : uint8_t {
 
 // render queue type def
 enum class RenderCommandQueueType : uint8_t {
-    None = 0x00,
-    Copy = 0x01,
-    Compute = 0x02,
+    None     = 0x00,
+    Copy     = 0x01,
+    Compute  = 0x02,
     Graphics = 0x04,
-    All = Copy | Compute | Graphics
+    All      = Copy | Compute | Graphics
 };
 
 struct RenderCommand {
     RenderCommandType type = RenderCommandType::Count;
 };
 
-template<RenderCommandType Type, RenderCommandQueueType QueueType> 
+template <RenderCommandType Type, RenderCommandQueueType QueueType>
 struct RenderCommandTyped : RenderCommand {
-    static constexpr RenderCommandType type = Type;
+    static constexpr RenderCommandType      type      = Type;
     static constexpr RenderCommandQueueType queueType = QueueType;
-    RenderCommandTyped() {this->type = type;}
+    RenderCommandTyped() { this->type = type; }
 };
 
-struct RenderCommandDraw : public RenderCommandTyped<RenderCommandType::Draw, RenderCommandQueueType::Graphics> {
+struct RenderCommandDraw
+    : public RenderCommandTyped<RenderCommandType::Draw, RenderCommandQueueType::Graphics> {
     uint32_t vertexCount;
     uint32_t instanceCount;
     uint32_t firstVertex;
     uint32_t firstInstance;
 };
 
-struct RenderCommandDispatch : public RenderCommandTyped<RenderCommandType::DisPatch, RenderCommandQueueType::Compute> {
-    std::shared_ptr<ComputeShader> computerShader; 
-    uint32_t dispatchX;
-    uint32_t dispatchY;
-    uint32_t dispatchZ;
+struct RenderCommandDispatch
+    : public RenderCommandTyped<RenderCommandType::DisPatch, RenderCommandQueueType::Compute> {
+    std::shared_ptr<ComputeShader> computerShader;
+    uint32_t                       dispatchX;
+    uint32_t                       dispatchY;
+    uint32_t                       dispatchZ;
 };
 
+class CompileContext : public RenderResource<RenderResourceType::CompileContext> {
+public:
+    CompileContext(RenderCommandQueueType queueType);
 
+    void DisPatch();
+
+private:
+    vk::CommandPool   m_cmdPool;
+    vk::CommandBuffer m_handle;
+};
 } // namespace wind

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "RenderBackend/Device.h"
 
 #include "VulkanHeader.h"
 #include "RenderBackend/Texture.h"
+#include "RenderBackend/Device.h"
 
 namespace wind {
 
@@ -20,7 +20,7 @@ public:
 private:
     void QuerySurfaceProperty();
     void CreateSyncObject();
-    
+
     const GPUDevice& m_device;
 
     std::vector<GPUTexture>    m_swapchainImages;

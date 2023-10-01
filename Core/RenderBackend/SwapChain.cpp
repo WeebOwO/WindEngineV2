@@ -46,6 +46,7 @@ Swapchain::Swapchain(const GPUDevice& device, const Window& window) : m_device(d
 
 void Swapchain::QuerySurfaceProperty() {
     auto physicalDevice      = m_device.GetVkPhysicalDevice();
+    
     auto presentModes        = physicalDevice.getSurfacePresentModesKHR(m_surface);
     auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(m_surface);
     auto surfaceFormats      = physicalDevice.getSurfaceFormatsKHR(m_surface);

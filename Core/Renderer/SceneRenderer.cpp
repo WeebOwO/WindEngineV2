@@ -18,6 +18,7 @@ SceneRenderer::SceneRenderer() {
 
     auto binaryCode = io::LoadBinary<u32>("ComputeTest.comp.spv");
     m_computeTestShader = std::make_unique<ComputeShader>(binaryCode);
+
 }
 
 void SceneRenderer::Render(Swapchain& swapchain) {
