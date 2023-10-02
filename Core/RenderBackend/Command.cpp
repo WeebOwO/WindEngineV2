@@ -1,20 +1,39 @@
 #include "Command.h"
 
 namespace wind {
-CompileContext::CompileContext(RenderCommandQueueType queueType) {
-    auto vkDevice     = device.GetVkDeviceHandle();
+CommandEncoder::CommandEncoder(RenderCommandQueueType queueType) : QueueType(queueType) {
     auto queueIndices = device.GetQueueIndices();
+    auto vkDevice     = device.GetVkDeviceHandle();
 
-    u32 queueIndex = queueType == RenderCommandQueueType::Compute
-                         ? queueIndices.computeQueueIndex.value()
-                         : queueIndices.graphicsQueueIndex.value();
+    u32                       queueIndex = queueType == RenderCommandQueueType::Compute
+                                               ? queueIndices.computeQueueIndex.value()
+                                               : queueIndices.graphicsQueueIndex.value();
+    vk::CommandPoolCreateInfo poolCreateInfo{.flags =
+                                                 vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+                                             .queueFamilyIndex = queueIndex};
 
-    vk::CommandPoolCreateInfo createInfo{.queueFamilyIndex = queueIndex};
+    m_cmdPool = vkDevice.createCommandPool(poolCreateInfo);
 
-    m_cmdPool = vkDevice.createCommandPool(createInfo);
+    vk::CommandBufferAllocateInfo allocateInfo{
+        .commandPool        = m_cmdPool,
+        .level              = vk::CommandBufferLevel::ePrimary,
+        .commandBufferCount = 1,
+    };
 
-    vk::CommandBufferAllocateInfo allocateInfo{.commandPool = m_cmdPool, .commandBufferCount = 1};
-
-    m_handle = vkDevice.allocateCommandBuffers(allocateInfo).front();
+    m_nativeHandle = vkDevice.allocateCommandBuffers(allocateInfo).front();
 }
+CommandEncoder::~CommandEncoder() {
+    // wait command to finish job
+    auto vkDevice = device.GetVkDeviceHandle();
+    vkDevice.waitIdle();
+    vkDevice.destroyCommandPool(m_cmdPool);
+}
+vk::CommandBuffer CommandEncoder::Begin() {
+    vk::CommandBufferBeginInfo beginInfo{
+        .flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit,
+    };
+    m_nativeHandle.begin(beginInfo);
+    return m_nativeHandle;
+}
+
 } // namespace wind

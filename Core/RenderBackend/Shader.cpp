@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include "Base/Log.h"
 
 #include <spirv_cross/spirv_glsl.hpp>
 
@@ -79,28 +80,27 @@ void Shader::GeneratePipelineLayout() {
 
     for (const auto& [setIndex, bindingVecs] : m_setGroups) {
         vk::DescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo;
-        descriptorSetLayoutCreateInfo.setBindingCount(bindingVecs.size()).setBindings(bindingVecs);
+        descriptorSetLayoutCreateInfo.setBindingCount(bindingVecs.size())
+                                     .setBindings(bindingVecs);
         vk::DescriptorSetLayout setLayout =
             vkDevice.createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
 
         m_descriptorSetLayouts.push_back(setLayout);
-        // m_descriptorSets.push_back(allocater->Allocate(setLayout));
+        m_descriptorSets.push_back(device.AllocateDescriptor(setLayout));
     }
 
     for (const auto& [resourceName, pushBinding] : m_pushConstantBinding) {
-        vk::PushConstantRange range {
-            .stageFlags = pushBinding.shadeshaderStageFlag, .offset = pushBinding.offset,
-            .size = pushBinding.size
-        };
+        vk::PushConstantRange range{.stageFlags = pushBinding.shadeshaderStageFlag,
+                                    .offset     = pushBinding.offset,
+                                    .size       = pushBinding.size};
         m_pushRanges.push_back(range);
     }
 
-    vk::PipelineLayoutCreateInfo layoutCreateInfo {
-        .setLayoutCount = (u32)m_descriptorSetLayouts.size(),
-        .pSetLayouts = m_descriptorSetLayouts.data(),
+    vk::PipelineLayoutCreateInfo layoutCreateInfo{
+        .setLayoutCount         = (u32)m_descriptorSetLayouts.size(),
+        .pSetLayouts            = m_descriptorSetLayouts.data(),
         .pushConstantRangeCount = (u32)m_pushRanges.size(),
-        .pPushConstantRanges = m_pushRanges.data()
-    };
+        .pPushConstantRanges    = m_pushRanges.data()};
 
     m_layout = vkDevice.createPipelineLayout(layoutCreateInfo);
 }
@@ -110,8 +110,23 @@ Shader::~Shader() {
 
     vkDevice.destroyPipelineLayout(m_layout);
 
-    for(auto& setlayout : m_descriptorSetLayouts) {
+    for (auto& setlayout : m_descriptorSetLayouts) {
         vkDevice.destroyDescriptorSetLayout(setlayout);
     }
+}
+
+void Shader::BindResource(const std::string& resourceName, const vk::DescriptorBufferInfo& bufferInfo) {
+    if (!m_bindings.contains(resourceName)) {
+        WIND_CORE_INFO("Fail to find shader resource {}", resourceName);
+    }
+
+    auto                   bindData = m_bindings[resourceName];
+    vk::WriteDescriptorSet writer{.dstSet          = m_descriptorSets[bindData.set],
+                                  .dstBinding      = bindData.binding,
+                                  .descriptorCount = bindData.count,
+                                  .descriptorType  = bindData.descriptorType,
+                                  .pBufferInfo     = &bufferInfo};
+
+    device.GetVkDeviceHandle().updateDescriptorSets(1, &writer, 0, nullptr);
 }
 } // namespace wind

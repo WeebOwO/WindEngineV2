@@ -2,8 +2,8 @@
 
 #include "std.h"
 
-#include "RenderBackend/RenderResource.h"
 #include "VulkanHeader.h"
+#include "RenderBackend/RenderResource.h"
 
 namespace wind {
 class Shader : public RenderResource<RenderResourceType::Shader> {
@@ -14,6 +14,8 @@ public:
     };
 
     ~Shader();
+
+    void BindResource(const std::string& resourceName, const vk::DescriptorBufferInfo& bufferInfo);
 
 protected:
     void CollectMetaData(const std::vector<u32>& spirvCode, vk::ShaderStageFlags flag);

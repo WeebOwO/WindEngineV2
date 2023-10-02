@@ -1,9 +1,9 @@
 #pragma once
 
 #include "std.h"
-
 #include "VulkanHeader.h"
 #include "RenderBackend/Allocator.h"
+#include "RenderBackend/Descriptor.h"
 
 namespace wind {
 
@@ -30,11 +30,15 @@ public:
     auto GetVkPhysicalDevice() const { return m_physicalDevice; }
     auto GetVkInstance() const { return *m_vkInstance; }
 
-    auto GetAllocator() const -> VkAllocator;
+    auto GetAllocator() const -> VkAllocator*;
 
-    AllocatedBuffer AllocateBuffer(const vk::BufferCreateInfo& bufferCreateInfo, const VmaAllocationCreateInfo& allocationCreateInfo);
-    void DeAllocateBuffer(AllocatedBuffer& buffer);
+    AllocatedBuffer AllocateBuffer(const vk::BufferCreateInfo&    bufferCreateInfo,
+                                   const VmaAllocationCreateInfo& allocationCreateInfo);
     
+    void            DeAllocateBuffer(AllocatedBuffer& buffer);
+
+    vk::DescriptorSet AllocateDescriptor(const vk::DescriptorSetLayout& );
+
 private:
     void InitAllocator();
     void CreateInstance();
@@ -60,5 +64,7 @@ private:
 
     std::unique_ptr<VkAllocator> m_allocator;
     bool                         m_enableDebug{true};
+
+    std::unique_ptr<DescriptorAllocator> m_descriptorAllocator;
 };
 } // namespace wind

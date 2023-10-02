@@ -2,9 +2,9 @@
 
 #include <vk_mem_alloc.h>
 
-#include "VulkanHeader.h"
 #include "RenderBackend/Allocator.h"
 #include "RenderBackend/RenderResource.h"
+#include "VulkanHeader.h"
 
 namespace wind {
 
@@ -48,6 +48,6 @@ public:
 private:
     void UnmapMemory();
 
-    u8* m_mapMemory {nullptr};
+    u8* m_mapMemory{nullptr};
 };
 } // namespace wind

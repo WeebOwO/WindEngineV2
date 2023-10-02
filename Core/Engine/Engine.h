@@ -24,8 +24,8 @@ private:
     float CalcDeltaTime();
 
     std::unique_ptr<Window> m_window;
-    
     std::unique_ptr<SceneRenderer> m_sceneRenderer;
+    
     std::chrono::steady_clock::time_point m_lastTickTimePoint{std::chrono::steady_clock::now()};
 };
 

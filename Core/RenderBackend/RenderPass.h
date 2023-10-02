@@ -13,7 +13,7 @@ struct RenderPassDesc {
 
 class RenderPass {    
 public:
-        
+     
 private:
     vk::RenderPass m_handle;
 };

@@ -10,9 +10,7 @@ GPUBuffer::GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,
     m_buffer = device.AllocateBuffer(BufferCreateInfo, AllocationCreateInfo);
 }
 
-GPUBuffer::~GPUBuffer() {
-    device.DeAllocateBuffer(m_buffer);
-}
+GPUBuffer::~GPUBuffer() { device.DeAllocateBuffer(m_buffer); }
 
 UploadBuffer::UploadBuffer(u32 byteSize)
     : GPUBuffer(byteSize, vk::BufferUsageFlagBits::eTransferSrc,
@@ -24,7 +22,7 @@ UploadBuffer::UploadBuffer(u32 byteSize)
                 }) {}
 
 StorageBuffer::StorageBuffer(u32 byteSize)
-    : GPUBuffer(byteSize, vk::BufferUsageFlagBits::eTransferSrc,
+    : GPUBuffer(byteSize, vk::BufferUsageFlagBits::eStorageBuffer,
                 VmaAllocationCreateInfo{
                     .flags    = VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT,
                     .usage    = VMA_MEMORY_USAGE_AUTO,
@@ -32,7 +30,8 @@ StorageBuffer::StorageBuffer(u32 byteSize)
                 }) {}
 
 ReadBackBuffer::ReadBackBuffer(u32 byteSize)
-    : GPUBuffer(byteSize, vk::BufferUsageFlagBits::eTransferSrc,
+    : GPUBuffer(byteSize,
+                vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eStorageBuffer,
                 VmaAllocationCreateInfo{
                     .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT |
                              VMA_ALLOCATION_CREATE_MAPPED_BIT,
@@ -41,8 +40,7 @@ ReadBackBuffer::ReadBackBuffer(u32 byteSize)
                 }) {}
 
 u8* ReadBackBuffer::MapMemory() {
-    auto nativeHandle = device.GetAllocator().NativeHandle();
-
+    auto& nativeHandle = device.GetAllocator()->NativeHandle();
     if (m_mapMemory == nullptr) {
         void* memory = nullptr;
         vmaMapMemory(nativeHandle, GetAllocatedBuffer().allocation, &memory);
@@ -53,13 +51,11 @@ u8* ReadBackBuffer::MapMemory() {
 }
 
 void ReadBackBuffer::UnmapMemory() {
-    auto nativeHandle = device.GetAllocator().NativeHandle();
+    auto& nativeHandle = device.GetAllocator()->NativeHandle();
     vmaUnmapMemory(nativeHandle, GetAllocatedBuffer().allocation);
 }
 
 ReadBackBuffer::~ReadBackBuffer() {
-    if(m_mapMemory != nullptr) {
-        UnmapMemory();
-    }
+    if (m_mapMemory != nullptr) { UnmapMemory(); }
 }
 } // namespace wind

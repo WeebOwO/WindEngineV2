@@ -149,9 +149,13 @@ void GPUDevice::CreateDevice() {
     m_computeQueue  = m_device->getQueue(m_queueIndices.computeQueueIndex.value(), 0);
 }
 
-void GPUDevice::InitAllocator() { m_allocator = std::make_unique<VkAllocator>(*this); }
+void GPUDevice::InitAllocator() { 
+    m_allocator = std::make_unique<VkAllocator>(*this); 
+    m_descriptorAllocator = std::make_unique<DescriptorAllocator>();
+    m_descriptorAllocator->Init(*m_device);
+}
 
-VkAllocator GPUDevice::GetAllocator() const { return *m_allocator; }
+VkAllocator* GPUDevice::GetAllocator() const { return m_allocator.get(); }
 
 GPUDevice::GPUDevice() {
     CreateInstance();
@@ -161,7 +165,10 @@ GPUDevice::GPUDevice() {
     InitAllocator();
 }
 
-GPUDevice::~GPUDevice() { m_device->waitIdle(); }
+GPUDevice::~GPUDevice() { 
+    m_device->waitIdle(); 
+    m_descriptorAllocator->CleanUp();
+}
 
 // buffer interface
 AllocatedBuffer GPUDevice::AllocateBuffer(const vk::BufferCreateInfo&    bufferCreateInfo,
@@ -170,4 +177,8 @@ AllocatedBuffer GPUDevice::AllocateBuffer(const vk::BufferCreateInfo&    bufferC
 }
 
 void GPUDevice::DeAllocateBuffer(AllocatedBuffer& buffer) { m_allocator->DeAllocateBuffer(buffer); }
+
+vk::DescriptorSet GPUDevice::AllocateDescriptor(const vk::DescriptorSetLayout& layout) {
+    return m_descriptorAllocator->Allocate(layout);
+}
 }; // namespace wind

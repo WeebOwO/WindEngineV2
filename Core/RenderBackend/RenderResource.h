@@ -7,12 +7,12 @@
 namespace wind {
 class GPUDevice;
 
-enum class RenderResourceType : u8 { Buffer, Texture, Shader, CompileContext };
+enum class RenderResourceType : u8 { Buffer, Texture, Shader, CommandPool };
 
 template <RenderResourceType ResourceType> 
 struct ResourceHandle {
     static constexpr RenderResourceType handleType = ResourceType;
-    u64                                 handle;
+    u32                                 handle;
 };
 
 template <RenderResourceType ResourceType> 
@@ -21,5 +21,4 @@ struct RenderResource {
     GPUDevice&                   device;
     ResourceHandle<ResourceType> handle;
 };
-
 } // namespace wind

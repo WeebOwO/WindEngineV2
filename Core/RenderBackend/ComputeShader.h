@@ -12,6 +12,8 @@ public:
     ~ComputeShader();
 
     auto GetPipeline() const { return m_pipeline; }
+    
+    void Bind(const vk::CommandBuffer& cmdBuffer);
 
 private:
     static constexpr auto bindPoint = {ShaderTag::ComputeShader};

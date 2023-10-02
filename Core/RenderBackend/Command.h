@@ -9,16 +9,6 @@ namespace wind {
 class ComputeShader;
 class RasterShader;
 
-// this file define render command, all command is stateless which is very easy for cache
-enum class RenderCommandType : uint8_t {
-    Draw = 0,
-    DrawIndiret,
-    DisPatch,
-    DisPatchIndirect,
-    Barriers,
-    Count
-};
-
 // render queue type def
 enum class RenderCommandQueueType : uint8_t {
     None     = 0x00,
@@ -28,41 +18,16 @@ enum class RenderCommandQueueType : uint8_t {
     All      = Copy | Compute | Graphics
 };
 
-struct RenderCommand {
-    RenderCommandType type = RenderCommandType::Count;
-};
-
-template <RenderCommandType Type, RenderCommandQueueType QueueType>
-struct RenderCommandTyped : RenderCommand {
-    static constexpr RenderCommandType      type      = Type;
-    static constexpr RenderCommandQueueType queueType = QueueType;
-    RenderCommandTyped() { this->type = type; }
-};
-
-struct RenderCommandDraw
-    : public RenderCommandTyped<RenderCommandType::Draw, RenderCommandQueueType::Graphics> {
-    uint32_t vertexCount;
-    uint32_t instanceCount;
-    uint32_t firstVertex;
-    uint32_t firstInstance;
-};
-
-struct RenderCommandDispatch
-    : public RenderCommandTyped<RenderCommandType::DisPatch, RenderCommandQueueType::Compute> {
-    std::shared_ptr<ComputeShader> computerShader;
-    uint32_t                       dispatchX;
-    uint32_t                       dispatchY;
-    uint32_t                       dispatchZ;
-};
-
-class CompileContext : public RenderResource<RenderResourceType::CompileContext> {
+class CommandEncoder : public RenderResource<RenderResourceType::CommandPool> {
 public:
-    CompileContext(RenderCommandQueueType queueType);
+    CommandEncoder(RenderCommandQueueType queueType = RenderCommandQueueType::All);
+    ~CommandEncoder();
+    vk::CommandBuffer Begin(); 
 
-    void DisPatch();
+    RenderCommandQueueType QueueType;
 
 private:
+    vk::CommandBuffer m_nativeHandle;
     vk::CommandPool   m_cmdPool;
-    vk::CommandBuffer m_handle;
 };
-} // namespace wind
+} // namespace wind::command

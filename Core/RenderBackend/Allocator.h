@@ -18,7 +18,7 @@ struct AllocatedImage {
 class GPUDevice;
 class VkAllocator {
 public:
-    auto NativeHandle() const { return m_allocator; }
+    auto& NativeHandle() const { return m_allocator; }
     VkAllocator(GPUDevice& device);
     ~VkAllocator();
 
