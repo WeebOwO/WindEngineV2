@@ -42,7 +42,7 @@ void SceneRenderer::ComputeTest() {
     auto cmdBuffer = m_frameParams[GetCurrentFrame()].m_encoder->Begin();
     std::vector<i32> data = {1, 2, 3, 4};
 
-    static ReadBackBuffer buffer(sizeof(i32) * data.size());
+    static ReadBackBuffer buffer(sizeof(i32) * data.size(), vk::BufferUsageFlagBits::eStorageBuffer);
 
     vk::DescriptorBufferInfo m_bufferInfo{
         .buffer = buffer.GetNativeHandle(), .offset = 0, .range = buffer.GetByteSize()};

@@ -30,17 +30,17 @@ private:
 
 class UploadBuffer : public GPUBuffer {
 public:
-    UploadBuffer(u32 byteSize);
+    UploadBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags);
 };
 
-class StorageBuffer : public GPUBuffer {
+class DeviceBuffer : public GPUBuffer {
 public:
-    StorageBuffer(u32 byteSize);
+    DeviceBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags);
 };
 
 class ReadBackBuffer : public GPUBuffer {
 public:
-    ReadBackBuffer(u32 byteSize);
+    ReadBackBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags);
     ~ReadBackBuffer();
 
     u8* MapMemory();
