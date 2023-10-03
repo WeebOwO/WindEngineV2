@@ -22,7 +22,8 @@ class CommandEncoder : public RenderResource<RenderResourceType::CommandPool> {
 public:
     CommandEncoder(RenderCommandQueueType queueType = RenderCommandQueueType::All);
     ~CommandEncoder();
-    vk::CommandBuffer Begin(); 
+    
+    vk::CommandBuffer BeginComputePass(const ComputeShader& computeShader); 
 
     RenderCommandQueueType QueueType;
 

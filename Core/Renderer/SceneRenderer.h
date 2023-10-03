@@ -24,7 +24,6 @@ private:
     void InitView();
     void ComputeTest();
     void BasePassRendering();
-    void UploadPass();
 
     GPUDevice& m_device;
     vk::Fence  m_tempComputeFence;

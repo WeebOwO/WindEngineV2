@@ -1,5 +1,7 @@
 #include "Command.h"
 
+#include "ComputeShader.h"
+
 namespace wind {
 CommandEncoder::CommandEncoder(RenderCommandQueueType queueType) : QueueType(queueType) {
     auto queueIndices = device.GetQueueIndices();
@@ -22,17 +24,20 @@ CommandEncoder::CommandEncoder(RenderCommandQueueType queueType) : QueueType(que
 
     m_nativeHandle = vkDevice.allocateCommandBuffers(allocateInfo).front();
 }
+
 CommandEncoder::~CommandEncoder() {
     // wait command to finish job
     auto vkDevice = device.GetVkDeviceHandle();
     vkDevice.waitIdle();
     vkDevice.destroyCommandPool(m_cmdPool);
 }
-vk::CommandBuffer CommandEncoder::Begin() {
+
+vk::CommandBuffer CommandEncoder::BeginComputePass(const ComputeShader& computeShader) {
     vk::CommandBufferBeginInfo beginInfo{
         .flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit,
     };
     m_nativeHandle.begin(beginInfo);
+    computeShader.Bind(m_nativeHandle);
     return m_nativeHandle;
 }
 

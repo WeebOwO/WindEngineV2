@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "VulkanHeader.h"
 #include "RenderBackend/Texture.h"
 #include "RenderBackend/Device.h"

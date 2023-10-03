@@ -23,7 +23,7 @@ ComputeShader::ComputeShader(const std::vector<u32>& spirvCode) {
     m_pipeline = vkDevice.createComputePipeline(nullptr, pipelineCreateInfo).value;
 }
 
-void ComputeShader::Bind(const vk::CommandBuffer& cmdBuffer) {
+void ComputeShader::Bind(const vk::CommandBuffer& cmdBuffer) const {
     cmdBuffer.bindPipeline(vk::PipelineBindPoint::eCompute, m_pipeline);
     cmdBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, m_layout, 0, m_descriptorSets,
                                  {});

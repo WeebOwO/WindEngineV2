@@ -10,7 +10,6 @@
 #include <vcruntime_string.h>
 
 namespace wind {
-static bool test = true;
 
 SceneRenderer::~SceneRenderer() { WIND_CORE_INFO("Destory {}", "Scene Renderer"); }
 
@@ -26,30 +25,27 @@ SceneRenderer::SceneRenderer() : m_device(Backend::GetGPUDevice()) {
 u32 SceneRenderer::GetCurrentFrame() { return m_frameNumber % Swapchain::MAX_FRAME_IN_FLIGHT; }
 
 void SceneRenderer::Render(Swapchain& swapchain) {
-    if(test) {
+    if (!m_frameNumber) {
         ComputeTest();
-        test = false;
     }
     ++m_frameNumber;
 }
 
 void SceneRenderer::ComputeTest() {
-    auto vkDevice = m_device.GetVkDeviceHandle();
-
+    auto                                  vkDevice = m_device.GetVkDeviceHandle();
+    std::vector<i32>                      data     = {1, 2, 3, 4};
     static std::unique_ptr<ComputeShader> computeShader =
         std::make_unique<ComputeShader>(io::LoadBinary<u32>("ComputeTest.comp.spv"));
-
-    auto cmdBuffer = m_frameParams[GetCurrentFrame()].m_encoder->Begin();
-    std::vector<i32> data = {1, 2, 3, 4};
-
-    static ReadBackBuffer buffer(sizeof(i32) * data.size(), vk::BufferUsageFlagBits::eStorageBuffer);
+    static ReadBackBuffer buffer(sizeof(i32) * data.size(),
+                                 vk::BufferUsageFlagBits::eStorageBuffer);
 
     vk::DescriptorBufferInfo m_bufferInfo{
         .buffer = buffer.GetNativeHandle(), .offset = 0, .range = buffer.GetByteSize()};
 
     computeShader->BindResource("Buffer", m_bufferInfo);
-    
-    computeShader->Bind(cmdBuffer);
+    auto cmdBuffer =
+        m_frameParams[GetCurrentFrame()].m_encoder->BeginComputePass(*computeShader);
+
     cmdBuffer.dispatch(4, 1, 1);
 
     cmdBuffer.end();
@@ -63,7 +59,7 @@ void SceneRenderer::ComputeTest() {
 
     memcpy(data.data(), buffer.MapMemory(), buffer.GetByteSize());
 
-    for(auto val : data) {
+    for (auto val : data) {
         WIND_CORE_INFO("Test is {}", val);
     }
 }
