@@ -1,7 +1,7 @@
 #pragma once
 
-#include "RenderBackend/RenderResource.h"
 #include "VulkanHeader.h"
+#include "RenderBackend/RenderResource.h"
 
 namespace wind {
 
@@ -22,8 +22,10 @@ class CommandEncoder : public RenderResource<RenderResourceType::CommandPool> {
 public:
     CommandEncoder(RenderCommandQueueType queueType = RenderCommandQueueType::All);
     ~CommandEncoder();
+
+    vk::CommandBuffer BeginComputePass(const ComputeShader& computeShader);
     
-    vk::CommandBuffer BeginComputePass(const ComputeShader& computeShader); 
+    vk::CommandBuffer GetNativeHandle() const { return m_nativeHandle; }
 
     RenderCommandQueueType QueueType;
 
@@ -31,4 +33,4 @@ private:
     vk::CommandBuffer m_nativeHandle;
     vk::CommandPool   m_cmdPool;
 };
-} // namespace wind::command
+} // namespace wind

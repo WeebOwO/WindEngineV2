@@ -1,14 +1,13 @@
 #include "Backend.h"
 
-#include <iostream>
-#include <memory>
+#include "Command.h"
 
 namespace wind {
 std::unique_ptr<Backend> Backend::s_instance = nullptr;
 
-Backend::Backend() { 
-    m_device = std::make_unique<GPUDevice>(); 
-}
+Backend::Backend() { m_device = std::make_unique<GPUDevice>(); }
 
-void Backend::Init() { s_instance = std::make_unique<Backend>(); }
+void Backend::Init() {
+    s_instance = std::make_unique<Backend>();
+}
 } // namespace wind

@@ -14,7 +14,9 @@ Engine::Engine(std::unique_ptr<Window> window) : m_window(std::move(window)) {
     PostInit();
 }
 
-Engine::~Engine() { Quit(); }
+Engine::~Engine() { 
+    Quit(); 
+}
 
 void Engine::Run() {
 #ifdef TRACY_ENABLE
@@ -31,10 +33,10 @@ void Engine::Run() {
 
 void Engine::Init() {
     Log::Init();
-    WIND_CORE_INFO("Init the engine core!");
     Backend::Init();
     JobSystem::Init();
-
+    WIND_CORE_INFO("Init the engine core!");
+    
     m_sceneRenderer = std::make_unique<SceneRenderer>();
 }
 
@@ -51,7 +53,9 @@ float Engine::CalcDeltaTime() {
     return dalta;
 }
 
-void Engine::PostInit() { m_window->PostInit(); }
+void Engine::PostInit() { 
+    m_window->Init(); 
+}
 
 void Engine::Quit() {
     JobSystem::Quit();

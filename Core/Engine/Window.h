@@ -17,7 +17,7 @@ public:
 
     Swapchain* GetSwapChain() const { return m_swapchain.get(); }
     
-    void       PostInit();
+    void       Init();
     void       OnUpdate(float fs);
 
 private:

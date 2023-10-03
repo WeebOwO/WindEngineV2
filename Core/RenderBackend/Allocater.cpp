@@ -33,7 +33,7 @@ AllocatedBuffer VkAllocator::AllocateBuffer(const vk::BufferCreateInfo&    buffe
     return buffer;
 }
 
-void VkAllocator::DeAllocateBuffer(AllocatedBuffer& buffer) {
+void VkAllocator::DestroyBuffer(AllocatedBuffer& buffer) {
     vmaDestroyBuffer(m_allocator, buffer.buffer, buffer.allocation);
 }
 } // namespace wind

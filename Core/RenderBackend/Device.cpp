@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 #include <algorithm>
+#include <limits>
 #include <memory>
 
 #include "Base/Log.h"
@@ -149,8 +150,8 @@ void GPUDevice::CreateDevice() {
     m_computeQueue  = m_device->getQueue(m_queueIndices.computeQueueIndex.value(), 0);
 }
 
-void GPUDevice::InitAllocator() { 
-    m_allocator = std::make_unique<VkAllocator>(*this); 
+void GPUDevice::InitAllocator() {
+    m_allocator           = std::make_unique<VkAllocator>(*this);
     m_descriptorAllocator = std::make_unique<DescriptorAllocator>();
     m_descriptorAllocator->Init(*m_device);
 }
@@ -165,20 +166,57 @@ GPUDevice::GPUDevice() {
     InitAllocator();
 }
 
-GPUDevice::~GPUDevice() { 
-    m_device->waitIdle(); 
+GPUDevice::~GPUDevice() {
+    m_device->waitIdle();
     m_descriptorAllocator->CleanUp();
 }
 
 // buffer interface
-AllocatedBuffer GPUDevice::AllocateBuffer(const vk::BufferCreateInfo&    bufferCreateInfo,
-                                          const VmaAllocationCreateInfo& allocationCreateInfo) {
+AllocatedBuffer
+GPUDevice::AllocateBuffer(const vk::BufferCreateInfo&    bufferCreateInfo,
+                          const VmaAllocationCreateInfo& allocationCreateInfo) const {
     return m_allocator->AllocateBuffer(bufferCreateInfo, allocationCreateInfo);
 }
 
-void GPUDevice::DeAllocateBuffer(AllocatedBuffer& buffer) { m_allocator->DeAllocateBuffer(buffer); }
+void GPUDevice::DestroyBuffer(AllocatedBuffer& buffer) const { m_allocator->DestroyBuffer(buffer); }
 
-vk::DescriptorSet GPUDevice::AllocateDescriptor(const vk::DescriptorSetLayout& layout) {
+vk::DescriptorSet GPUDevice::AllocateDescriptor(const vk::DescriptorSetLayout& layout) const {
     return m_descriptorAllocator->Allocate(layout);
+}
+
+void GPUDevice::InitBackupCommandBuffer() {
+    vk::CommandPoolCreateInfo poolCreateInfo{
+        .flags            = vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+        .queueFamilyIndex = m_queueIndices.graphicsQueueIndex.value()};
+
+    m_backupCommandPool = m_device->createCommandPool(poolCreateInfo);
+
+    vk::CommandBufferAllocateInfo allocateInfo{.commandPool = m_backupCommandPool,
+                                               .level       = vk::CommandBufferLevel::ePrimary,
+                                               .commandBufferCount = 1};
+
+    m_backupCommandBuffer = m_device->allocateCommandBuffers(allocateInfo).front();
+
+    vk::FenceCreateInfo fenceCreateInfo{.flags = vk::FenceCreateFlagBits::eSignaled};
+    m_backupCommandfence = m_device->createFence(fenceCreateInfo);
+}
+
+vk::CommandBuffer GPUDevice::GetBackUpCommandBuffer() {
+    auto result =
+        m_device->waitForFences(m_backupCommandfence, true, std::numeric_limits<float>::max());
+    if (result != vk::Result::eSuccess) {
+        WIND_CORE_WARN("Backup ComandBuffer wait too long time");
+    }
+    m_device->resetFences(m_backupCommandfence);
+
+    m_backupCommandBuffer.reset();
+
+    return m_backupCommandBuffer;
+}
+
+void GPUDevice::SubmitBackUpCommandBuffer(const vk::CommandBuffer& buffer) {
+    vk::SubmitInfo submitInfo{.commandBufferCount = 1, .pCommandBuffers = &buffer};
+
+    m_graphicsQueue.submit(submitInfo, m_backupCommandfence);
 }
 }; // namespace wind

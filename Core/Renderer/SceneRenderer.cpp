@@ -6,8 +6,6 @@
 #include "Renderer/SceneRenderer.h"
 #include "Resource/Loader.h"
 #include "Scene/Scene.h"
-#include <memory>
-#include <vcruntime_string.h>
 
 namespace wind {
 
@@ -34,9 +32,10 @@ void SceneRenderer::Render(Swapchain& swapchain) {
 void SceneRenderer::ComputeTest() {
     auto                                  vkDevice = m_device.GetVkDeviceHandle();
     std::vector<i32>                      data     = {1, 2, 3, 4};
-    static std::unique_ptr<ComputeShader> computeShader =
+
+    std::unique_ptr<ComputeShader> computeShader =
         std::make_unique<ComputeShader>(io::LoadBinary<u32>("ComputeTest.comp.spv"));
-    static ReadBackBuffer buffer(sizeof(i32) * data.size(),
+    ReadBackBuffer buffer(sizeof(i32) * data.size(),
                                  vk::BufferUsageFlagBits::eStorageBuffer);
 
     vk::DescriptorBufferInfo m_bufferInfo{

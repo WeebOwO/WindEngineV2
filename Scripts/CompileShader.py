@@ -1,10 +1,10 @@
 import os
 import subprocess
 
-def Judge(x):
+def is_shader(x):
     return x.endswith("vert") or x.endswith("frag") or x.endswith("comp")
 
-def CompileShader():
+def compile():
     # use this black list to check no need shader
     black_list = []
 
@@ -14,7 +14,7 @@ def CompileShader():
     current_dir = os.getcwd()
     
     shader_root_path = os.path.join(current_dir, "Shaders")
-    shader_file_list = [file for file in os.listdir(shader_root_path) if Judge(file)]
+    shader_file_list = [file for file in os.listdir(shader_root_path) if is_shader(file)]
 
     for shader in shader_file_list:
         if shader in black_list:
@@ -25,4 +25,4 @@ def CompileShader():
     return
 
 if __name__ == "__main__":
-    CompileShader()
+    compile()

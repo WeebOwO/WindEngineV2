@@ -10,7 +10,7 @@ GPUBuffer::GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,
     m_buffer = device.AllocateBuffer(BufferCreateInfo, AllocationCreateInfo);
 }
 
-GPUBuffer::~GPUBuffer() { device.DeAllocateBuffer(m_buffer); }
+GPUBuffer::~GPUBuffer() { device.DestroyBuffer(m_buffer); }
 
 UploadBuffer::UploadBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags)
     : GPUBuffer(byteSize, usageFlags,

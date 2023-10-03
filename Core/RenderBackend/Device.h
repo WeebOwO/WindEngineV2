@@ -1,9 +1,11 @@
 #pragma once
 
 #include "std.h"
-#include "VulkanHeader.h"
+
 #include "RenderBackend/Allocator.h"
 #include "RenderBackend/Descriptor.h"
+#include "VulkanHeader.h"
+#include <memory>
 
 namespace wind {
 
@@ -15,29 +17,34 @@ struct QueueIndices {
 };
 
 class VkAllocator;
+class CommandEncoder;
+
 class GPUDevice {
 public:
     friend class Backend;
     GPUDevice();
     ~GPUDevice();
 
-    vk::Queue GetGraphicsQueue() { return m_graphicsQueue; }
-    vk::Queue GetComputeQueue() { return m_computeQueue; }
+    vk::Queue GetGraphicsQueue() noexcept { return m_graphicsQueue; }
+    vk::Queue GetComputeQueue() noexcept { return m_computeQueue; }
 
-    auto GetQueueIndices() { return m_queueIndices; }
+    auto GetQueueIndices() noexcept { return m_queueIndices; }
 
-    auto GetVkDeviceHandle() const { return *m_device; }
-    auto GetVkPhysicalDevice() const { return m_physicalDevice; }
-    auto GetVkInstance() const { return *m_vkInstance; }
+    auto GetVkDeviceHandle() const noexcept { return *m_device; }
+    auto GetVkPhysicalDevice() const noexcept { return m_physicalDevice; }
+    auto GetVkInstance() const noexcept { return *m_vkInstance; }
 
     auto GetAllocator() const -> VkAllocator*;
 
     AllocatedBuffer AllocateBuffer(const vk::BufferCreateInfo&    bufferCreateInfo,
-                                   const VmaAllocationCreateInfo& allocationCreateInfo);
-    
-    void            DeAllocateBuffer(AllocatedBuffer& buffer);
+                                   const VmaAllocationCreateInfo& allocationCreateInfo) const;
 
-    vk::DescriptorSet AllocateDescriptor(const vk::DescriptorSetLayout& );
+    void DestroyBuffer(AllocatedBuffer& buffer) const;
+
+    vk::DescriptorSet AllocateDescriptor(const vk::DescriptorSetLayout&) const;
+
+    vk::CommandBuffer GetBackUpCommandBuffer();
+    void SubmitBackUpCommandBuffer(const vk::CommandBuffer& buffer);
 
 private:
     void InitAllocator();
@@ -45,6 +52,7 @@ private:
     void PickupPhysicalDevice();
     void CreateDevice();
     void QueryQueueFamilyIndices();
+    void InitBackupCommandBuffer();
 
     std::vector<const char*> GetRequiredExtensions();
 
@@ -66,5 +74,10 @@ private:
     bool                         m_enableDebug{true};
 
     std::unique_ptr<DescriptorAllocator> m_descriptorAllocator;
+
+    vk::CommandPool   m_backupCommandPool;
+    vk::CommandBuffer m_backupCommandBuffer;
+
+    vk::Fence m_backupCommandfence;
 };
 } // namespace wind

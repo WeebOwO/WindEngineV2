@@ -23,7 +23,7 @@ public:
     ~VkAllocator();
 
     AllocatedBuffer AllocateBuffer(const vk::BufferCreateInfo& bufferCreateInfo, const VmaAllocationCreateInfo& allocationCreateInfo);
-    void DeAllocateBuffer(AllocatedBuffer& buffer);
+    void DestroyBuffer(AllocatedBuffer& buffer);
     
 private:
     VmaAllocator m_allocator;
