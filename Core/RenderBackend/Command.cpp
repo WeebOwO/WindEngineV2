@@ -41,4 +41,19 @@ vk::CommandBuffer CommandEncoder::BeginComputePass(const ComputeShader& computeS
     return m_nativeHandle;
 }
 
+ImmCommand::ImmCommand() {
+    m_handle = device.GetBackUpCommandBuffer();
+    vk::CommandBufferBeginInfo beginInfo{.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit};
+    m_handle.begin(beginInfo);
+}
+
+void ImmCommand::PushTask(const TaskFunc& func) { m_tasks.push_back(func); }
+
+void ImmCommand::Submit() {
+    for (const auto& func : m_tasks) {
+        func(m_handle);
+    }
+    // this submit may cause gpu cpu stall
+    device.SubmitBackUpCommandBuffer(m_handle); 
+}
 } // namespace wind

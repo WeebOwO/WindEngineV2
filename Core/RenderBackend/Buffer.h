@@ -2,9 +2,9 @@
 
 #include <vk_mem_alloc.h>
 
-#include "VulkanHeader.h"
 #include "RenderBackend/Allocator.h"
 #include "RenderBackend/RenderResource.h"
+#include "VulkanHeader.h"
 
 namespace wind {
 
@@ -30,7 +30,8 @@ private:
 
 class UploadBuffer : public GPUBuffer {
 public:
-    UploadBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags);
+    UploadBuffer(u32                  byteSize,
+                 vk::BufferUsageFlags usageFlags = vk::BufferUsageFlagBits::eTransferSrc);
 };
 
 class DeviceBuffer : public GPUBuffer {

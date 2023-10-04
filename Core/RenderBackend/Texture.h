@@ -5,30 +5,25 @@
 
 namespace wind {
 
-struct ImageOptions {
-    using Value = u32;
-    enum Bits : Value {
-        Default = 0,
-        MipMaps = 1 << 0,
-        Cubemap = 1 << 1,
-    };
-};
-
 struct TextureDesc {
-    uint32_t            width;
-    uint32_t            height;
-    uint32_t            depth;
-    vk::Format          format;
-    ImageOptions::Value createOptions = ImageOptions::Default;
+    uint32_t   width;
+    uint32_t   height;
+    uint32_t   depth;
+    vk::Format format;
 };
 
 struct GPUTexture : public RenderResource<RenderResourceType::Texture> {
 public:
     static std::shared_ptr<GPUTexture> Create(const TextureDesc& textureDesc);
 
+    GPUTexture();
+
+    virtual void GenerateMips();
+
 private:
     vk::Image                  m_vkHandle;
     vk::ImageView              m_textureView;
+
     std::vector<vk::ImageView> m_cubemapImageViews;
 
     uint32_t m_mipLevelCount{1};
@@ -40,4 +35,11 @@ private:
     VmaAllocation m_allocation = {};
 };
 
+class GPUTexture2D : public GPUTexture {
+
+};
+
+class GPUTextureCube : public GPUTexture {
+
+};
 } // namespace wind

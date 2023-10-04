@@ -46,6 +46,7 @@ protected:
 };
 
 class ShaderCache {
-    
+        
 };
+
 } // namespace wind

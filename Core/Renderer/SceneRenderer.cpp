@@ -2,6 +2,7 @@
 
 #include "Base/Log.h"
 #include "RenderBackend/Buffer.h"
+#include "RenderBackend/Command.h"
 #include "RenderBackend/ComputeShader.h"
 #include "Renderer/SceneRenderer.h"
 #include "Resource/Loader.h"
@@ -40,22 +41,17 @@ void SceneRenderer::ComputeTest() {
 
     vk::DescriptorBufferInfo m_bufferInfo{
         .buffer = buffer.GetNativeHandle(), .offset = 0, .range = buffer.GetByteSize()};
-
     computeShader->BindResource("Buffer", m_bufferInfo);
-    auto cmdBuffer =
-        m_frameParams[GetCurrentFrame()].m_encoder->BeginComputePass(*computeShader);
 
-    cmdBuffer.dispatch(4, 1, 1);
+    ImmCommand command;
+    command.PushTask([&](const vk::CommandBuffer& cmdBuffer) {
+        computeShader->Bind(cmdBuffer);
+        cmdBuffer.dispatch(4, 1, 1);
+    });
 
-    cmdBuffer.end();
-
-    vk::SubmitInfo submitInfo{.commandBufferCount = 1, .pCommandBuffers = &cmdBuffer};
-
-    m_device.GetComputeQueue().submit(submitInfo);
+    command.Submit();
 
     vkDevice.waitIdle();
-    cmdBuffer.reset();
-
     memcpy(data.data(), buffer.MapMemory(), buffer.GetByteSize());
 
     for (auto val : data) {

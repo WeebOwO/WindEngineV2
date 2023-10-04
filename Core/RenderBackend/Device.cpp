@@ -164,11 +164,14 @@ GPUDevice::GPUDevice() {
     QueryQueueFamilyIndices();
     CreateDevice();
     InitAllocator();
+    InitBackupCommandBuffer();
 }
 
 GPUDevice::~GPUDevice() {
     m_device->waitIdle();
     m_descriptorAllocator->CleanUp();
+    m_device->destroyCommandPool(m_backupCommandPool);
+    m_device->destroyFence(m_backupCommandfence);
 }
 
 // buffer interface
@@ -215,8 +218,9 @@ vk::CommandBuffer GPUDevice::GetBackUpCommandBuffer() {
 }
 
 void GPUDevice::SubmitBackUpCommandBuffer(const vk::CommandBuffer& buffer) {
-    vk::SubmitInfo submitInfo{.commandBufferCount = 1, .pCommandBuffers = &buffer};
+    buffer.end();
 
+    vk::SubmitInfo submitInfo{.commandBufferCount = 1, .pCommandBuffers = &buffer};
     m_graphicsQueue.submit(submitInfo, m_backupCommandfence);
 }
 }; // namespace wind
