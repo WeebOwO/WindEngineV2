@@ -1,8 +1,8 @@
 #pragma once
 
-#include "RenderBackend/RenderResource.h"
 #include "VulkanHeader.h"
 
+#include "RenderBackend/RenderResource.h"
 
 namespace wind {
 // fwd def
@@ -22,14 +22,13 @@ public:
     CommandEncoder(RenderCommandQueueType queueType = RenderCommandQueueType::General);
     ~CommandEncoder();
 
-    std::unique_ptr<RenderEncoder>  BeginRenderPass();
-    std::unique_ptr<ComputeEncoder> BeginComputePass(bool isAsync = false);
-
     void              Reset();
     vk::CommandBuffer Finish();
 
-private:
+protected:
     void Begin();
+
+private:
     RenderCommandQueueType m_queueType;
 
     vk::CommandBuffer m_nativeHandle;
@@ -45,7 +44,6 @@ class ComputeEncoder : public CommandEncoder {
 public:
     ComputeEncoder(bool isAsync = false);
     void Dispatch(u32 x, u32 y, u32 z);
-
 };
 
 // always alloc from stack, try not to use this from heap memory

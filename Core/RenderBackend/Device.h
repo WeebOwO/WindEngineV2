@@ -1,11 +1,10 @@
 #pragma once
 
 #include "std.h"
+#include "VulkanHeader.h"
 
 #include "RenderBackend/Allocator.h"
 #include "RenderBackend/Descriptor.h"
-#include "VulkanHeader.h"
-#include <memory>
 
 namespace wind {
 

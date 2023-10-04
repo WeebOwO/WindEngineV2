@@ -1,9 +1,6 @@
 #include "Device.h"
 
 #include <GLFW/glfw3.h>
-#include <algorithm>
-#include <limits>
-#include <memory>
 
 #include "Base/Log.h"
 #include "RenderBackend/Allocator.h"

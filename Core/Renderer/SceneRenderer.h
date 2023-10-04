@@ -1,15 +1,19 @@
 #pragma once
 
-#include "RenderBackend/Command.h"
-#include "RenderBackend/SwapChain.h"
-#include "Scene/Scene.h"
+#include "std.h"
+
+#include "Renderbackend/SwapChain.h"
 
 namespace wind {
 class ReadBackBuffer;
 class ComputeShader;
+class ComputeEncoder;
+class RenderEncoder;
+class Swapchain;
 
 struct FrameParms {
-    
+    std::unique_ptr<ComputeEncoder> computeContext;
+    std::unique_ptr<RenderEncoder>  renderContext;
 };
 
 class SceneRenderer {
@@ -26,8 +30,7 @@ private:
     void BasePassRendering();
 
     GPUDevice& m_device;
-    vk::Fence  m_tempComputeFence;
-
+    
     FrameParms m_frameParams[Swapchain::MAX_FRAME_IN_FLIGHT];
     u32        m_frameNumber{0};
 };

@@ -51,16 +51,15 @@ ImmCommandEncoder::ImmCommandEncoder() {
     m_handle.begin(beginInfo);
 }
 
-std::unique_ptr<ComputeEncoder> CommandEncoder::BeginComputePass(bool isAsync) {
-    auto ptr = std::make_unique<ComputeEncoder>(isAsync);
-    ptr->Begin();
-    return ptr;
-}
-
 // Compute Encoder part
 ComputeEncoder::ComputeEncoder(bool isAsync)
     : CommandEncoder(isAsync ? RenderCommandQueueType::AsyncCompute
                              : RenderCommandQueueType::Compute) {}
+
+// Render Encoder part
+RenderEncoder::RenderEncoder() : CommandEncoder(RenderCommandQueueType::Graphics) {
+
+}
 
 void ImmCommandEncoder::PushTask(const TaskFunc& func) { m_tasks.push_back(func); }
 

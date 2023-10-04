@@ -1,7 +1,5 @@
 #include "SwapChain.h"
 
-#include <algorithm>
-
 #include "Base/Log.h"
 #include "Engine/Window.h"
 #include "RenderBackend/SwapChain.h"
