@@ -38,15 +38,18 @@ void SceneRenderer::ComputeTest() {
 
     vk::DescriptorBufferInfo m_bufferInfo{
         .buffer = buffer.GetNativeHandle(), .offset = 0, .range = buffer.GetByteSize()};
+
     computeShader->BindResource("Buffer", m_bufferInfo);
 
-    ImmCommandEncoder command;
-    command.PushTask([&](const vk::CommandBuffer& cmdBuffer) {
-        computeShader->Bind(cmdBuffer);
-        cmdBuffer.dispatch(2, 1, 1);
-    });
+    auto& computeContext = m_frameParams[GetCurrentFrame()].computeContext;
+    
+    computeContext->Begin();
+    computeContext->BindComputShader(*computeShader);
+    computeContext->Dispatch(2, 1, 1);
 
-    command.Submit();
+    auto cmdBuffer = computeContext->Finish();
+    vk::SubmitInfo submitInfo {.commandBufferCount = 1, .pCommandBuffers = &cmdBuffer};
+    m_device.GetComputeQueue().submit(submitInfo);
 
     vkDevice.waitIdle();
     memcpy(data.data(), buffer.MapMemory(), buffer.GetByteSize());

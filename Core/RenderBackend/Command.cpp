@@ -1,5 +1,7 @@
 #include "Command.h"
 
+#include "Renderbackend/ComputeShader.h"
+
 namespace wind {
 CommandEncoder::CommandEncoder(RenderCommandQueueType queueType) : m_queueType(queueType) {
     auto queueIndices = device.GetQueueIndices();
@@ -56,10 +58,15 @@ ComputeEncoder::ComputeEncoder(bool isAsync)
     : CommandEncoder(isAsync ? RenderCommandQueueType::AsyncCompute
                              : RenderCommandQueueType::Compute) {}
 
-// Render Encoder part
-RenderEncoder::RenderEncoder() : CommandEncoder(RenderCommandQueueType::Graphics) {
-
+void ComputeEncoder::Dispatch(u32 x, u32 y, u32 z) { 
+    m_nativeHandle.dispatch(x, y, z); 
 }
+
+void ComputeEncoder::BindComputShader(const ComputeShader& computeShader) {
+    computeShader.Bind(m_nativeHandle);
+}
+// Render Encoder part
+RenderEncoder::RenderEncoder() : CommandEncoder(RenderCommandQueueType::Graphics) {}
 
 void ImmCommandEncoder::PushTask(const TaskFunc& func) { m_tasks.push_back(func); }
 

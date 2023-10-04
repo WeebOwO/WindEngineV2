@@ -5,30 +5,26 @@
 #include "RenderBackend/RenderResource.h"
 
 namespace wind {
-// fwd def
+class RenderEncoder;
+class ComputeEncoder;
 class ComputeShader;
 class RasterShader;
 
-// render queue type def
 enum class RenderCommandQueueType : uint8_t { Copy = 0, Graphics, Compute, AsyncCompute, General };
 
 using TaskFunc = std::function<void(const vk::CommandBuffer&)>;
-
-class RenderEncoder;
-class ComputeEncoder;
 
 class CommandEncoder : public RenderResource<RenderResourceType::CommandEncoder> {
 public:
     CommandEncoder(RenderCommandQueueType queueType = RenderCommandQueueType::General);
     ~CommandEncoder();
 
+    void Begin();
     void              Reset();
     vk::CommandBuffer Finish();
 
 protected:
-    void Begin();
 
-private:
     RenderCommandQueueType m_queueType;
 
     vk::CommandBuffer m_nativeHandle;
@@ -43,6 +39,7 @@ public:
 class ComputeEncoder : public CommandEncoder {
 public:
     ComputeEncoder(bool isAsync = false);
+    void BindComputShader(const ComputeShader& computeShader);
     void Dispatch(u32 x, u32 y, u32 z);
 };
 
