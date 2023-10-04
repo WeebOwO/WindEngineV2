@@ -2,7 +2,6 @@
 
 #include "RenderBackend/RenderResource.h"
 #include "VulkanHeader.h"
-#include <functional>
 
 
 namespace wind {
@@ -11,37 +10,49 @@ class ComputeShader;
 class RasterShader;
 
 // render queue type def
-enum class RenderCommandQueueType : uint8_t {
-    None     = 0x00,
-    Copy     = 0x01,
-    Compute  = 0x02,
-    Graphics = 0x04,
-    All      = Copy | Compute | Graphics
-};
+enum class RenderCommandQueueType : uint8_t { Copy = 0, Graphics, Compute, AsyncCompute, General };
+
+using TaskFunc = std::function<void(const vk::CommandBuffer&)>;
+
+class RenderEncoder;
+class ComputeEncoder;
 
 class CommandEncoder : public RenderResource<RenderResourceType::CommandEncoder> {
 public:
-    CommandEncoder(RenderCommandQueueType queueType = RenderCommandQueueType::All);
+    CommandEncoder(RenderCommandQueueType queueType = RenderCommandQueueType::General);
     ~CommandEncoder();
 
-    vk::CommandBuffer BeginComputePass(const ComputeShader& computeShader);
+    std::unique_ptr<RenderEncoder>  BeginRenderPass();
+    std::unique_ptr<ComputeEncoder> BeginComputePass(bool isAsync = false);
 
-    vk::CommandBuffer GetNativeHandle() const { return m_nativeHandle; }
-
-    RenderCommandQueueType QueueType;
+    void              Reset();
+    vk::CommandBuffer Finish();
 
 private:
+    void Begin();
+    RenderCommandQueueType m_queueType;
+
     vk::CommandBuffer m_nativeHandle;
     vk::CommandPool   m_cmdPool;
 };
 
-// always alloc from stack, try not to use this from heap memory
-class ImmCommand : public RenderResource<RenderResourceType::CommandBuffer> {
+class RenderEncoder : public CommandEncoder {
 public:
-    using TaskFunc = std::function<void(const vk::CommandBuffer&)>;
+    RenderEncoder();
+};
 
-    ImmCommand();
-    ~ImmCommand() = default;
+class ComputeEncoder : public CommandEncoder {
+public:
+    ComputeEncoder(bool isAsync = false);
+    void Dispatch(u32 x, u32 y, u32 z);
+
+};
+
+// always alloc from stack, try not to use this from heap memory
+class ImmCommandEncoder : public RenderResource<RenderResourceType::CommandBuffer> {
+public:
+    ImmCommandEncoder();
+    ~ImmCommandEncoder() = default;
 
     void PushTask(const TaskFunc& func);
     void Submit();

@@ -17,7 +17,7 @@ SceneRenderer::SceneRenderer() : m_device(Backend::GetGPUDevice()) {
 
     // create frame parms
     for (auto& frameParms : m_frameParams) {
-        frameParms.m_encoder = std::make_shared<CommandEncoder>(RenderCommandQueueType::All);
+        
     }
 }
 
@@ -43,10 +43,10 @@ void SceneRenderer::ComputeTest() {
         .buffer = buffer.GetNativeHandle(), .offset = 0, .range = buffer.GetByteSize()};
     computeShader->BindResource("Buffer", m_bufferInfo);
 
-    ImmCommand command;
+    ImmCommandEncoder command;
     command.PushTask([&](const vk::CommandBuffer& cmdBuffer) {
-        computeShader->Bind(cmdBuffer);
-        cmdBuffer.dispatch(4, 1, 1);
+        computeShader->Bind(cmdBuffer); 
+        cmdBuffer.dispatch(2, 1, 1);
     });
 
     command.Submit();

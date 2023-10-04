@@ -9,7 +9,7 @@ class ReadBackBuffer;
 class ComputeShader;
 
 struct FrameParms {
-    std::shared_ptr<CommandEncoder> m_encoder;
+    
 };
 
 class SceneRenderer {

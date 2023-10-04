@@ -1,15 +1,14 @@
 #include "Command.h"
 
-#include "ComputeShader.h"
-
 namespace wind {
-CommandEncoder::CommandEncoder(RenderCommandQueueType queueType) : QueueType(queueType) {
+CommandEncoder::CommandEncoder(RenderCommandQueueType queueType) : m_queueType(queueType) {
     auto queueIndices = device.GetQueueIndices();
     auto vkDevice     = device.GetVkDeviceHandle();
 
-    u32                       queueIndex = queueType == RenderCommandQueueType::Compute
-                                               ? queueIndices.computeQueueIndex.value()
-                                               : queueIndices.graphicsQueueIndex.value();
+    u32 queueIndex = queueType == RenderCommandQueueType::Compute
+                         ? queueIndices.computeQueueIndex.value()
+                         : queueIndices.graphicsQueueIndex.value();
+
     vk::CommandPoolCreateInfo poolCreateInfo{.flags =
                                                  vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
                                              .queueFamilyIndex = queueIndex};
@@ -32,28 +31,45 @@ CommandEncoder::~CommandEncoder() {
     vkDevice.destroyCommandPool(m_cmdPool);
 }
 
-vk::CommandBuffer CommandEncoder::BeginComputePass(const ComputeShader& computeShader) {
-    vk::CommandBufferBeginInfo beginInfo{
-        .flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit,
-    };
+// reset the whole command pool, this is faster than reset the commandbuffer in multithread context
+// https://github.com/KhronosGroup/Vulkan-Samples/blob/main/samples/performance/command_buffer_usage/README.adoc
+void CommandEncoder::Reset() { device.GetVkDeviceHandle().resetCommandPool(m_cmdPool); }
+
+void CommandEncoder::Begin() {
+    vk::CommandBufferBeginInfo beginInfo{.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit};
     m_nativeHandle.begin(beginInfo);
-    computeShader.Bind(m_nativeHandle);
+}
+
+vk::CommandBuffer CommandEncoder::Finish() {
+    m_nativeHandle.end();
     return m_nativeHandle;
 }
 
-ImmCommand::ImmCommand() {
+ImmCommandEncoder::ImmCommandEncoder() {
     m_handle = device.GetBackUpCommandBuffer();
     vk::CommandBufferBeginInfo beginInfo{.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit};
     m_handle.begin(beginInfo);
 }
 
-void ImmCommand::PushTask(const TaskFunc& func) { m_tasks.push_back(func); }
+std::unique_ptr<ComputeEncoder> CommandEncoder::BeginComputePass(bool isAsync) {
+    auto ptr = std::make_unique<ComputeEncoder>(isAsync);
+    ptr->Begin();
+    return ptr;
+}
 
-void ImmCommand::Submit() {
+// Compute Encoder part
+ComputeEncoder::ComputeEncoder(bool isAsync)
+    : CommandEncoder(isAsync ? RenderCommandQueueType::AsyncCompute
+                             : RenderCommandQueueType::Compute) {}
+
+void ImmCommandEncoder::PushTask(const TaskFunc& func) { m_tasks.push_back(func); }
+
+void ImmCommandEncoder::Submit() {
     for (const auto& func : m_tasks) {
         func(m_handle);
     }
     // this submit may cause gpu cpu stall
-    device.SubmitBackUpCommandBuffer(m_handle); 
+    device.SubmitBackUpCommandBuffer(m_handle);
 }
+
 } // namespace wind

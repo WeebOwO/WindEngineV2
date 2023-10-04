@@ -5,26 +5,24 @@
 
 namespace wind {
 
-struct TextureDesc {
-    uint32_t   width;
-    uint32_t   height;
-    uint32_t   depth;
-    vk::Format format;
-};
-
 struct GPUTexture : public RenderResource<RenderResourceType::Texture> {
 public:
+    struct TextureDesc {
+        uint32_t            width;
+        uint32_t            height;
+        uint32_t            depth;
+        vk::Format          format;
+        vk::ImageUsageFlags imageUsage;
+    };
+
     static std::shared_ptr<GPUTexture> Create(const TextureDesc& textureDesc);
 
     GPUTexture();
 
     virtual void GenerateMips();
-
+    
 private:
-    vk::Image                  m_vkHandle;
-    vk::ImageView              m_textureView;
-
-    std::vector<vk::ImageView> m_cubemapImageViews;
+    vk::Image     m_vkHandle;
 
     uint32_t m_mipLevelCount{1};
     uint32_t m_layerCount{1};
@@ -36,10 +34,14 @@ private:
 };
 
 class GPUTexture2D : public GPUTexture {
+public:
 
+private:
+    vk::ImageView m_view;
 };
 
 class GPUTextureCube : public GPUTexture {
-
+private:
+    std::vector<vk::ImageView> m_cubeViews;
 };
 } // namespace wind
