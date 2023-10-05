@@ -3,8 +3,8 @@ Experiment graphics engine which mainly learned from unreal.
 
 ## Build
 Using command below to generate project file
-```bash
-    xmake project -k vsxmake -m "debug,release" 
+```cmd
+xmake project -k vsxmake -m "debug,release" 
 ```
 
 ## Reference
