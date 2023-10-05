@@ -1,9 +1,10 @@
 #pragma once
 
-#include "std.h"
 #include "VulkanHeader.h"
+#include "std.h"
 
 #include "RenderBackend/RenderResource.h"
+#include <unordered_map>
 
 namespace wind {
 class Shader : public RenderResource<RenderResourceType::Shader> {
@@ -46,7 +47,13 @@ protected:
 };
 
 class ShaderCache {
-        
-};
+public:
+    ShaderCache(const vk::Device& device) : m_device(device) {}
 
+    void Destroy();
+
+private:
+    const vk::Device&                                 m_device;
+    std::unordered_map<std::string, vk::ShaderModule> m_cache;
+};
 } // namespace wind

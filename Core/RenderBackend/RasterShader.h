@@ -5,7 +5,7 @@
 namespace wind {
 
 class RasterShader : public Shader {
-public:
+
         
 };
 } // namespace wind

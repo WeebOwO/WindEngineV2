@@ -3,7 +3,10 @@
 #include <GLFW/glfw3.h>
 
 #include "Base/Log.h"
+
 #include "RenderBackend/Allocator.h"
+#include "RenderBackend/Shader.h"
+
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 

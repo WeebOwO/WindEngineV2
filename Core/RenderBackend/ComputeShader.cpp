@@ -4,7 +4,18 @@
 
 namespace wind {
 ComputeShader::ComputeShader(const std::vector<u32>& spirvCode) {
-    auto                       vkDevice = device.GetVkDeviceHandle();
+    auto vkDevice = device.GetVkDeviceHandle();
+
+    // create Pipeline cache
+    bool                        cacheValid = spirvCode.size() != 0;
+    vk::PipelineCacheCreateInfo cacheCreateInfo{
+        .flags           = {},
+        .initialDataSize = cacheValid ? sizeof(u32) * spirvCode.size() : 0,
+        .pInitialData    = cacheValid ? spirvCode.data() : nullptr,
+    };
+
+    m_cache = vkDevice.createPipelineCache(cacheCreateInfo);
+
     vk::ShaderModuleCreateInfo shaderCreateInfo{.codeSize = sizeof(u32) * spirvCode.size(),
                                                 .pCode    = spirvCode.data()};
     m_computeModule = vkDevice.createShaderModule(shaderCreateInfo);
@@ -20,7 +31,7 @@ ComputeShader::ComputeShader(const std::vector<u32>& spirvCode) {
 
     vk::ComputePipelineCreateInfo pipelineCreateInfo{.stage = shaderStage, .layout = m_layout};
 
-    m_pipeline = vkDevice.createComputePipeline(nullptr, pipelineCreateInfo).value;
+    m_pipeline = vkDevice.createComputePipeline(m_cache, pipelineCreateInfo).value;
 }
 
 void ComputeShader::Bind(const vk::CommandBuffer& cmdBuffer) const {
@@ -32,6 +43,7 @@ void ComputeShader::Bind(const vk::CommandBuffer& cmdBuffer) const {
 ComputeShader::~ComputeShader() {
     auto vkDevice = device.GetVkDeviceHandle();
     vkDevice.waitIdle();
+    vkDevice.destroyPipelineCache(m_cache);
     vkDevice.destroyShaderModule(m_computeModule);
     vkDevice.destroyPipeline(m_pipeline);
 }

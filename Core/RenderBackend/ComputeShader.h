@@ -9,6 +9,7 @@ namespace wind {
 class ComputeShader : public Shader {
 public:
     ComputeShader(const std::vector<u32>& spirvCode);
+    ComputeShader(const std::filesystem::path& filepath);
     ~ComputeShader();
 
     auto GetPipeline() const { return m_pipeline; }
@@ -19,5 +20,6 @@ private:
     static constexpr auto bindPoint = {ShaderTag::ComputeShader};
     vk::ShaderModule      m_computeModule;
     vk::Pipeline          m_pipeline;
+    vk::PipelineCache     m_cache; // feel not right to use cache this way ? 
 };
 } // namespace wind

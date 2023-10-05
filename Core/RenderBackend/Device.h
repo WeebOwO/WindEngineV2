@@ -17,6 +17,7 @@ struct QueueIndices {
 
 class VkAllocator;
 class CommandEncoder;
+class ShaderCache;
 
 class GPUDevice {
 public:
