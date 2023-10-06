@@ -3,8 +3,8 @@
 #include "Base/Log.h"
 #include "Resource/Loader.h"
 
-#include "RenderBackend/Command.h"
 #include "RenderBackend/Buffer.h"
+#include "RenderBackend/Command.h"
 #include "RenderBackend/ComputeShader.h"
 
 namespace wind {
@@ -21,11 +21,18 @@ SceneRenderer::SceneRenderer() : m_device(Backend::GetGPUDevice()) {
     }
 }
 
-u32 SceneRenderer::GetCurrentFrame() { return m_frameNumber % Swapchain::MAX_FRAME_IN_FLIGHT; }
+u32 SceneRenderer::GetCurrentFrame() { return m_frameNumber; }
+
+void SceneRenderer::ResetFrameParams() { m_frameParams[GetCurrentFrame()].renderContext->Reset(); }
 
 void SceneRenderer::Render(Swapchain& swapchain) {
-    if (!m_frameNumber) { ComputeTest(); }
-    ++m_frameNumber;
+    swapchain.SetFrameNumber(m_frameNumber);
+    u32 imageIndex = swapchain.AcquireNextImage().value();
+    ResetFrameParams();
+    
+    PresentPass(swapchain, imageIndex);
+
+    m_frameNumber = (m_frameNumber + 1) % Swapchain::MAX_FRAME_IN_FLIGHT;
 }
 
 void SceneRenderer::ComputeTest() {
@@ -42,13 +49,13 @@ void SceneRenderer::ComputeTest() {
     computeShader->BindResource("Buffer", m_bufferInfo);
 
     auto& computeContext = m_frameParams[GetCurrentFrame()].computeContext;
-    
+
     computeContext->Begin();
     computeContext->BindComputShader(*computeShader);
     computeContext->Dispatch(2, 1, 1);
 
-    auto cmdBuffer = computeContext->Finish();
-    vk::SubmitInfo submitInfo {.commandBufferCount = 1, .pCommandBuffers = &cmdBuffer};
+    auto           cmdBuffer = computeContext->Finish();
+    vk::SubmitInfo submitInfo{.commandBufferCount = 1, .pCommandBuffers = &cmdBuffer};
     m_device.GetComputeQueue().submit(submitInfo);
 
     vkDevice.waitIdle();
@@ -57,5 +64,30 @@ void SceneRenderer::ComputeTest() {
     for (auto val : data) {
         WIND_CORE_INFO("Test is {}", val);
     }
+}
+
+void SceneRenderer::PresentPass(Swapchain& swapchain, u32 imageIndex) {
+
+    vk::RenderPass renderPass = swapchain.GetRenderPass();
+
+    vk::ClearColorValue color{std::array<float, 4>{1.0f, 0.0f, 0.0f, 0.0f}};
+
+    vk::ClearValue clearValue{.color = color};
+
+    vk::RenderPassBeginInfo passBeginInfo{
+        .renderPass      = renderPass,
+        .framebuffer     = swapchain.GetFrameBuffer(imageIndex),
+        .renderArea      = vk::Rect2D{{0, 0}, {swapchain.GetWidth(), swapchain.GetHeight()}},
+        .clearValueCount = 1,
+        .pClearValues    = &clearValue};
+
+    auto& renderContext = m_frameParams[GetCurrentFrame()].renderContext;
+
+    renderContext->Begin();
+
+    renderContext->BeginRenderPass(passBeginInfo);
+    renderContext->EndRenderPass();
+
+    swapchain.SubmitCommandBuffer(renderContext->Finish(), imageIndex);
 }
 } // namespace wind

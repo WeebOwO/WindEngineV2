@@ -25,8 +25,8 @@ public:
     GPUDevice();
     ~GPUDevice();
 
-    vk::Queue GetGraphicsQueue() noexcept { return m_graphicsQueue; }
-    vk::Queue GetComputeQueue() noexcept { return m_computeQueue; }
+    vk::Queue GetGraphicsQueue() const noexcept { return m_graphicsQueue; }
+    vk::Queue GetComputeQueue() const noexcept { return m_computeQueue; }
 
     auto GetQueueIndices() noexcept { return m_queueIndices; }
 

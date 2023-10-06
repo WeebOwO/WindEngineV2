@@ -2,8 +2,8 @@
 
 #include "VulkanHeader.h"
 
-#include "RenderBackend/Texture.h"
 #include "RenderBackend/Device.h"
+#include "RenderBackend/Texture.h"
 
 namespace wind {
 
@@ -13,28 +13,56 @@ public:
     static constexpr uint32_t MAX_FRAME_IN_FLIGHT = 2;
 
     Swapchain(const GPUDevice& device, const Window& window);
-    
     ~Swapchain();
-    void Resize();
+
+    void                Resize(u32 width, u32 height);
+    u32                 ImageCount() { return m_swapchainImages.size(); }
+    auto                GetFrameBuffer(u32 index) { return m_framebuffers[index]; }
+    auto                GetImageView(u32 index) { return m_swapchainViews[index]; }
+    std::pair<u32, u32> GetWindowExtent() { return {m_windowExtent.width, m_windowExtent.height}; }
+    u32                 GetWidth() { return m_windowExtent.width; }
+    u32                 GetHeight() { return m_windowExtent.height; }
+    float               GetAspectRatio() {
+        return static_cast<float>(m_windowExtent.width) / static_cast<float>(m_windowExtent.height);
+    }
+
+    auto GetRenderPass() { return m_renderPass; }
+    void SetFrameNumber(u32 currentFrame) { m_frameNumber = currentFrame; }
+
+    std::optional<u32> AcquireNextImage();
+    void               SubmitCommandBuffer(const vk::CommandBuffer& cmdBuffer, u32 imageIndex);
 
 private:
     void QuerySurfaceProperty();
     void CreateSyncObject();
+    void GetSwapChainImage();
+    void CreateSwapChainInteral(u32 width, u32 height);
+    void CleanUpSwapChain();
+    void CreateRenderPass();
 
     const GPUDevice& m_device;
 
-    std::vector<GPUTexture>    m_swapchainImages;
-    std::vector<vk::Semaphore> m_semaphores;
+    std::vector<vk::Image>     m_swapchainImages;
+    std::vector<vk::ImageView> m_swapchainViews;
+
+    std::vector<vk::Semaphore> m_imageAvailableSemaphores;
+    std::vector<vk::Semaphore> m_renderFinishedSemaphores;
     std::vector<vk::Fence>     m_fences;
 
     vk::SwapchainKHR m_swapchain;
     vk::SurfaceKHR   m_surface;
 
-    vk::Extent2D         m_surfaceExtent;
+    vk::RenderPass m_renderPass;
+
+    std::vector<vk::Framebuffer> m_framebuffers;
+
+    vk::Extent2D m_windowExtent;
+
     vk::SurfaceFormatKHR m_surfaceFormat;
     vk::PresentModeKHR   m_surfacePresentMode;
 
     bool m_vsync{true};
+    u32  m_frameNumber;
 };
 
 }; // namespace wind

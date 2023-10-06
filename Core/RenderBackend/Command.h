@@ -34,6 +34,8 @@ protected:
 class RenderEncoder : public CommandEncoder {
 public:
     RenderEncoder();
+    void BeginRenderPass(const vk::RenderPassBeginInfo& renderPassBeginInfo);
+    void EndRenderPass();
 };
 
 class ComputeEncoder : public CommandEncoder {

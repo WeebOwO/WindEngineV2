@@ -36,12 +36,19 @@ private:
 
 class GPUTexture2D : public GPUTexture {
 public:
-
-private:
+    GPUTexture2D(u32 width, u32 height, vk::Format fomat, vk::ImageUsageFlags flags);
+    
+private:    
     vk::ImageView m_view;
 };
 
+class GPUTexture3D : public GPUTexture {
+
+};  
+
 class GPUTextureCube : public GPUTexture {
+public:
+
 private:
     std::vector<vk::ImageView> m_cubeViews;
 };

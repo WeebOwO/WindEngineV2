@@ -27,7 +27,10 @@ public:
 private:
     void InitView();
     void ComputeTest();
+    void ResetFrameParams();
+
     void BasePassRendering();
+    void PresentPass(Swapchain& swapchain, u32 imageIndex);
 
     GPUDevice& m_device;
     
