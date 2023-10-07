@@ -16,17 +16,17 @@ public:
     ~Swapchain();
 
     void                Resize(u32 width, u32 height);
-    u32                 ImageCount() { return m_swapchainImages.size(); }
-    auto                GetFrameBuffer(u32 index) { return m_framebuffers[index]; }
-    auto                GetImageView(u32 index) { return m_swapchainViews[index]; }
-    std::pair<u32, u32> GetWindowExtent() { return {m_windowExtent.width, m_windowExtent.height}; }
-    u32                 GetWidth() { return m_windowExtent.width; }
-    u32                 GetHeight() { return m_windowExtent.height; }
-    float               GetAspectRatio() {
+    u32                 ImageCount() const { return m_swapchainImages.size(); }
+    auto                GetFrameBuffer(u32 index) const { return m_framebuffers[index]; }
+    auto                GetImageView(u32 index) const { return m_swapchainViews[index]; }
+    std::pair<u32, u32> GetWindowExtent() const { return {m_windowExtent.width, m_windowExtent.height}; }
+    u32                 GetWidth() const { return m_windowExtent.width; }
+    u32                 GetHeight() const { return m_windowExtent.height; }
+    float               GetAspectRatio() const {
         return static_cast<float>(m_windowExtent.width) / static_cast<float>(m_windowExtent.height);
     }
 
-    auto GetRenderPass() { return m_renderPass; }
+    auto GetRenderPass() const { return m_renderPass; }
     void SetFrameNumber(u32 currentFrame) { m_frameNumber = currentFrame; }
 
     std::optional<u32> AcquireNextImage();

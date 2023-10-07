@@ -17,6 +17,7 @@ public:
     ~Shader();
 
     void BindResource(const std::string& resourceName, const vk::DescriptorBufferInfo& bufferInfo);
+    virtual void BindCommandBuffer(const vk::CommandBuffer& cmdBuffer) const;
 
 protected:
     void CollectMetaData(const std::vector<u32>& spirvCode, vk::ShaderStageFlags flag);

@@ -131,4 +131,7 @@ void Shader::BindResource(const std::string&              resourceName,
     device.GetVkDeviceHandle().updateDescriptorSets(1, &writer, 0, nullptr);
 }
 
+void Shader::BindCommandBuffer(const vk::CommandBuffer& cmdBuffer) const {
+
+}
 } // namespace wind

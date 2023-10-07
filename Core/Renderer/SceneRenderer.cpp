@@ -70,7 +70,7 @@ void SceneRenderer::PresentPass(Swapchain& swapchain, u32 imageIndex) {
 
     vk::RenderPass renderPass = swapchain.GetRenderPass();
 
-    vk::ClearColorValue color{std::array<float, 4>{1.0f, 0.0f, 0.0f, 0.0f}};
+    vk::ClearColorValue color{std::array<float, 4>{0.3f, 0.3f, 0.3f, 0.3f}};
 
     vk::ClearValue clearValue{.color = color};
 
@@ -86,6 +86,7 @@ void SceneRenderer::PresentPass(Swapchain& swapchain, u32 imageIndex) {
     renderContext->Begin();
 
     renderContext->BeginRenderPass(passBeginInfo);
+    
     renderContext->EndRenderPass();
 
     swapchain.SubmitCommandBuffer(renderContext->Finish(), imageIndex);

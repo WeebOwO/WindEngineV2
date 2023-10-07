@@ -11,7 +11,7 @@ Swapchain::Swapchain(const GPUDevice& device, const Window& window) : m_device(d
     m_surface = rawSurface;
     CreateSwapChainInteral(window.width(), window.height());
     CreateSyncObject();
-    WIND_INFO("Create swapchain");
+    WIND_CORE_INFO("Create swapchain");
 }
 
 void Swapchain::QuerySurfaceProperty() {
@@ -117,7 +117,7 @@ void Swapchain::CreateRenderPass() {
     vk::AttachmentReference colorReference{.attachment = 0,
                                            .layout     = vk::ImageLayout::eAttachmentOptimal};
 
-    vk::SubpassDescription subpassDesc{
+    vk::SubpassDescription subpassDesc {
         .pipelineBindPoint    = vk::PipelineBindPoint::eGraphics,
         .colorAttachmentCount = 1,
         .pColorAttachments    = &colorReference,
