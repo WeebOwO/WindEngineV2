@@ -9,16 +9,22 @@ namespace wind {
 
 class GraphicsPipelineBuilder {
 public:
-    void Build(const vk::Device& device, RasterShader& shader);
-
-    GraphicsPipelineBuilder&
-    SetBlendState(const std::span<vk::PipelineColorBlendAttachmentState> blendStates);
-
-    GraphicsPipelineBuilder& SetRenderPass(const vk::RenderPass& renderPass);
-    GraphicsPipelineBuilder& SetDepthAndSetencilState();
-
+    vk::Pipeline Build(const vk::Device& device, const Material& material, const vk::RenderPass& renderPass);
+    
+    void SetInput();
+    
 private:
-    vk::RenderPass                 m_renderPass;
-    vk::GraphicsPipelineCreateInfo m_pipelineCreateInfo;
+    vk::RenderPass m_renderPass;
+
+    vk::GraphicsPipelineCreateInfo           m_pipelineCreateInfo;
+    vk::PipelineShaderStageCreateInfo        m_ShaderStages;
+    vk::PipelineVertexInputStateCreateInfo   m_vertexInputState;
+    vk::PipelineInputAssemblyStateCreateInfo m_inputAssemblyState;
+    vk::PipelineRasterizationStateCreateInfo m_rasterState;
+    vk::PipelineMultisampleStateCreateInfo   m_multiSampleState;
+    vk::PipelineDepthStencilStateCreateInfo  m_depthStencilState;
+    vk::PipelineColorBlendStateCreateInfo    m_blendState;
+    vk::PipelineDynamicStateCreateInfo       m_dynamicState;
+    vk::PipelineViewportStateCreateInfo      m_viewPortState; // may be dynamic
 };
 } // namespace wind

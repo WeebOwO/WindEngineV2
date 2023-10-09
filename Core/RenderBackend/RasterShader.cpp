@@ -1,7 +1,9 @@
 #include "RasterShader.h"
 
 namespace wind {
-RasterShader::RasterShader(const std::vector<u32>& vertexCode, const std::vector<u32>& fragcode) {
+RasterShader::RasterShader(const std::string& name, const std::vector<u32>& vertexCode, const std::vector<u32>& fragcode) {
+    SetShaderName(name);
+    
     auto vkDevice = device.GetVkDeviceHandle();
 
     CollectMetaData(vertexCode, vk::ShaderStageFlagBits::eVertex);
@@ -19,8 +21,4 @@ RasterShader::RasterShader(const std::vector<u32>& vertexCode, const std::vector
     GeneratePipelineLayout();
 }
 
-void RasterShader::CreatePipeline(const vk::GraphicsPipelineCreateInfo& pipelineCreteInfo) {
-    auto vkDevice = device.GetVkDeviceHandle();
-    m_pipeline = vkDevice.createGraphicsPipeline(nullptr, pipelineCreteInfo).value;
-}
 } // namespace wind

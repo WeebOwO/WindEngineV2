@@ -8,7 +8,6 @@ enum class CullingMethod {
 };
 
 class CullingManager {
-    
+      
 };
-
 }

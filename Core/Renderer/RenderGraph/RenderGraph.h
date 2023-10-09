@@ -5,6 +5,11 @@
 namespace wind {
 class RenderGraph {
 public:
+    void Setup();
+    void Compile();
+    void Exec();
+
+    void AddPass();
     
 private:
     

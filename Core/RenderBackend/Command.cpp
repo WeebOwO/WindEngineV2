@@ -62,7 +62,7 @@ ComputeEncoder::ComputeEncoder(bool isAsync)
 void ComputeEncoder::Dispatch(u32 x, u32 y, u32 z) { m_nativeHandle.dispatch(x, y, z); }
 
 void ComputeEncoder::BindComputShader(const ComputeShader& computeShader) {
-    computeShader.Bind(m_nativeHandle);
+    computeShader.BindCommandBuffer(m_nativeHandle);
 }
 // Render Encoder part
 RenderEncoder::RenderEncoder() : CommandEncoder(RenderCommandQueueType::Graphics) {}

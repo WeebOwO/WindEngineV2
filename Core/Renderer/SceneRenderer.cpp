@@ -29,7 +29,7 @@ void SceneRenderer::Render(Swapchain& swapchain) {
     swapchain.SetFrameNumber(m_frameNumber);
     u32 imageIndex = swapchain.AcquireNextImage().value();
     ResetFrameParams();
-    
+
     PresentPass(swapchain, imageIndex);
 
     m_frameNumber = (m_frameNumber + 1) % Swapchain::MAX_FRAME_IN_FLIGHT;
@@ -40,7 +40,7 @@ void SceneRenderer::ComputeTest() {
     std::vector<i32> data     = {1, 2, 3, 4};
 
     std::unique_ptr<ComputeShader> computeShader =
-        std::make_unique<ComputeShader>(io::LoadBinary<u32>("ComputeTest.comp.spv"));
+        std::make_unique<ComputeShader>("ComputeTest", io::LoadBinary<u32>("ComputeTest.comp.spv"));
     ReadBackBuffer buffer(sizeof(i32) * data.size(), vk::BufferUsageFlagBits::eStorageBuffer);
 
     vk::DescriptorBufferInfo m_bufferInfo{
@@ -86,7 +86,7 @@ void SceneRenderer::PresentPass(Swapchain& swapchain, u32 imageIndex) {
     renderContext->Begin();
 
     renderContext->BeginRenderPass(passBeginInfo);
-    
+
     renderContext->EndRenderPass();
 
     swapchain.SubmitCommandBuffer(renderContext->Finish(), imageIndex);

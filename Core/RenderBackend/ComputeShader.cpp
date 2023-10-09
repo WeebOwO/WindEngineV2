@@ -3,7 +3,8 @@
 #include "Base/Log.h"
 
 namespace wind {
-ComputeShader::ComputeShader(const std::vector<u32>& spirvCode) {
+ComputeShader::ComputeShader(const std::string& debugName, const std::vector<u32>& spirvCode) {
+    SetShaderName(debugName);
     auto vkDevice = device.GetVkDeviceHandle();
 
     // create Pipeline cache

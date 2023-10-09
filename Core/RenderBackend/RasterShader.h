@@ -9,11 +9,15 @@ class RasterShader : public Shader {
 public:
     friend class GraphicsPipelineBuilder;
 
-    RasterShader(const std::vector<u32>& vertexCode, const std::vector<u32>& fragcode);
-    // pipeline
+    RasterShader(const std::string& name, const std::vector<u32>& vertexCode,
+                 const std::vector<u32>& fragcode);
 
+    vk::PipelineLayout GetPipelineLayout() const noexcept { return m_layout; }
+
+    auto GetShaderModules() const noexcept { return m_shaderModules; }
+    
 private:
     std::vector<vk::ShaderModule> m_shaderModules;
-    vk::Pipeline                  m_pipeline;
+    vk::Pipeline                  pipeline;
 };
 } // namespace wind

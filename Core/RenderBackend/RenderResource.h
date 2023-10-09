@@ -16,13 +16,16 @@ enum class RenderResourceType : u8 {
     ShaderParamer
 };
 
-template <RenderResourceType ResourceType> struct ResourceHandle {
+template <RenderResourceType ResourceType> 
+struct ResourceHandle {
     static constexpr RenderResourceType handleType = ResourceType;
     u32                                 handle;
 };
 
-template <RenderResourceType ResourceType> struct RenderResource {
-    RenderResource() : device(Backend::GetGPUDevice()) {}
+template <RenderResourceType ResourceType> 
+struct RHIResource {
+    RHIResource() : device(Backend::GetGPUDevice()) {}
+
     GPUDevice&                   device;
     ResourceHandle<ResourceType> handle;
 };

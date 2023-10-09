@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 namespace wind {
-class Shader : public RenderResource<RenderResourceType::Shader> {
+class Shader : public RHIResource<RenderResourceType::Shader> {
 public:
     enum class ShaderTag : uint8_t {
         ComputeShader = 0,
@@ -19,7 +19,10 @@ public:
     void BindResource(const std::string& resourceName, const vk::DescriptorBufferInfo& bufferInfo);
     virtual void BindCommandBuffer(const vk::CommandBuffer& cmdBuffer) const;
 
+    auto GetShaderName() const { return m_debugName; }
+
 protected:
+    auto SetShaderName(const std::string& name) { m_debugName = name; }
     void CollectMetaData(const std::vector<u32>& spirvCode, vk::ShaderStageFlags flag);
     void GeneratePipelineLayout();
 
@@ -37,6 +40,7 @@ protected:
         vk::ShaderStageFlags shadeshaderStageFlag;
     };
 
+    std::string                                    m_debugName;
     vk::PipelineLayout                             m_layout;
     std::unordered_map<std::string, ShaderBinding> m_bindings;
 

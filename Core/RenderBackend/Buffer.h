@@ -7,7 +7,7 @@
 
 namespace wind {
 
-class GPUBuffer : public RenderResource<RenderResourceType::Buffer> {
+class GPUBuffer : public RHIResource<RenderResourceType::Buffer> {
 public:
     GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,
               const VmaAllocationCreateInfo& AllocationCreateInfo);
