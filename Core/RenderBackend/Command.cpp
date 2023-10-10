@@ -1,7 +1,6 @@
 #include "Command.h"
 
-#include "RenderBackend/Command.h"
-#include "Renderbackend/ComputeShader.h"
+#include "ComputeShader.h"
 
 namespace wind {
 CommandEncoder::CommandEncoder(RenderCommandQueueType queueType) : m_queueType(queueType) {

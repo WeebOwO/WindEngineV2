@@ -1,9 +1,11 @@
 #pragma once
 
-namespace wind {
-class RenderGraph {
-public:
+#include "shaderc/shaderc.hpp"
 
+namespace wind {
+class ShaderCompiler {
+public:
+    
 private:
     
 };

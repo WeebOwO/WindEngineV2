@@ -10,4 +10,4 @@ xmake project -k vsxmake -m "debug,release"
 ## Reference
 * [WebGPU](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API)
 * [LuisaCompute](https://github.com/WeebOwO/LuisaCompute/tree/next/src/backends/vk)
-
+* [filament](https://github.com/google/filament)

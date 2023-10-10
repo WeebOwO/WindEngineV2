@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RenderBackend/Pipeline.h"
 #include "RenderBackend/RasterShader.h"
 
 namespace wind {
@@ -14,11 +15,12 @@ public:
     };
 
     static std::unique_ptr<Material> Create(const CreateInfo& createInfo);
-    
+     
 private:
     ShadingModel                  m_shadingModel;
     std::unique_ptr<RasterShader> m_rasterShader;
     std::string                   m_debugName;
+    
 };
 
 } // namespace wind

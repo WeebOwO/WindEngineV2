@@ -2,8 +2,8 @@
 
 #include "VulkanHeader.h"
 
-#include "RenderBackend/Device.h"
-#include "RenderBackend/Texture.h"
+#include "Device.h"
+#include "Texture.h"
 
 namespace wind {
 

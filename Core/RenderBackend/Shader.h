@@ -3,8 +3,7 @@
 #include "VulkanHeader.h"
 #include "std.h"
 
-#include "RenderBackend/RenderResource.h"
-#include <unordered_map>
+#include "RenderResource.h"
 
 namespace wind {
 class Shader : public RHIResource<RenderResourceType::Shader> {

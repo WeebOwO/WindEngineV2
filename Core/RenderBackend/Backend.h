@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RenderBackend/Device.h"
+#include "Device.h"
 
 namespace wind {
 class Backend {

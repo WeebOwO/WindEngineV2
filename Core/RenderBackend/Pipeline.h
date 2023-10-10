@@ -2,17 +2,36 @@
 
 #include "VulkanHeader.h"
 
-#include "RenderBackend/RasterShader.h"
+#include "RasterShader.h"
 
 namespace wind {
-// use for graphics pipeline
+// Raster state descriptor
+struct RasterState {
+    vk::CullModeFlags cullingMode;
+    vk::CompareOp     depthCompareOps;
+    vk::BlendOp       blendOps;
+    vk::BlendFactor   factor;
+    bool              colorWrite;
+    bool              depthWrite;
+    bool              alphaToCoverage;
+    bool              inverseFrontFaces;
+};
+
+struct StencilState {
+
+};
+
+struct PipelineState {
+
+};
 
 class GraphicsPipelineBuilder {
 public:
-    vk::Pipeline Build(const vk::Device& device, const Material& material, const vk::RenderPass& renderPass);
-    
+    vk::Pipeline Build(const vk::Device& device, const Material& material,
+                       const vk::RenderPass& renderPass);
+
     void SetInput();
-    
+
 private:
     vk::RenderPass m_renderPass;
 

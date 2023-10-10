@@ -2,7 +2,7 @@
 
 #include "VulkanHeader.h"
 
-#include "RenderBackend/RenderResource.h"
+#include "RenderResource.h"
 
 namespace wind {
 class RenderEncoder;

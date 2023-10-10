@@ -1,9 +1,9 @@
 #define VMA_IMPLEMENTATION
 
 #include "Allocator.h"
+#include "Device.h"
 
 #include "Base/Log.h"
-#include "RenderBackend/Device.h"
 
 namespace wind {
 VkAllocator::VkAllocator(GPUDevice& device) {
