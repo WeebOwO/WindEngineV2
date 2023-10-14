@@ -18,7 +18,7 @@ struct RasterState {
 };
 
 struct StencilState {
-
+    
 };
 
 struct PipelineState {

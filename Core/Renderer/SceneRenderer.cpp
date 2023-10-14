@@ -1,6 +1,7 @@
 #include "SceneRenderer.h"
 
 #include "Base/Log.h"
+#include "Renderer/SceneRenderer.h"
 #include "Resource/Loader.h"
 
 #include "RenderBackend/Buffer.h"
@@ -8,6 +9,16 @@
 #include "RenderBackend/ComputeShader.h"
 
 namespace wind {
+void FrameParms::Init() {
+    m_encoders[computeIndex] = std::make_unique<ComputeEncoder>();
+    m_encoders[renderIndex]  = std::make_unique<RenderEncoder>();
+}
+
+void FrameParms::ResetCommanEncoders() {
+    for (const auto& encoder : m_encoders) {
+        encoder->Reset();
+    }
+}
 
 SceneRenderer::~SceneRenderer() { WIND_CORE_INFO("Destory {}", "Scene Renderer"); }
 
@@ -16,14 +27,13 @@ SceneRenderer::SceneRenderer() : m_device(Backend::GetGPUDevice()) {
 
     // create frame parms
     for (auto& frameParms : m_frameParams) {
-        frameParms.renderContext  = std::make_unique<RenderEncoder>();
-        frameParms.computeContext = std::make_unique<ComputeEncoder>();
+        frameParms.Init();
     }
 }
 
 u32 SceneRenderer::GetCurrentFrame() { return m_frameNumber; }
 
-void SceneRenderer::ResetFrameParams() { m_frameParams[GetCurrentFrame()].renderContext->Reset(); }
+void SceneRenderer::ResetFrameParams() { m_frameParams[GetCurrentFrame()].ResetCommanEncoders(); }
 
 void SceneRenderer::Render(Swapchain& swapchain) {
     swapchain.SetFrameNumber(m_frameNumber);
@@ -48,7 +58,9 @@ void SceneRenderer::ComputeTest() {
 
     computeShader->BindResource("Buffer", m_bufferInfo);
 
-    auto& computeContext = m_frameParams[GetCurrentFrame()].computeContext;
+    auto computeContext = m_frameParams[GetCurrentFrame()]
+                              .GetEncoder(FrameParms::computeIndex)
+                              ->CreateComputeEncoder();
 
     computeContext->Begin();
     computeContext->BindComputShader(*computeShader);
@@ -81,7 +93,8 @@ void SceneRenderer::PresentPass(Swapchain& swapchain, u32 imageIndex) {
         .clearValueCount = 1,
         .pClearValues    = &clearValue};
 
-    auto& renderContext = m_frameParams[GetCurrentFrame()].renderContext;
+    auto renderContext =
+        m_frameParams[GetCurrentFrame()].GetEncoder(FrameParms::renderIndex)->CreateRenderEncoder();
 
     renderContext->Begin();
 

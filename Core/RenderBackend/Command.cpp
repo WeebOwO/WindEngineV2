@@ -1,5 +1,6 @@
 #include "Command.h"
 
+#include "std.h"
 #include "ComputeShader.h"
 
 namespace wind {
@@ -31,6 +32,16 @@ CommandEncoder::~CommandEncoder() {
     auto vkDevice = device.GetVkDeviceHandle();
     vkDevice.waitIdle();
     vkDevice.destroyCommandPool(m_cmdPool);
+}
+
+ComputeEncoder* CommandEncoder::CreateComputeEncoder() {
+    assert(m_queueType == RenderCommandQueueType::Compute || m_queueType == RenderCommandQueueType::AsyncCompute);
+    return static_cast<ComputeEncoder*>(this);
+}
+
+RenderEncoder* CommandEncoder::CreateRenderEncoder() {
+    assert(m_queueType == RenderCommandQueueType::Graphics);
+    return static_cast<RenderEncoder*>(this);
 }
 
 // reset the whole command pool, this is faster than reset the commandbuffer in multithread context
@@ -80,5 +91,4 @@ void ImmCommandEncoder::Submit() {
     // this submit may cause gpu cpu stall
     device.SubmitBackUpCommandBuffer(m_handle);
 }
-
 } // namespace wind

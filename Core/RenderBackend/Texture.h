@@ -16,8 +16,6 @@ public:
         vk::ImageUsageFlags imageUsage;
     };
 
-    static std::shared_ptr<GPUTexture> Create(const TextureDesc& textureDesc);
-
     GPUTexture();
 
     virtual void GenerateMips();
@@ -37,15 +35,19 @@ private:
 class GPUTexture2D : public GPUTexture {
 public:
     GPUTexture2D(u32 width, u32 height, vk::Format fomat, vk::ImageUsageFlags flags);
-
+    
 private:
     vk::ImageView m_view;
 };
 
-class GPUTexture3D : public GPUTexture {};
+class GPUTexture3D : public GPUTexture {
+public:
+    GPUTexture3D();
+};
 
 class GPUTextureCube : public GPUTexture {
 public:
+
 private:
     std::vector<vk::ImageView> m_cubeViews;
 };

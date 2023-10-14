@@ -2,6 +2,7 @@
 
 #include "std.h"
 
+#include "RenderBackend/Command.h"
 #include "Renderbackend/SwapChain.h"
 
 namespace wind {
@@ -12,8 +13,12 @@ class RenderEncoder;
 class Swapchain;
 
 struct FrameParms {
-    std::unique_ptr<ComputeEncoder> computeContext;
-    std::unique_ptr<RenderEncoder>  renderContext;
+    void Init();
+    void ResetCommanEncoders();
+    auto GetEncoder(u32 index) { return m_encoders[index].get(); }
+
+    static constexpr u32                           computeIndex = 0, renderIndex = 1;
+    std::array<std::unique_ptr<CommandEncoder>, 2> m_encoders;
 };
 
 class SceneRenderer {
@@ -33,7 +38,7 @@ private:
     void PresentPass(Swapchain& swapchain, u32 imageIndex);
 
     GPUDevice& m_device;
-    
+
     FrameParms m_frameParams[Swapchain::MAX_FRAME_IN_FLIGHT];
     u32        m_frameNumber{0};
 };

@@ -7,10 +7,13 @@
 namespace wind {
 class RenderEncoder;
 class ComputeEncoder;
+
 class ComputeShader;
 class RasterShader;
 
-enum class RenderCommandQueueType : uint8_t { Copy = 0, Graphics, Compute, AsyncCompute, General };
+enum class RenderCommandQueueType : uint8_t { 
+    Copy = 0, Graphics, Compute, AsyncCompute, General 
+};
 
 using TaskFunc = std::function<void(const vk::CommandBuffer&)>;
 
@@ -18,6 +21,9 @@ class CommandEncoder : public RHIResource<RenderResourceType::CommandEncoder> {
 public:
     CommandEncoder(RenderCommandQueueType queueType = RenderCommandQueueType::General);
     ~CommandEncoder();
+
+    ComputeEncoder* CreateComputeEncoder();
+    RenderEncoder* CreateRenderEncoder();
 
     void Begin();
     void              Reset();
