@@ -3,39 +3,60 @@
 #include "std.h"
 
 #include "RenderBackend/Command.h"
-#include "RenderGraphResource.h"
+#include "RenderBackend/Texture.h"
 
 namespace wind {
 class RenderGraph;
 
-class RenderGraphPass {
+struct AttachmentInfo {
+    u32        width      = 1.0f;
+    u32        height     = 1.0f;
+    vk::Format format     = vk::Format::eUndefined;
+    unsigned   samples    = 1;
+    unsigned   levels     = 1;
+    unsigned   layers     = 1;
+    bool       persistent = true;
+};
+
+struct BufferInfo {
+    size_t               byteSize;
+    vk::BufferUsageFlags usage;
+    bool                 persistent;
+};
+
+class RenderGraphPass : public RHIResource<RHIResourceType::RenderPass> {
 public:
     using StencilClearCallBack     = std::function<void(vk::ClearDepthStencilValue& value)>;
     using RenderColorClearCallBack = std::function<void(vk::ClearDepthStencilValue& value)>;
     using ExecCallBack             = std::function<void(CommandEncoder& encoder)>;
 
-    RenderGraphPass(RenderGraph& renderGraph, u32 index, RenderCommandQueueType type);
+    RenderGraphPass(RenderGraph& renderGraph, RenderCommandQueueType type);
 
-    void AddColorOuput(const std::string& resourceName, const RenderGraphTexture::Desc& desc);
-    void AddTextureInput();
+    RenderGraphPass& AddColorOuput(const std::string&    resourceName,
+                                   const AttachmentInfo& attachmentInfo);
 
-    void SetExecCallBack(const ExecCallBack& callback) { m_exec = callback; }
-    void SetStencilClearCallBack(const StencilClearCallBack& callback) {
-        m_stencilCallback = callback;
-    }
-    void SetRenderColorClearCallBack(const RenderColorClearCallBack& callback) {
-        m_renderColorClearCallBack = callback;
-    }
+    RenderGraphPass& AddDepthStencilOutput(const std::string&    resourceName,
+                                           const AttachmentInfo& attachmentInfo);
+
+    void SetExecCallBack(const ExecCallBack& callback);
+    void SetStencilClearCallBack(const StencilClearCallBack& callback);
+    void SetRenderColorClearCallBack(const RenderColorClearCallBack& callback);
+
+    void Compile();
+    void Exec();
 
 private:
-    ExecCallBack             m_exec;
+    bool                   m_writeDepth;
+    
+    RenderGraph&           m_renderGraph;
+    RenderCommandQueueType m_passtype;
+
+    ExecCallBack             m_execCallback;
     StencilClearCallBack     m_stencilCallback;
     RenderColorClearCallBack m_renderColorClearCallBack;
 
-    RenderGraph&           m_refGraph;
     RenderCommandQueueType m_queueType;
 
-    std::vector<Ref<RenderGraphResource>> m_ouputResources;
-    std::vector<Ref<RenderGraphResource>> m_dependencyResources;
+    vk::RenderPass m_vkHandle;
 };
 }; // namespace wind

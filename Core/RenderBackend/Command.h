@@ -13,7 +13,7 @@ class RasterShader;
 
 enum class RenderCommandQueueType : uint8_t { Copy = 0, Graphics, Compute, AsyncCompute, General };
 
-class CommandEncoder : public RHIResource<RenderResourceType::CommandEncoder> {
+class CommandEncoder : public RHIResource<RHIResourceType::CommandEncoder> {
 public:
     CommandEncoder(RenderCommandQueueType queueType = RenderCommandQueueType::General);
     ~CommandEncoder();
@@ -47,7 +47,7 @@ public:
 };
 
 // always alloc from stack, try not to use this from heap memory
-class ImmCommandEncoder : public RHIResource<RenderResourceType::CommandBuffer> {
+class ImmCommandEncoder : public RHIResource<RHIResourceType::CommandBuffer> {
 public:
     using TaskFunc = std::function<void(const vk::CommandBuffer&)>;
     ImmCommandEncoder();

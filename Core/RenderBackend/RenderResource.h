@@ -7,22 +7,23 @@
 namespace wind {
 class GPUDevice;
 
-enum class RenderResourceType : u8 {
+enum class RHIResourceType : u8 {
     Buffer,
     Texture,
     Shader,
     CommandEncoder,
     CommandBuffer,
-    ShaderParamer
+    ShaderParamer,
+    RenderPass
 };
 
-template <RenderResourceType ResourceType> 
+template <RHIResourceType ResourceType> 
 struct ResourceHandle {
-    static constexpr RenderResourceType handleType = ResourceType;
+    static constexpr RHIResourceType handleType = ResourceType;
     u32                                 handle;
 };
 
-template <RenderResourceType ResourceType> 
+template <RHIResourceType ResourceType> 
 struct RHIResource {
     RHIResource() : device(Backend::GetGPUDevice()) {}
 

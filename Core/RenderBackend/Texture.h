@@ -6,7 +6,7 @@
 
 namespace wind {
 
-struct GPUTexture : public RHIResource<RenderResourceType::Texture> {
+struct GPUTexture : public RHIResource<RHIResourceType::Texture> {
 public:
     GPUTexture() = default;
     GPUTexture(const vk::ImageCreateInfo&     desc,
@@ -35,7 +35,7 @@ public:
         vk::ImageUsageFlags usage;
     };
 
-    GPUTexture2D(const Desc& desc);
+    Ref<GPUTexture2D> Create(const Desc& desc);
 
 private:
     vk::ImageView m_view;
@@ -51,9 +51,7 @@ public:
         vk::Format          format;
         vk::ImageUsageFlags usage;
     };
-
-    GPUTexture3D(const Desc& desc);
-
+    
 private:
     vk::ImageView m_view;
 };

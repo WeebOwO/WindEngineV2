@@ -13,10 +13,10 @@ public:
     RenderGraphPass& AddPass(const std::string& passName);
 
     void SetBackBufferName(const std::string& backBufferName);
-
     void ImportExtenernalTexture();
 
 private:
-    Ref<GPUTexture> m_extenalTextures;
+    Ref<GPUDevice>               m_device;
+    std::vector<RenderGraphPass> m_graphPasses;
 };
 } // namespace wind

@@ -6,7 +6,7 @@
 #include "RenderResource.h"
 
 namespace wind {
-class Shader : public RHIResource<RenderResourceType::Shader> {
+class Shader : public RHIResource<RHIResourceType::Shader> {
 public:
     enum class ShaderTag : uint8_t {
         ComputeShader = 0,
