@@ -3,7 +3,7 @@
 #include "Engine/Engine.h"
 #include "Engine/Application.h"
 
-extern std::unique_ptr<wind::Application> CreateClientApplication();
+extern wind::Scope<wind::Application> CreateClientApplication();
 
 namespace wind {
     int GuardedMain(int argc, char **argv) {

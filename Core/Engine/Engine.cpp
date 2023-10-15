@@ -9,7 +9,7 @@
 #include "tracy/Tracy.hpp"
 
 namespace wind {
-Engine::Engine(std::unique_ptr<Window> window) : m_window(std::move(window)) {
+Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {
     Init();
     PostInit();
 }
@@ -37,7 +37,7 @@ void Engine::Init() {
     JobSystem::Init();
     WIND_CORE_INFO("Init the engine core!");
     
-    m_sceneRenderer = std::make_unique<SceneRenderer>();
+    m_sceneRenderer = scope::Create<SceneRenderer>();
 }
 
 float Engine::CalcDeltaTime() {

@@ -6,6 +6,7 @@
 
 #include "RenderBackend/Allocator.h"
 #include "RenderBackend/Shader.h"
+#include "std.h"
 
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
@@ -151,8 +152,8 @@ void GPUDevice::CreateDevice() {
 }
 
 void GPUDevice::InitAllocator() {
-    m_allocator           = std::make_unique<VkAllocator>(*this);
-    m_descriptorAllocator = std::make_unique<DescriptorAllocator>();
+    m_allocator           = scope::Create<VkAllocator>(*this);
+    m_descriptorAllocator = scope::Create<DescriptorAllocator>();
     m_descriptorAllocator->Init(*m_device);
 }
 

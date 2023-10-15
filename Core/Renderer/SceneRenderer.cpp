@@ -1,7 +1,6 @@
 #include "SceneRenderer.h"
 
 #include "Base/Log.h"
-#include "Renderer/SceneRenderer.h"
 #include "Resource/Loader.h"
 
 #include "RenderBackend/Buffer.h"
@@ -10,8 +9,8 @@
 
 namespace wind {
 void FrameParms::Init() {
-    m_encoders[computeIndex] = std::make_unique<ComputeEncoder>();
-    m_encoders[renderIndex]  = std::make_unique<RenderEncoder>();
+    m_encoders[computeIndex] = scope::Create<ComputeEncoder>();
+    m_encoders[renderIndex]  = scope::Create<RenderEncoder>();
 }
 
 void FrameParms::ResetCommanEncoders() {
@@ -49,8 +48,8 @@ void SceneRenderer::ComputeTest() {
     auto             vkDevice = m_device.GetVkDeviceHandle();
     std::vector<i32> data     = {1, 2, 3, 4};
 
-    std::unique_ptr<ComputeShader> computeShader =
-        std::make_unique<ComputeShader>("ComputeTest", io::LoadBinary<u32>("ComputeTest.comp.spv"));
+    Scope<ComputeShader> computeShader =
+        scope::Create<ComputeShader>("ComputeTest", io::LoadBinary<u32>("ComputeTest.comp.spv"));
     ReadBackBuffer buffer(sizeof(i32) * data.size(), vk::BufferUsageFlagBits::eStorageBuffer);
 
     vk::DescriptorBufferInfo m_bufferInfo{

@@ -15,7 +15,7 @@ Window::Window(uint32_t width, uint32_t height, std::string_view title): m_windo
 
 void Window::Init() {
     auto& Device = Backend::GetGPUDevice();
-    m_swapchain = std::make_unique<Swapchain>(Device, *this);
+    m_swapchain = scope::Create<Swapchain>(Device, *this);
 }
 
 Window::~Window() { glfwDestroyWindow(m_window); }

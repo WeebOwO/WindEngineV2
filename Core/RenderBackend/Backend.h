@@ -16,8 +16,8 @@ private:
     Backend(const Backend&)                  = delete;
     Backend& operator=(const Backend& other) = delete;
 
-    std::unique_ptr<GPUDevice> m_device;
+    Scope<GPUDevice> m_device;
 
-    static std::unique_ptr<Backend> s_instance;
+    static Scope<Backend> s_instance;
 };
 } // namespace wind

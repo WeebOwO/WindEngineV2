@@ -44,7 +44,7 @@ public:
     ~ReadBackBuffer();
 
     u8* MapMemory();
-
+    
 private:
     void UnmapMemory();
 

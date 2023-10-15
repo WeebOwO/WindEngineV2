@@ -28,6 +28,6 @@ private:
 
     GLFWwindow*                m_window{nullptr};
     WindowInfo                 m_windowInfo{};
-    std::unique_ptr<Swapchain> m_swapchain;
+    Scope<Swapchain> m_swapchain;
 };
 } // namespace wind

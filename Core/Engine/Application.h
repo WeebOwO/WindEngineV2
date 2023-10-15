@@ -11,5 +11,5 @@ public:
     virtual void Run() = 0;
 };
 
-std::unique_ptr<Application> CreateClientApplication();
+Scope<Application> CreateClientApplication();
 } // namespace wind

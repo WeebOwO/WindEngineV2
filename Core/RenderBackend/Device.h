@@ -1,7 +1,8 @@
 #pragma once
 
-#include "std.h"
 #include "VulkanHeader.h"
+#include "std.h"
+
 
 #include "Allocator.h"
 #include "Descriptor.h"
@@ -44,7 +45,7 @@ public:
     vk::DescriptorSet AllocateDescriptor(const vk::DescriptorSetLayout&) const;
 
     vk::CommandBuffer GetBackUpCommandBuffer();
-    void SubmitBackUpCommandBuffer(const vk::CommandBuffer& buffer);
+    void              SubmitBackUpCommandBuffer(const vk::CommandBuffer& buffer);
 
 private:
     void InitAllocator();
@@ -70,10 +71,10 @@ private:
     std::unordered_set<std::string> m_supportedExtensions;
     std::vector<const char*>        m_enableExtensions;
 
-    std::unique_ptr<VkAllocator> m_allocator;
-    bool                         m_enableDebug{true};
+    Scope<VkAllocator> m_allocator;
+    bool               m_enableDebug{true};
 
-    std::unique_ptr<DescriptorAllocator> m_descriptorAllocator;
+    Scope<DescriptorAllocator> m_descriptorAllocator;
 
     vk::CommandPool   m_backupCommandPool;
     vk::CommandBuffer m_backupCommandBuffer;
