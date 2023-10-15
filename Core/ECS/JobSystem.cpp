@@ -110,7 +110,10 @@ void JobSystem::WorkerThread() {
     }
 }
 
-void JobEntry(Job&& job) { wind::JobSystem::AddJob(std::move(job)); }
+void JobEntry(Job&& job) { 
+    wind::JobSystem::AddJob(std::move(job)); 
+}
+
 void JobEntry(std::function<void()> jobFunc, int id, std::vector<int> deps) {
     Job job{jobFunc, id, deps};
     wind::JobSystem::AddJob(std::move(job));

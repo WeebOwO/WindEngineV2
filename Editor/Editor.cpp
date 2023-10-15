@@ -6,7 +6,8 @@
 class Editor : public wind::Application {
 public:
     Editor() {}
-
+    void Init() override {}
+    void Quit() override {}
     void Run() override {
         uint32_t                  width = 1920, height = 1080;
         std::string               title  = "WindEngineV2";

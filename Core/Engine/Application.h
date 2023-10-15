@@ -6,9 +6,9 @@ namespace wind {
 
 class Application {
 public:
-    virtual void Init();
-    virtual void Quit();
-    virtual void Run() = 0;
+    virtual void Init() = 0;
+    virtual void Quit() = 0;
+    virtual void Run()  = 0;
 };
 
 Scope<Application> CreateClientApplication();
