@@ -22,9 +22,14 @@ public:
     VkAllocator(GPUDevice& device);
     ~VkAllocator();
 
-    AllocatedBuffer AllocateBuffer(const vk::BufferCreateInfo& bufferCreateInfo, const VmaAllocationCreateInfo& allocationCreateInfo);
-    void DestroyBuffer(AllocatedBuffer& buffer);
-    
+    AllocatedBuffer AllocateBuffer(const vk::BufferCreateInfo&    bufferCreateInfo,
+                                   const VmaAllocationCreateInfo& allocationCreateInfo);
+    void            DestroyBuffer(AllocatedBuffer& buffer);
+
+    AllocatedImage AllocateImage(const vk::ImageCreateInfo&     imageCreateInfo,
+                                 const VmaAllocationCreateInfo& allocationCreateInfo);
+    void           DestroyImage(AllocatedImage& image);
+
 private:
     VmaAllocator m_allocator;
 };

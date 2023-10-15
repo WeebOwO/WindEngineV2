@@ -5,7 +5,8 @@
 
 namespace wind {
 
-Window::Window(uint32_t width, uint32_t height, std::string_view title): m_windowInfo(WindowInfo{width, height, std::string(title)}) {
+Window::Window(uint32_t width, uint32_t height, std::string_view title)
+    : m_windowInfo(WindowInfo{width, height, std::string(title)}) {
     // init the glfw context
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -15,12 +16,10 @@ Window::Window(uint32_t width, uint32_t height, std::string_view title): m_windo
 
 void Window::Init() {
     auto& Device = Backend::GetGPUDevice();
-    m_swapchain = scope::Create<Swapchain>(Device, *this);
+    m_swapchain  = scope::Create<Swapchain>(Device, *this);
 }
 
 Window::~Window() { glfwDestroyWindow(m_window); }
 
-void Window::OnUpdate(float fs) {
-    glfwPollEvents();
-}
-} // namespace wind 
+void Window::OnUpdate(float fs) { glfwPollEvents(); }
+} // namespace wind

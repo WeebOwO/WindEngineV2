@@ -2,12 +2,9 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Shader.h"
+
 #include "Base/Log.h"
-
-#include "RenderBackend/Allocator.h"
-#include "RenderBackend/Shader.h"
-#include "std.h"
-
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
@@ -183,6 +180,13 @@ GPUDevice::AllocateBuffer(const vk::BufferCreateInfo&    bufferCreateInfo,
 }
 
 void GPUDevice::DestroyBuffer(AllocatedBuffer& buffer) const { m_allocator->DestroyBuffer(buffer); }
+
+AllocatedImage GPUDevice::AllocateImage(const vk::ImageCreateInfo&     imageCreateInfo,
+                                        const VmaAllocationCreateInfo& allocationCreateInfo) const {
+    return m_allocator->AllocateImage(imageCreateInfo, allocationCreateInfo);
+}
+
+void GPUDevice::DestroyImage(AllocatedImage& image) const { m_allocator->DestroyImage(image); }
 
 vk::DescriptorSet GPUDevice::AllocateDescriptor(const vk::DescriptorSetLayout& layout) const {
     return m_descriptorAllocator->Allocate(layout);

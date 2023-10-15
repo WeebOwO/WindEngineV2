@@ -14,13 +14,12 @@ public:
         ShadingModel shaingModel;
     };
 
-    static Scope<Material> Create(const CreateInfo& createInfo);
-     
+    static Ref<Material> Create(const CreateInfo& createInfo);
+
 private:
-    ShadingModel                  m_shadingModel;
-    Scope<RasterShader> m_rasterShader;
-    std::string                   m_debugName;
-    
+    ShadingModel      m_shadingModel;
+    Ref<RasterShader> m_rasterShader;
+    std::string       m_debugName;
 };
 
 } // namespace wind

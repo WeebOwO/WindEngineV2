@@ -16,9 +16,9 @@ public:
     [[nodiscard]] auto height() const { return m_windowInfo.height; }
 
     Swapchain* GetSwapChain() const { return m_swapchain.get(); }
-    
-    void       Init();
-    void       OnUpdate(float fs);
+
+    void Init();
+    void OnUpdate(float fs);
 
 private:
     struct WindowInfo {
@@ -26,8 +26,8 @@ private:
         std::string title;
     };
 
-    GLFWwindow*                m_window{nullptr};
-    WindowInfo                 m_windowInfo{};
+    GLFWwindow*      m_window{nullptr};
+    WindowInfo       m_windowInfo{};
     Scope<Swapchain> m_swapchain;
 };
 } // namespace wind

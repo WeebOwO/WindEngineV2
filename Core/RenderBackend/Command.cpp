@@ -81,7 +81,8 @@ void RenderEncoder::BeginRenderPass(const vk::RenderPassBeginInfo& renderPassBeg
     m_nativeHandle.beginRenderPass(renderPassBeginInfo, vk::SubpassContents::eInline);
 }
 
-void RenderEncoder::EndRenderPass() { m_nativeHandle.endRenderPass(); }
+void RenderEncoder::EndRenderPass() { m_nativeHandle.endRenderPass(); 
+}
 void ImmCommandEncoder::PushTask(const TaskFunc& func) { m_tasks.push_back(func); }
 
 void ImmCommandEncoder::Submit() {

@@ -31,20 +31,19 @@ using u32 = uint32_t;
 using u64 = uint64_t;
 
 namespace wind {
-template <typename T> using Ref   = std::shared_ptr<T>;
-template <typename T> using Scope = std::unique_ptr<T>;
+template <typename T> using Ref     = std::shared_ptr<T>;
+template <typename T> using Scope   = std::unique_ptr<T>;
+template <typename T> using WeakRef = std::weak_ptr<T>;
 } // namespace wind
 
 namespace wind::ref {
-template <typename T, typename... Args> 
-Ref<T> Create(Args&&... args) {
+template <typename T, typename... Args> Ref<T> Create(Args&&... args) {
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
 } // namespace wind::ref
 
 namespace wind::scope {
-template <typename T, typename... Args>
-Scope<T> Create(Args&&... args) {
+template <typename T, typename... Args> Scope<T> Create(Args&&... args) {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 } // namespace wind::scope

@@ -8,46 +8,58 @@ namespace wind {
 
 struct GPUTexture : public RHIResource<RenderResourceType::Texture> {
 public:
-    struct TextureDesc {
-        uint32_t            width;
-        uint32_t            height;
-        uint32_t            depth;
-        vk::Format          format;
-        vk::ImageUsageFlags imageUsage;
-    };
-
-    GPUTexture();
+    GPUTexture() = default;
+    GPUTexture(const vk::ImageCreateInfo&     desc,
+               const VmaAllocationCreateInfo& AllocationCreateInfo);
 
     virtual void GenerateMips();
+    virtual void Init();
 
 private:
-    vk::Image m_vkHandle;
+    Scope<AllocatedImage> m_image;
 
     uint32_t m_mipLevelCount{1};
     uint32_t m_layerCount{1};
 
     u32        width, height, depth;
     vk::Format m_format{vk::Format::eUndefined};
-
-    VmaAllocation m_allocation = {};
 };
 
 class GPUTexture2D : public GPUTexture {
 public:
-    GPUTexture2D(u32 width, u32 height, vk::Format fomat, vk::ImageUsageFlags flags);
-    
+    struct Desc {
+        u32                 width;
+        u32                 height;
+        u32                 mipCount;
+        vk::Format          format;
+        vk::ImageUsageFlags usage;
+    };
+
+    GPUTexture2D(const Desc& desc);
+
 private:
     vk::ImageView m_view;
 };
 
 class GPUTexture3D : public GPUTexture {
 public:
-    GPUTexture3D();
+    struct Desc {
+        u32                 width;
+        u32                 height;
+        u32                 depth;
+        u32                 mipCount;
+        vk::Format          format;
+        vk::ImageUsageFlags usage;
+    };
+
+    GPUTexture3D(const Desc& desc);
+
+private:
+    vk::ImageView m_view;
 };
 
 class GPUTextureCube : public GPUTexture {
 public:
-
 private:
     std::vector<vk::ImageView> m_cubeViews;
 };

@@ -1,11 +1,10 @@
 #pragma once
 
-#include "VulkanHeader.h"
 #include "std.h"
-
 
 #include "Allocator.h"
 #include "Descriptor.h"
+#include "VulkanHeader.h"
 
 namespace wind {
 
@@ -41,6 +40,11 @@ public:
                                    const VmaAllocationCreateInfo& allocationCreateInfo) const;
 
     void DestroyBuffer(AllocatedBuffer& buffer) const;
+
+    AllocatedImage AllocateImage(const vk::ImageCreateInfo&    imageCreateInfo,
+                                   const VmaAllocationCreateInfo& allocationCreateInfo) const;
+
+    void DestroyImage(AllocatedImage& image) const;
 
     vk::DescriptorSet AllocateDescriptor(const vk::DescriptorSetLayout&) const;
 

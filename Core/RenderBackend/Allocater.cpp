@@ -36,4 +36,16 @@ AllocatedBuffer VkAllocator::AllocateBuffer(const vk::BufferCreateInfo&    buffe
 void VkAllocator::DestroyBuffer(AllocatedBuffer& buffer) {
     vmaDestroyBuffer(m_allocator, buffer.buffer, buffer.allocation);
 }
+
+AllocatedImage VkAllocator::AllocateImage(const vk::ImageCreateInfo&     imageCreateInfo,
+                                          const VmaAllocationCreateInfo& allocationCreateInfo) {
+    AllocatedImage image;
+    vmaCreateImage(m_allocator, (VkImageCreateInfo*)&imageCreateInfo, &allocationCreateInfo,
+                   (VkImage*)&image.image, &image.allocation, nullptr);
+    return image;
+}
+
+void VkAllocator::DestroyImage(AllocatedImage& image) {
+    vmaDestroyImage(m_allocator, image.image, image.allocation);
+}
 } // namespace wind
