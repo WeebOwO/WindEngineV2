@@ -17,8 +17,8 @@ struct FrameParms {
     void ResetCommanEncoders();
     auto GetEncoder(u32 index) { return m_encoders[index].get(); }
 
-    static constexpr u32                 computeIndex = 0, renderIndex = 1;
-    std::array<Scope<CommandEncoder>, 2> m_encoders;
+    static constexpr u32               computeIndex = 0, renderIndex = 1;
+    std::array<Ref<CommandEncoder>, 2> m_encoders;
 };
 
 class SceneRenderer {
@@ -37,9 +37,8 @@ private:
     void BasePassRendering();
     void PresentPass(Swapchain& swapchain, u32 imageIndex);
 
-    GPUDevice& m_device;
-
-    FrameParms m_frameParams[Swapchain::MAX_FRAME_IN_FLIGHT];
-    u32        m_frameNumber{0};
+    GPUDevice&  m_device;
+    FrameParms  m_frameParams[Swapchain::MAX_FRAME_IN_FLIGHT];
+    u32         m_frameNumber{0};
 };
 } // namespace wind

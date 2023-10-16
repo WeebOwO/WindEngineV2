@@ -9,12 +9,12 @@ public:
     enum class ShadingModel { UnLit = 0, Lit };
     enum class BlendMode { Opaque, Tanslucency };
 
-    struct CreateInfo {
+    struct Desc {
         std::string  debugName;
         ShadingModel shaingModel;
     };
 
-    static Ref<Material> Create(const CreateInfo& createInfo);
+    static Ref<Material> Create(const Desc& desc);
 
 private:
     ShadingModel      m_shadingModel;

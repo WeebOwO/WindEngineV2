@@ -9,13 +9,13 @@ namespace wind {
 class RenderGraph;
 
 struct AttachmentInfo {
-    u32        width      = 1.0f;
-    u32        height     = 1.0f;
-    vk::Format format     = vk::Format::eUndefined;
-    unsigned   samples    = 1;
-    unsigned   levels     = 1;
-    unsigned   layers     = 1;
-    bool       persistent = true;
+    u32        width;
+    u32        height;
+    vk::Format format{vk::Format::eUndefined};
+    u32        samples{1};
+    u32        levels{1};
+    u32        layers{1};
+    bool       persistent{true};
 };
 
 struct BufferInfo {
@@ -47,7 +47,7 @@ public:
 
 private:
     bool                   m_writeDepth;
-    
+    std::string            m_debugName;
     RenderGraph&           m_renderGraph;
     RenderCommandQueueType m_passtype;
 
@@ -58,5 +58,7 @@ private:
     RenderCommandQueueType m_queueType;
 
     vk::RenderPass m_vkHandle;
+
+    std::vector<AttachmentInfo> m_attachmentInfos;
 };
 }; // namespace wind

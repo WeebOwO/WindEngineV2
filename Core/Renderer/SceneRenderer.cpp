@@ -9,8 +9,8 @@
 
 namespace wind {
 void FrameParms::Init() {
-    m_encoders[computeIndex] = scope::Create<ComputeEncoder>();
-    m_encoders[renderIndex]  = scope::Create<RenderEncoder>();
+    m_encoders[computeIndex] = ref::Create<ComputeEncoder>();
+    m_encoders[renderIndex]  = ref::Create<RenderEncoder>();
 }
 
 void FrameParms::ResetCommanEncoders() {
