@@ -9,20 +9,18 @@ namespace wind {
 struct GPUTexture : public RHIResource<RHIResourceType::Texture> {
 public:
     GPUTexture() = default;
-    GPUTexture(const vk::ImageCreateInfo&     desc,
-               const VmaAllocationCreateInfo& AllocationCreateInfo);
 
     virtual void GenerateMips();
     virtual void Init();
 
-private:
-    Scope<AllocatedImage> m_image;
+protected:
+    AllocatedImage allocatedImage;
 
-    uint32_t m_mipLevelCount{1};
-    uint32_t m_layerCount{1};
+    uint32_t mipLevelCount{1};
+    uint32_t layerCount{1};
 
     u32        width, height, depth;
-    vk::Format m_format{vk::Format::eUndefined};
+    vk::Format format{vk::Format::eUndefined};
 };
 
 class GPUTexture2D : public GPUTexture {
@@ -51,7 +49,7 @@ public:
         vk::Format          format;
         vk::ImageUsageFlags usage;
     };
-    
+
 private:
     vk::ImageView m_view;
 };

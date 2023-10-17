@@ -11,7 +11,16 @@ void RenderGraphPass::SetRenderColorClearCallBack(const RenderColorClearCallBack
     m_renderColorClearCallBack = callback;
 }
 
+RenderGraphPass& RenderGraphPass::AddColorOuput(const std::string&    resourceName,
+                                                const AttachmentInfo& attachmentInfo) {
+    return *this;
+}
+RenderGraphPass& RenderGraphPass::AddDepthStencilOutput(const std::string&    resourceName,
+                                                        const AttachmentInfo& attachmentInfo) {
+    return *this;
+}
 void RenderGraphPass::Compile() {
     
 }
+
 } // namespace wind

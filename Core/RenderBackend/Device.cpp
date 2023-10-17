@@ -60,7 +60,7 @@ void GPUDevice::CreateInstance() {
 
     auto extensions = GetRequiredExtensions();
 
-    vk::InstanceCreateInfo instanceCreateInfo{
+    vk::InstanceCreateInfo instanceCreateInfo {
         .flags                   = {},
         .pApplicationInfo        = &applicationInfo,
         .enabledLayerCount       = (u32)layers.size(),

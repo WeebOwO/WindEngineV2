@@ -46,9 +46,10 @@ public:
     void Exec();
 
 private:
+    RenderGraph&           m_renderGraph;
+
     bool                   m_writeDepth;
     std::string            m_debugName;
-    RenderGraph&           m_renderGraph;
     RenderCommandQueueType m_passtype;
 
     ExecCallBack             m_execCallback;
