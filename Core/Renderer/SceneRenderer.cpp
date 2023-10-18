@@ -7,6 +7,8 @@
 #include "RenderBackend/Command.h"
 #include "RenderBackend/ComputeShader.h"
 
+#include "RenderGraph/RenderPass.h"
+
 namespace wind {
 void FrameParms::Init() {
     m_encoders[computeIndex] = ref::Create<ComputeEncoder>();
@@ -23,7 +25,7 @@ SceneRenderer::~SceneRenderer() { WIND_CORE_INFO("Destory {}", "Scene Renderer")
 
 SceneRenderer::SceneRenderer() : m_device(Backend::GetGPUDevice()) {
     auto vkDevice = m_device.GetVkDeviceHandle();
-
+    m_renderGraph = ref::Create<RenderGraph>(m_device);
     // create frame parms
     for (auto& frameParms : m_frameParams) {
         frameParms.Init();
@@ -39,7 +41,17 @@ void SceneRenderer::Render(Swapchain& swapchain) {
     u32 imageIndex = swapchain.AcquireNextImage().value();
     ResetFrameParams();
 
-    PresentPass(swapchain, imageIndex);
+    // init render graph
+    m_renderGraph->SetupSwapChain(swapchain);
+    m_renderGraph->SetGraphicsEncoder(
+        m_frameParams[GetCurrentFrame()].GetEncoder(FrameParms::renderIndex));
+    m_renderGraph->SetComputeEncoder(
+        m_frameParams[GetCurrentFrame()].GetEncoder(FrameParms::computeIndex));
+    m_renderGraph->ImportBackBuffer("BackBuffer", swapchain.GetFrameBuffer(imageIndex));
+
+    PresentPass();
+    
+    m_renderGraph->SubmitToSwapChain(swapchain);
 
     m_frameNumber = (m_frameNumber + 1) % Swapchain::MAX_FRAME_IN_FLIGHT;
 }
@@ -77,30 +89,36 @@ void SceneRenderer::ComputeTest() {
     }
 }
 
-void SceneRenderer::PresentPass(Swapchain& swapchain, u32 imageIndex) {
+void SceneRenderer::PresentPass() {
 
-    vk::RenderPass renderPass = swapchain.GetRenderPass();
+    // vk::RenderPass renderPass = swapchain.GetRenderPass();
 
-    vk::ClearColorValue color{std::array<float, 4>{0.3f, 0.3f, 0.3f, 0.3f}};
+    // vk::ClearColorValue color{std::array<float, 4>{0.3f, 0.3f, 0.3f, 0.3f}};
 
-    vk::ClearValue clearValue{.color = color};
+    // vk::ClearValue clearValue{.color = color};
 
-    vk::RenderPassBeginInfo passBeginInfo{
-        .renderPass      = renderPass,
-        .framebuffer     = swapchain.GetFrameBuffer(imageIndex),
-        .renderArea      = vk::Rect2D{{0, 0}, {swapchain.GetWidth(), swapchain.GetHeight()}},
-        .clearValueCount = 1,
-        .pClearValues    = &clearValue};
+    // vk::RenderPassBeginInfo passBeginInfo{
+    //     .renderPass      = renderPass,
+    //     .framebuffer     = swapchain.GetFrameBuffer(imageIndex),
+    //     .renderArea      = vk::Rect2D{{0, 0}, {swapchain.GetWidth(), swapchain.GetHeight()}},
+    //     .clearValueCount = 1,
+    //     .pClearValues    = &clearValue};
 
-    auto renderContext =
-        m_frameParams[GetCurrentFrame()].GetEncoder(FrameParms::renderIndex)->CreateRenderEncoder();
+    // auto renderContext =
+    //     m_frameParams[GetCurrentFrame()].GetEncoder(FrameParms::renderIndex)->CreateRenderEncoder();
 
-    renderContext->Begin();
+    // renderContext->Begin();
 
-    renderContext->BeginRenderPass(passBeginInfo);
+    // renderContext->BeginRenderPass(passBeginInfo);
 
-    renderContext->EndRenderPass();
+    // renderContext->EndRenderPass();
 
-    swapchain.SubmitCommandBuffer(renderContext->Finish(), imageIndex);
+    // swapchain.SubmitCommandBuffer(renderContext->Finish(), imageIndex);
+
+
+    auto& presentPass = m_renderGraph->AddPass("PresentPass", RenderCommandQueueType::Graphics);
+    presentPass.SetExecCallBack([](CommandEncoder& encoder) {
+        // empty now
+    });
 }
 } // namespace wind

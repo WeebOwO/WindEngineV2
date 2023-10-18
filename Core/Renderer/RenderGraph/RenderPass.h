@@ -27,10 +27,10 @@ struct BufferInfo {
 class RenderGraphPass : public RHIResource<RHIResourceType::RenderPass> {
 public:
     using StencilClearCallBack     = std::function<void(vk::ClearDepthStencilValue& value)>;
-    using RenderColorClearCallBack = std::function<void(vk::ClearDepthStencilValue& value)>;
+    using RenderColorClearCallBack = std::function<void(vk::ClearColorValue& value)>;
     using ExecCallBack             = std::function<void(CommandEncoder& encoder)>;
 
-    RenderGraphPass(RenderGraph& renderGraph, RenderCommandQueueType type);
+    RenderGraphPass(RenderGraph& renderGraph, const std::string& debugName, RenderCommandQueueType type);
 
     RenderGraphPass& AddColorOuput(const std::string&    resourceName,
                                    const AttachmentInfo& attachmentInfo);
@@ -42,13 +42,15 @@ public:
     void SetStencilClearCallBack(const StencilClearCallBack& callback);
     void SetRenderColorClearCallBack(const RenderColorClearCallBack& callback);
 
-    void Compile();
-    void Exec();
-
 private:
-    RenderGraph&           m_renderGraph;
+    friend class RenderGraph;
+    enum StateBit { WriteToDepth = 1 << 0, WriteToBackBuffer = 1 << 1 };
+    struct DepthOuput {
+        std::string    depthOutputName;
+        AttachmentInfo attachmentInfo;
+    };
 
-    bool                   m_writeDepth;
+    RenderGraph&           m_renderGraph;
     std::string            m_debugName;
     RenderCommandQueueType m_passtype;
 
@@ -60,6 +62,7 @@ private:
 
     vk::RenderPass m_vkHandle;
 
-    std::vector<AttachmentInfo> m_attachmentInfos;
+    std::unordered_map<std::string, AttachmentInfo> m_colorAttachmentLUT;
+    std::optional<DepthOuput>                       m_depthOutput;
 };
 }; // namespace wind
