@@ -41,7 +41,7 @@ void Engine::Init() {
 }
 
 float Engine::CalcDeltaTime() {
-    float dalta;
+    float dalta; 
     {
         using namespace std::chrono;
         steady_clock::time_point tickTimePoint = steady_clock::now();

@@ -21,8 +21,8 @@ public:
     ComputeEncoder* CreateComputeEncoder();
     RenderEncoder*  CreateRenderEncoder();
 
-    void              Begin();
     void              Reset();
+    void              Begin();
     vk::CommandBuffer Finish();
 
 protected:

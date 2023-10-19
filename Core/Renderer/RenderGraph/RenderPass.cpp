@@ -8,7 +8,9 @@ RenderGraphPass::RenderGraphPass(RenderGraph& renderGraph, const std::string& de
                                  RenderCommandQueueType type)
     : m_renderGraph(renderGraph), m_debugName(debugName), m_passtype(type) {}
 
-void RenderGraphPass::SetExecCallBack(const ExecCallBack& callback) { m_execCallback = callback; }
+void RenderGraphPass::SetRenderExecCallBack(const RenderExecCallBack& callback) {
+    m_renderExecCallback = callback;
+}
 void RenderGraphPass::SetStencilClearCallBack(const StencilClearCallBack& callback) {
     m_stencilCallback = callback;
 }
@@ -21,6 +23,7 @@ RenderGraphPass& RenderGraphPass::AddColorOuput(const std::string&    resourceNa
     m_colorAttachmentLUT[resourceName] = attachmentInfo;
     return *this;
 }
+
 RenderGraphPass& RenderGraphPass::AddDepthStencilOutput(const std::string&    resourceName,
                                                         const AttachmentInfo& attachmentInfo) {
     if (!m_depthOutput.has_value()) {
@@ -28,6 +31,27 @@ RenderGraphPass& RenderGraphPass::AddDepthStencilOutput(const std::string&    re
     } else {
         WIND_CORE_WARN("Pass {} already have a depth output", m_debugName);
     }
+    return *this;
+}
+
+bool RenderGraphPass::IsWriteToDepth() { return m_writeToDepth; }
+
+bool RenderGraphPass::IsWriteToBackBuffer() { return m_writeToBackBuffer; }
+
+void RenderGraphPass::MarkWriteDepth() {
+    m_writeToDepth = true;
+}
+
+void RenderGraphPass::MarkWriteBackBuffer() {
+    m_writeToBackBuffer = true;
+}
+
+bool RenderGraphPass::ContainsResource(const std::string& resourceName) {
+    return m_colorAttachmentLUT.contains(resourceName);
+}
+
+RenderGraphPass& RenderGraphPass::SetRenderArea(const vk::Rect2D& rect) {
+    m_renderArea = rect;
     return *this;
 }
 } // namespace wind

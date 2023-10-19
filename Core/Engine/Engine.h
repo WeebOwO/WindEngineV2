@@ -2,7 +2,6 @@
 
 #include "std.h"
 
-
 namespace wind {
 class SceneRenderer;
 class Window;

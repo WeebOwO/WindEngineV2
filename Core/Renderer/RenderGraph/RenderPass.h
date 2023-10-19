@@ -26,11 +26,12 @@ struct BufferInfo {
 
 class RenderGraphPass : public RHIResource<RHIResourceType::RenderPass> {
 public:
-    using StencilClearCallBack     = std::function<void(vk::ClearDepthStencilValue& value)>;
-    using RenderColorClearCallBack = std::function<void(vk::ClearColorValue& value)>;
-    using ExecCallBack             = std::function<void(CommandEncoder& encoder)>;
+    using StencilClearCallBack     = std::function<vk::ClearDepthStencilValue()>;
+    using RenderColorClearCallBack = std::function<vk::ClearColorValue()>;
+    using RenderExecCallBack       = std::function<void(RenderEncoder& encoder)>;
 
-    RenderGraphPass(RenderGraph& renderGraph, const std::string& debugName, RenderCommandQueueType type);
+    RenderGraphPass(RenderGraph& renderGraph, const std::string& debugName,
+                    RenderCommandQueueType type);
 
     RenderGraphPass& AddColorOuput(const std::string&    resourceName,
                                    const AttachmentInfo& attachmentInfo);
@@ -38,13 +39,25 @@ public:
     RenderGraphPass& AddDepthStencilOutput(const std::string&    resourceName,
                                            const AttachmentInfo& attachmentInfo);
 
-    void SetExecCallBack(const ExecCallBack& callback);
+    RenderGraphPass& SetRenderArea(const vk::Rect2D& rect);
+
+    void MarkWriteDepth();
+    void MarkWriteBackBuffer();
+
+    void SetRenderExecCallBack(const RenderExecCallBack& callback);
     void SetStencilClearCallBack(const StencilClearCallBack& callback);
     void SetRenderColorClearCallBack(const RenderColorClearCallBack& callback);
 
+    bool IsWriteToDepth();
+    bool IsWriteToBackBuffer();
+
+    bool ContainsResource(const std::string& resourceName);
+
 private:
     friend class RenderGraph;
-    enum StateBit { WriteToDepth = 1 << 0, WriteToBackBuffer = 1 << 1 };
+    bool m_writeToDepth = false;
+    bool m_writeToBackBuffer = false;
+
     struct DepthOuput {
         std::string    depthOutputName;
         AttachmentInfo attachmentInfo;
@@ -54,9 +67,9 @@ private:
     std::string            m_debugName;
     RenderCommandQueueType m_passtype;
 
-    ExecCallBack             m_execCallback;
-    StencilClearCallBack     m_stencilCallback;
-    RenderColorClearCallBack m_renderColorClearCallBack;
+    RenderExecCallBack       m_renderExecCallback{nullptr};
+    StencilClearCallBack     m_stencilCallback{nullptr};
+    RenderColorClearCallBack m_renderColorClearCallBack{nullptr};
 
     RenderCommandQueueType m_queueType;
 
@@ -64,5 +77,7 @@ private:
 
     std::unordered_map<std::string, AttachmentInfo> m_colorAttachmentLUT;
     std::optional<DepthOuput>                       m_depthOutput;
+
+    vk::Rect2D m_renderArea;
 };
 }; // namespace wind

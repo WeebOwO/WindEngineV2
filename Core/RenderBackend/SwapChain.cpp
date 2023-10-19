@@ -98,6 +98,7 @@ void Swapchain::CreateSwapChainInteral(u32 width, u32 height) {
     }
 
     CreateRenderPass();
+    ResetClearValue();
 }
 
 void Swapchain::CreateRenderPass() {
@@ -117,7 +118,7 @@ void Swapchain::CreateRenderPass() {
     vk::AttachmentReference colorReference{.attachment = 0,
                                            .layout     = vk::ImageLayout::eAttachmentOptimal};
 
-    vk::SubpassDescription subpassDesc {
+    vk::SubpassDescription subpassDesc{
         .pipelineBindPoint    = vk::PipelineBindPoint::eGraphics,
         .colorAttachmentCount = 1,
         .pColorAttachments    = &colorReference,
@@ -188,7 +189,7 @@ std::optional<u32> Swapchain::AcquireNextImage() {
     return result.value;
 }
 
-void Swapchain::SubmitCommandBuffer(const vk::CommandBuffer& cmdBuffer, u32 imageIndex) {
+void Swapchain::SubmitCommandBuffer(const vk::CommandBuffer& cmdBuffer, u32 imageIndex) const {
     std::vector<vk::PipelineStageFlags> waitStage{
         vk::PipelineStageFlagBits::eColorAttachmentOutput};
 
@@ -224,5 +225,14 @@ void Swapchain::CleanUpSwapChain() {
 
     vkdevice.destroyRenderPass(m_renderPass);
     vkdevice.destroySwapchainKHR(m_swapchain);
+}
+
+void Swapchain::SetClearColor(float r, float g, float b, float a) {
+    m_swapchainClearColor.setFloat32(std::array<float, 4>{r, g, b, a});
+    ResetClearValue();
+}
+
+void Swapchain::ResetClearValue() {
+    m_clearValue.setColor(m_swapchainClearColor);
 }
 } // namespace wind

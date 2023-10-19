@@ -15,22 +15,27 @@ public:
     Swapchain(const GPUDevice& device, const Window& window);
     ~Swapchain();
 
-    void                Resize(u32 width, u32 height);
-    u32                 ImageCount() const { return m_swapchainImages.size(); }
-    auto                GetFrameBuffer(u32 index) const { return m_framebuffers[index]; }
-    auto                GetImageView(u32 index) const { return m_swapchainViews[index]; }
-    std::pair<u32, u32> GetWindowExtent() const { return {m_windowExtent.width, m_windowExtent.height}; }
-    u32                 GetWidth() const { return m_windowExtent.width; }
-    u32                 GetHeight() const { return m_windowExtent.height; }
-    float               GetAspectRatio() const {
+    void Resize(u32 width, u32 height);
+    u32  ImageCount() const { return m_swapchainImages.size(); }
+    auto GetFrameBuffer(u32 index) const { return m_framebuffers[index]; }
+    auto GetImageView(u32 index) const { return m_swapchainViews[index]; }
+    auto GetClearValue() const { return &m_clearValue; }
+
+    std::pair<u32, u32> GetWindowExtent() const {
+        return {m_windowExtent.width, m_windowExtent.height};
+    }
+    u32   GetWidth() const { return m_windowExtent.width; }
+    u32   GetHeight() const { return m_windowExtent.height; }
+    float GetAspectRatio() const {
         return static_cast<float>(m_windowExtent.width) / static_cast<float>(m_windowExtent.height);
     }
 
     auto GetRenderPass() const { return m_renderPass; }
     void SetFrameNumber(u32 currentFrame) { m_frameNumber = currentFrame; }
+    void SetClearColor(float r, float g, float b, float a);
 
     std::optional<u32> AcquireNextImage();
-    void               SubmitCommandBuffer(const vk::CommandBuffer& cmdBuffer, u32 imageIndex);
+    void               SubmitCommandBuffer(const vk::CommandBuffer& cmdBuffer, u32 imageIndex) const ;
 
 private:
     void QuerySurfaceProperty();
@@ -40,6 +45,7 @@ private:
     void CleanUpSwapChain();
     void CreateRenderPass();
 
+    void ResetClearValue();
     const GPUDevice& m_device;
 
     std::vector<vk::Image>     m_swapchainImages;
@@ -61,8 +67,10 @@ private:
     vk::SurfaceFormatKHR m_surfaceFormat;
     vk::PresentModeKHR   m_surfacePresentMode;
 
-    bool m_vsync{true};
-    u32  m_frameNumber;
+    vk::ClearColorValue m_swapchainClearColor{std::array<float, 4>{0.3f, 0.3f, 0.3f, 0.3f}};
+    vk::ClearValue      m_clearValue {};
+    bool                m_vsync{true};
+    u32                 m_frameNumber;
 };
 
 }; // namespace wind

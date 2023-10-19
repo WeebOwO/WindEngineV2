@@ -34,7 +34,6 @@ public:
 
 private:
     void InitView();
-    void ComputeTest();
     void ResetFrameParams();
 
     void BasePassRendering();
