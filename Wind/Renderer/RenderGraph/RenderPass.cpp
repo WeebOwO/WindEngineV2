@@ -1,7 +1,6 @@
-#pragma once
-
 #include "RenderPass.h"
-#include "Base/Log.h"
+
+#include "Core/Log.h"
 
 namespace wind {
 RenderGraphPass::RenderGraphPass(RenderGraph& renderGraph, const std::string& debugName,

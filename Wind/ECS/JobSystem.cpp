@@ -1,9 +1,5 @@
 #include "JobSystem.h"
 
-#include "Base/Log.h"
-#include <mutex>
-#include <sstream>
-
 namespace wind {
 bool                     JobSystem::s_running = false;
 std::vector<std::thread> JobSystem::s_workerThreads{};

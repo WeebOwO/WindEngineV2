@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Base/Log.h"
+#include "Core/Log.h"
 
 namespace wind {
 

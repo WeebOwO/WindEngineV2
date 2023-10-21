@@ -5,7 +5,6 @@
 #include "VulkanHeader.h"
 
 namespace wind {
-
 class GPUBuffer : public RHIResource<RHIResourceType::Buffer> {
 public:
     GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,

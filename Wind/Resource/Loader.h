@@ -2,7 +2,7 @@
 
 #include "std.h"
 
-#include "Base/Log.h"
+#include "Core/Log.h"
 
 namespace wind::io {
 template <typename T>

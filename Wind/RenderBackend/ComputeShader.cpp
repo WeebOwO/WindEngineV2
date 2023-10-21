@@ -1,6 +1,6 @@
 #include "ComputeShader.h"
 
-#include "Base/Log.h"
+#include "Core/Log.h"
 
 namespace wind {
 ComputeShader::ComputeShader(const std::string& debugName, const std::vector<u32>& spirvCode) {
