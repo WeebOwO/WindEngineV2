@@ -26,7 +26,7 @@ void Swapchain::QuerySurfaceProperty() {
     m_surfaceFormat = surfaceFormats.front();
 
     for (const auto& availableFormat : surfaceFormats) {
-        if (availableFormat.format == vk::Format::eB8G8R8A8Srgb &&
+        if (availableFormat.format == vk::Format::eB8G8R8A8Snorm &&
             availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
             m_surfaceFormat = availableFormat;
             break;

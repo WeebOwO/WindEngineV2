@@ -4,7 +4,6 @@
 #include "RenderResource.h"
 #include "VulkanHeader.h"
 
-
 namespace wind {
 
 class GPUBuffer : public RHIResource<RHIResourceType::Buffer> {

@@ -35,6 +35,7 @@ protected:
 class RenderEncoder : public CommandEncoder {
 public:
     RenderEncoder();
+    void BindGraphicsShader(const RasterShader& shader);
     void BeginRenderPass(const vk::RenderPassBeginInfo& renderPassBeginInfo);
     void EndRenderPass();
 };

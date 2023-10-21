@@ -49,6 +49,7 @@ void SceneRenderer::Render(Swapchain& swapchain) {
         m_frameParams[GetCurrentFrame()].GetEncoder(FrameParms::computeIndex));
     m_renderGraph->ImportBackBuffer("BackBuffer");
 
+    // record render pass
     PresentPass();
 
     m_renderGraph->Exec();
@@ -59,7 +60,7 @@ void SceneRenderer::PresentPass() {
     auto& presentPass = m_renderGraph->AddPass("PresentPass", RenderCommandQueueType::Graphics);
     presentPass.MarkWriteBackBuffer();
     presentPass.SetRenderExecCallBack([](RenderEncoder& encoder) {
-        // empty now
+        
     });
 }
 } // namespace wind

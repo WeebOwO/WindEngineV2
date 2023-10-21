@@ -2,19 +2,13 @@
 
 #include "std.h"
 
-#include "RenderGraph/RenderGraph.h"
-
 #include "RenderBackend/Command.h"
 #include "Renderbackend/SwapChain.h"
+#include "RenderBackend/Fwd.h"
 
+#include "RenderGraph/RenderGraph.h"
 
 namespace wind {
-class ReadBackBuffer;
-class ComputeShader;
-class ComputeEncoder;
-class RenderEncoder;
-class Swapchain;
-
 struct FrameParms {
     void Init();
     void ResetCommanEncoders();
@@ -35,14 +29,13 @@ public:
 private:
     void InitView();
     void ResetFrameParams();
-
+    
     void BasePassRendering();
     void PresentPass();
 
     GPUDevice& m_device;
     FrameParms m_frameParams[Swapchain::MAX_FRAME_IN_FLIGHT];
     u32        m_frameNumber{0};
-
     Ref<RenderGraph> m_renderGraph;
 };
 } // namespace wind

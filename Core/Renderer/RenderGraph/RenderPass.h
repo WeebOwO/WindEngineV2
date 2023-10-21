@@ -55,7 +55,7 @@ public:
 
 private:
     friend class RenderGraph;
-    bool m_writeToDepth = false;
+    bool m_writeToDepth      = false;
     bool m_writeToBackBuffer = false;
 
     struct DepthOuput {
@@ -73,7 +73,8 @@ private:
 
     RenderCommandQueueType m_queueType;
 
-    vk::RenderPass m_vkHandle;
+    vk::RenderPass  m_vkHandle;
+    vk::Framebuffer m_frameBuffer;
 
     std::unordered_map<std::string, AttachmentInfo> m_colorAttachmentLUT;
     std::optional<DepthOuput>                       m_depthOutput;
