@@ -37,8 +37,6 @@ ComputeShader::ComputeShader(const std::string& debugName, const std::vector<u32
 
 void ComputeShader::BindCommandBuffer(const vk::CommandBuffer& cmdBuffer) const {
     cmdBuffer.bindPipeline(vk::PipelineBindPoint::eCompute, m_pipeline);
-    cmdBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, m_layout, 0, m_descriptorSets,
-                                 {});
 }
 
 ComputeShader::~ComputeShader() {

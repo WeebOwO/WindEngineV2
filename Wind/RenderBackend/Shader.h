@@ -18,8 +18,6 @@ public:
     void BindResource(const std::string& resourceName, const vk::DescriptorBufferInfo& bufferInfo);
     virtual void BindCommandBuffer(const vk::CommandBuffer& cmdBuffer) const;
 
-    auto GetShaderName() const { return m_debugName; }
-
 protected:
     auto SetShaderName(const std::string& name) { m_debugName = name; }
     void CollectMetaData(const std::vector<u32>& spirvCode, vk::ShaderStageFlags flag);
@@ -47,7 +45,6 @@ protected:
     std::unordered_map<std::string, PushConstantBinding> m_pushConstantBinding;
 
     std::vector<vk::DescriptorSetLayout> m_descriptorSetLayouts;
-    std::vector<vk::DescriptorSet>       m_descriptorSets;
 };
 
 class ShaderCache {

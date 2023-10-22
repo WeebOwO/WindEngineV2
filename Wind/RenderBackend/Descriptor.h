@@ -46,7 +46,7 @@ public:
     void Init(vk::Device);
     void CleanUp();
 
-    vk::DescriptorSet Allocate(vk::DescriptorSetLayout);
+    vk::DescriptorSet Allocate(const vk::DescriptorSetLayout& layout);
 
 private:
     vk::Device         m_device;
@@ -58,6 +58,4 @@ private:
     std::vector<vk::DescriptorPool> m_usedPools;
     std::vector<vk::DescriptorPool> m_freePools;
 };
-
-
 } // namespace wind

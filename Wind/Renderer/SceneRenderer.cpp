@@ -1,6 +1,7 @@
 #include "SceneRenderer.h"
 
 #include "Core/Log.h"
+#include "Renderer/SceneRenderer.h"
 #include "Resource/Loader.h"
 
 #include "RenderBackend/Buffer.h"
@@ -10,43 +11,57 @@
 #include "RenderGraph/RenderPass.h"
 
 namespace wind {
-void FrameParms::Init() {
-    m_encoders[computeIndex] = ref::Create<ComputeEncoder>();
-    m_encoders[renderIndex]  = ref::Create<RenderEncoder>();
+void FrameParms::Init(const vk::Device& device) {
+    computeEncoder = ref::Create<ComputeEncoder>();
+    renderEncoder  = ref::Create<RenderEncoder>();
+
+    vk::FenceCreateInfo fenceCreateInfo{.flags = vk::FenceCreateFlagBits::eSignaled};
+    flightFence = device.createFence(fenceCreateInfo);
+
+    imageAvailableSemaphore = device.createSemaphore({});
+    renderFinishedSemaphore = device.createSemaphore({});
+}
+
+void FrameParms::Destroy(const vk::Device& device) {
+    device.destroyFence(flightFence);
+    device.destroySemaphore(imageAvailableSemaphore);
+    device.destroySemaphore(renderFinishedSemaphore);
 }
 
 void FrameParms::ResetCommanEncoders() {
-    for (const auto& encoder : m_encoders) {
-        encoder->Reset();
-    }
+    computeEncoder->Reset();
+    renderEncoder->Reset();
 }
 
-SceneRenderer::~SceneRenderer() { WIND_CORE_INFO("Destory {}", "Scene Renderer"); }
+SceneRenderer::~SceneRenderer() {
+    m_device.GetVkDeviceHandle().waitIdle();
+    for (auto& frameData : m_frameParams) {
+        frameData.Destroy(m_device.GetVkDeviceHandle());
+    }
+}
 
 SceneRenderer::SceneRenderer() : m_device(Backend::GetGPUDevice()) {
     auto vkDevice = m_device.GetVkDeviceHandle();
     m_renderGraph = ref::Create<RenderGraph>(m_device);
     // create frame parms
     for (auto& frameParms : m_frameParams) {
-        frameParms.Init();
+        frameParms.Init(vkDevice);
     }
 }
 
-u32 SceneRenderer::GetCurrentFrame() { return m_frameNumber; }
-
-void SceneRenderer::ResetFrameParams() { m_frameParams[GetCurrentFrame()].ResetCommanEncoders(); }
+FrameParms& SceneRenderer::GetCurrentFrameData() { return m_frameParams[m_frameNumber]; }
 
 void SceneRenderer::Render(Swapchain& swapchain) {
-    swapchain.SetFrameNumber(m_frameNumber);
-    u32 imageIndex = swapchain.AcquireNextImage().value();
-    ResetFrameParams();
+
+    auto& frameData = GetCurrentFrameData();
+    frameData.swapchainImageIndex =
+        swapchain.AcquireNextImage(frameData.flightFence, frameData.imageAvailableSemaphore)
+            .value();
+    frameData.ResetCommanEncoders();
 
     // init render graph
-    m_renderGraph->SetupSwapChain(swapchain, imageIndex);
-    m_renderGraph->SetGraphicsEncoder(
-        m_frameParams[GetCurrentFrame()].GetEncoder(FrameParms::renderIndex));
-    m_renderGraph->SetComputeEncoder(
-        m_frameParams[GetCurrentFrame()].GetEncoder(FrameParms::computeIndex));
+    m_renderGraph->SetupSwapChain(swapchain);
+    m_renderGraph->SetupFrameData(frameData);
     m_renderGraph->ImportBackBuffer("BackBuffer");
 
     // record render pass
@@ -60,7 +75,7 @@ void SceneRenderer::PresentPass() {
     auto& presentPass = m_renderGraph->AddPass("PresentPass", RenderCommandQueueType::Graphics);
     presentPass.MarkWriteBackBuffer();
     presentPass.SetRenderExecCallBack([](RenderEncoder& encoder) {
-        
+
     });
 }
 } // namespace wind

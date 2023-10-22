@@ -11,7 +11,6 @@ class Window;
 class Swapchain {
 public:
     static constexpr uint32_t MAX_FRAME_IN_FLIGHT = 2;
-
     Swapchain(const GPUDevice& device, const Window& window);
     ~Swapchain();
 
@@ -34,26 +33,24 @@ public:
     void SetFrameNumber(u32 currentFrame) { m_frameNumber = currentFrame; }
     void SetClearColor(float r, float g, float b, float a);
 
-    std::optional<u32> AcquireNextImage();
-    void               SubmitCommandBuffer(const vk::CommandBuffer& cmdBuffer, u32 imageIndex) const ;
+    std::optional<u32> AcquireNextImage(const vk::Fence&     waitFence,
+                                        const vk::Semaphore& imageAvailableSemaphore);
+    void SubmitCommandBuffer(const vk::CommandBuffer& cmdBuffer, const vk::Fence& signalFence,
+                             const vk::Semaphore& imageAvailableSemaphore,
+                             const vk::Semaphore& imageFinishSemaphre, u32 imageIndex) const;
 
 private:
     void QuerySurfaceProperty();
-    void CreateSyncObject();
     void GetSwapChainImage();
     void CreateSwapChainInteral(u32 width, u32 height);
     void CleanUpSwapChain();
     void CreateRenderPass();
 
-    void ResetClearValue();
+    void             ResetClearValue();
     const GPUDevice& m_device;
 
     std::vector<vk::Image>     m_swapchainImages;
     std::vector<vk::ImageView> m_swapchainViews;
-
-    std::vector<vk::Semaphore> m_imageAvailableSemaphores;
-    std::vector<vk::Semaphore> m_renderFinishedSemaphores;
-    std::vector<vk::Fence>     m_fences;
 
     vk::SwapchainKHR m_swapchain;
     vk::SurfaceKHR   m_surface;
@@ -68,9 +65,10 @@ private:
     vk::PresentModeKHR   m_surfacePresentMode;
 
     vk::ClearColorValue m_swapchainClearColor{std::array<float, 4>{0.3f, 0.3f, 0.3f, 0.3f}};
-    vk::ClearValue      m_clearValue {};
+    vk::ClearValue      m_clearValue{};
     bool                m_vsync{true};
-    u32                 m_frameNumber;
+
+    u32 m_frameNumber;
 };
 
 }; // namespace wind

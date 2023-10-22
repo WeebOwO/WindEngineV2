@@ -44,7 +44,7 @@ vk::DescriptorSetLayout DescriptorLayoutCache::CreateDescriptorsetlayout(
     const vk::DescriptorSetLayoutCreateInfo layoutInfo) {
     DescriptorLayoutInfo ownLayoutInfo;
     uint32_t             bindCount = layoutInfo.bindingCount;
-    
+
     ownLayoutInfo.bindings.reserve(bindCount);
     bool isSorted    = false;
     int  lastBinding = -1;
@@ -91,9 +91,7 @@ vk::DescriptorPool CreatePool(vk::Device device, const DescriptorAllocator::Pool
     }
 
     vk::DescriptorPoolCreateInfo createInfo;
-    createInfo.setPoolSizeCount(sizes.size())
-              .setPoolSizes(sizes)
-              .setMaxSets(count);
+    createInfo.setPoolSizeCount(sizes.size()).setPoolSizes(sizes).setMaxSets(count);
 
     return device.createDescriptorPool(createInfo);
 }
@@ -119,20 +117,16 @@ vk::DescriptorPool DescriptorAllocator::GrabPool() {
     }
 }
 
-vk::DescriptorSet DescriptorAllocator::Allocate(vk::DescriptorSetLayout descriptorSetLayout) {
+vk::DescriptorSet DescriptorAllocator::Allocate(const vk::DescriptorSetLayout& layout) {
     if (!m_currentPool) {
         m_currentPool = GrabPool();
         m_usedPools.push_back(m_currentPool);
     }
 
-    vk::DescriptorSetAllocateInfo allcateInfo{};
-    allcateInfo.setDescriptorPool(m_currentPool)
-        .setDescriptorSetCount(1)
-        .setSetLayouts(descriptorSetLayout);
+    vk::DescriptorSetAllocateInfo allcateInfo{.descriptorPool     = m_currentPool,
+                                              .descriptorSetCount = 1,
+                                              .pSetLayouts        = &layout};
 
-    vk::DescriptorSet descriptorSet;
-    descriptorSet = m_device.allocateDescriptorSets(allcateInfo).front();
-
-    return descriptorSet;
+    return m_device.allocateDescriptorSets(allcateInfo).front();
 }
 } // namespace wind

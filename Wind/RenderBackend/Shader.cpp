@@ -86,7 +86,6 @@ void Shader::GeneratePipelineLayout() {
             vkDevice.createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
 
         m_descriptorSetLayouts.push_back(setLayout);
-        m_descriptorSets.push_back(device.AllocateDescriptor(setLayout));
     }
 
     for (const auto& [resourceName, pushBinding] : m_pushConstantBinding) {
@@ -115,23 +114,7 @@ Shader::~Shader() {
     }
 }
 
-void Shader::BindResource(const std::string&              resourceName,
-                          const vk::DescriptorBufferInfo& bufferInfo) {
-    if (!m_bindings.contains(resourceName)) {
-        WIND_CORE_INFO("Fail to find shader resource {}", resourceName);
-    }
-
-    auto                   bindData = m_bindings[resourceName];
-    vk::WriteDescriptorSet writer{.dstSet          = m_descriptorSets[bindData.set],
-                                  .dstBinding      = bindData.binding,
-                                  .descriptorCount = bindData.count,
-                                  .descriptorType  = bindData.descriptorType,
-                                  .pBufferInfo     = &bufferInfo};
-
-    device.GetVkDeviceHandle().updateDescriptorSets(1, &writer, 0, nullptr);
-}
-
 void Shader::BindCommandBuffer(const vk::CommandBuffer& cmdBuffer) const {
-
+    
 }
 } // namespace wind

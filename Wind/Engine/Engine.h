@@ -12,7 +12,7 @@ public:
     ~Engine();
 
     void Run();
-    
+
 private:
     void Init();
     void PostInit();
@@ -22,9 +22,9 @@ private:
 
     float CalcDeltaTime();
 
-    Scope<Window> m_window;
+    Scope<Window>        m_window;
     Scope<SceneRenderer> m_sceneRenderer;
-    
+
     std::chrono::steady_clock::time_point m_lastTickTimePoint{std::chrono::steady_clock::now()};
 };
 

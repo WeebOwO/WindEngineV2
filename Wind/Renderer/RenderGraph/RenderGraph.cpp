@@ -7,6 +7,8 @@
 #include "RenderBackend/Command.h"
 #include "RenderBackend/SwapChain.h"
 
+#include "Renderer/SceneRenderer.h"
+
 namespace wind {
 
 RenderGraph::RenderGraph(GPUDevice& device) : m_device(device) {}
@@ -15,10 +17,9 @@ void RenderGraph::ImportBackBuffer(const std::string& backBufferName) {
     m_backBufferDebugName = backBufferName;
 }
 
-void RenderGraph::SetupSwapChain(const Swapchain& swapchain, u32 imageIndex) {
-    m_swapchain           = &swapchain;
-    m_swapchainImageIndex = imageIndex;
-}
+void RenderGraph::SetupSwapChain(const Swapchain& swapchain) { m_swapchain = &swapchain; }
+
+void RenderGraph::SetupFrameData(FrameParms& frameData) { m_currentFrameData = &frameData; }
 
 RenderGraphPass& RenderGraph::AddPass(const std::string& passName, RenderCommandQueueType type) {
     if (m_renderGraphPasses.contains(passName)) {
@@ -32,14 +33,14 @@ RenderGraphPass& RenderGraph::AddPass(const std::string& passName, RenderCommand
 
 void RenderGraph::Exec() {
     auto vkDevice      = m_device.GetVkDeviceHandle();
-    auto renderEncoder = m_graphicsEncoder->CreateRenderEncoder();
+    auto renderEncoder = m_currentFrameData->renderEncoder->CreateRenderEncoder();
     renderEncoder->Begin();
-    
+
     for (const auto& [passDebugName, graphPass] : m_renderGraphPasses) {
         if (graphPass->IsWriteToBackBuffer()) {
             vk::RenderPassBeginInfo beginInfo{
                 .renderPass      = m_swapchain->GetRenderPass(),
-                .framebuffer     = m_swapchain->GetFrameBuffer(m_swapchainImageIndex),
+                .framebuffer     = m_swapchain->GetFrameBuffer(m_currentFrameData->swapchainImageIndex),
                 .renderArea      = vk::Rect2D{.offset = {},
                                               .extent = {.width  = m_swapchain->GetWidth(),
                                                          .height = m_swapchain->GetHeight()}},
@@ -52,7 +53,10 @@ void RenderGraph::Exec() {
     }
 
     if (m_swapchain) {
-        m_swapchain->SubmitCommandBuffer(renderEncoder->Finish(), m_swapchainImageIndex);
+        m_swapchain->SubmitCommandBuffer(renderEncoder->Finish(), m_currentFrameData->flightFence,
+                                         m_currentFrameData->imageAvailableSemaphore,
+                                         m_currentFrameData->renderFinishedSemaphore,
+                                         m_currentFrameData->swapchainImageIndex);
     }
 }
 } // namespace wind

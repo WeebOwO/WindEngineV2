@@ -10,6 +10,7 @@
 namespace wind {
 class RenderGraphPass;
 class Swapchain;
+class FrameParms;
 
 class RenderGraph {
 public:
@@ -21,10 +22,9 @@ public:
     void ImportTexture(const std::string& resourceName, Ref<GPUTexture2D> externalTexture);
     void ImportBackBuffer(const std::string& backBufferName);
 
-    void SetGraphicsEncoder(Ref<CommandEncoder> encoder) { m_graphicsEncoder = encoder; }
-    void SetComputeEncoder(Ref<CommandEncoder> encoder) { m_computeEncoder = encoder; };
+    void SetupSwapChain(const Swapchain& swapchain);
+    void SetupFrameData(FrameParms& frameData);
 
-    void SetupSwapChain(const Swapchain& swapchain, u32 imageIndex);
     void Exec();
 
 private:
@@ -35,12 +35,11 @@ private:
     std::unordered_map<std::string, Ref<RenderGraphPass>> m_renderGraphPasses;
     std::unordered_map<std::string, RenderGraphResource>  m_resources;
 
-    Ref<CommandEncoder>            m_graphicsEncoder;
-    Ref<CommandEncoder>            m_computeEncoder;
     std::vector<Ref<GPUTexture2D>> m_importTexture;
 
     const Swapchain* m_swapchain;
-    u32              m_swapchainImageIndex;
     std::string      m_backBufferDebugName{"None"};
+
+    FrameParms* m_currentFrameData{nullptr};
 };
 } // namespace wind
