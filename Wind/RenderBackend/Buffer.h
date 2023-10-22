@@ -1,5 +1,7 @@
 #pragma once
 
+#include "std.h"
+
 #include "Allocator.h"
 #include "RenderResource.h"
 #include "VulkanHeader.h"
@@ -10,6 +12,7 @@ public:
     GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,
               const VmaAllocationCreateInfo& AllocationCreateInfo);
     ~GPUBuffer();
+    
     GPUBuffer(const GPUBuffer& other)            = delete;
     GPUBuffer& operator=(const GPUBuffer& other) = delete;
 
@@ -42,10 +45,30 @@ public:
     ~ReadBackBuffer();
 
     u8* MapMemory();
-    
+
 private:
     void UnmapMemory();
 
     u8* m_mapMemory{nullptr};
 };
+
+class PushBuffer : public GPUBuffer {
+public:
+    PushBuffer(u32 buffersize, vk::BufferUsageFlags usage, VmaMemoryUsage vmaMemoryUsage);
+
+    template <typename T> u32 Push(T& data);
+
+    u32  Push(void* data, u32 size);
+    void Reset();
+
+private:
+    u32 m_align;
+    u32 m_currentOffset;
+
+    u8* m_mapMemory{nullptr};
+};
 } // namespace wind
+
+namespace wind::utils {
+u32 PadUniformBufferSize(u32 originSize);
+}

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "entt/entt.hpp"
+
 namespace wind {
 class Entity {
 public:

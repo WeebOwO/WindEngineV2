@@ -1,4 +1,5 @@
 #include "Buffer.h"
+#include "RenderBackend/Buffer.h"
 
 namespace wind {
 GPUBuffer::GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,
@@ -57,4 +58,21 @@ void ReadBackBuffer::UnmapMemory() {
 ReadBackBuffer::~ReadBackBuffer() {
     if (m_mapMemory != nullptr) { UnmapMemory(); }
 }
+
+PushBuffer::PushBuffer(u32 buffersize, vk::BufferUsageFlags usage, VmaMemoryUsage vmaMemoryUsage)
+    : GPUBuffer(buffersize, usage, VmaAllocationCreateInfo{.usage = vmaMemoryUsage}) {}
+
+void PushBuffer::Reset() { m_currentOffset = 0; }
 } // namespace wind
+
+namespace wind::utils {
+u32 PadUniformBufferSize(u32 originSize) {
+    auto limits          = Backend::GetGPUDevice().GetLimits();
+    u32  minUboAlignment = limits.minUniformBufferOffsetAlignment;
+    u32  alignedSize     = originSize;
+    if (minUboAlignment > 0) {
+        alignedSize = (alignedSize + minUboAlignment - 1) & ~(minUboAlignment - 1);
+    }
+    return alignedSize;
+}
+} // namespace wind::utils

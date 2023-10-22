@@ -60,7 +60,7 @@ void GPUDevice::CreateInstance() {
 
     auto extensions = GetRequiredExtensions();
 
-    vk::InstanceCreateInfo instanceCreateInfo {
+    vk::InstanceCreateInfo instanceCreateInfo{
         .flags                   = {},
         .pApplicationInfo        = &applicationInfo,
         .enabledLayerCount       = (u32)layers.size(),
@@ -78,7 +78,11 @@ void GPUDevice::CreateInstance() {
 
 void GPUDevice::PickupPhysicalDevice() {
     m_physicalDevice = m_vkInstance->enumeratePhysicalDevices().front();
-    WIND_CORE_INFO(m_physicalDevice.getProperties().deviceName);
+
+    auto properties = m_physicalDevice.getProperties();
+    m_limits        = properties.limits;
+    
+    WIND_CORE_INFO(properties.deviceName);
 
     auto supportedExtensions = m_physicalDevice.enumerateDeviceExtensionProperties();
 
@@ -148,9 +152,7 @@ void GPUDevice::CreateDevice() {
     m_computeQueue  = m_device->getQueue(m_queueIndices.computeQueueIndex.value(), 0);
 }
 
-void GPUDevice::InitAllocator() {
-    m_allocator           = scope::Create<VkAllocator>(*this);
-}
+void GPUDevice::InitAllocator() { m_allocator = scope::Create<VkAllocator>(*this); }
 
 VkAllocator* GPUDevice::GetAllocator() const { return m_allocator.get(); }
 

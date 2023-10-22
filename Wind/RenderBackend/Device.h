@@ -35,14 +35,15 @@ public:
     auto GetVkInstance() const noexcept { return *m_vkInstance; }
 
     auto GetAllocator() const -> VkAllocator*;
+    auto GetLimits() { return m_limits; }
 
     AllocatedBuffer AllocateBuffer(const vk::BufferCreateInfo&    bufferCreateInfo,
                                    const VmaAllocationCreateInfo& allocationCreateInfo) const;
 
     void DestroyBuffer(AllocatedBuffer& buffer) const;
 
-    AllocatedImage AllocateImage(const vk::ImageCreateInfo&    imageCreateInfo,
-                                   const VmaAllocationCreateInfo& allocationCreateInfo) const;
+    AllocatedImage AllocateImage(const vk::ImageCreateInfo&     imageCreateInfo,
+                                 const VmaAllocationCreateInfo& allocationCreateInfo) const;
 
     void DestroyImage(AllocatedImage& image) const;
 
@@ -61,13 +62,15 @@ private:
 
     std::vector<const char*> GetRequiredExtensions();
 
+    u32          m_alignSize;
     QueueIndices m_queueIndices;
     vk::Queue    m_graphicsQueue;
     vk::Queue    m_computeQueue;
 
-    vk::UniqueInstance m_vkInstance;
-    vk::PhysicalDevice m_physicalDevice;
-    vk::UniqueDevice   m_device;
+    vk::UniqueInstance       m_vkInstance;
+    vk::PhysicalDevice       m_physicalDevice;
+    vk::PhysicalDeviceLimits m_limits;
+    vk::UniqueDevice         m_device;
 
     vk::UniqueDebugUtilsMessengerEXT m_dubugMessenger;
     vk::DynamicLoader                m_vkLoader{};

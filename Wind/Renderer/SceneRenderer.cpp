@@ -1,16 +1,18 @@
 #include "SceneRenderer.h"
 
 #include "Core/Log.h"
-#include "RenderBackend/Descriptor.h"
-#include "Renderer/SceneRenderer.h"
+
 #include "Resource/Loader.h"
+
+#include "Renderer/SceneRenderer.h"
 
 #include "RenderBackend/Buffer.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/ComputeShader.h"
+#include "RenderBackend/Descriptor.h"
+
 
 #include "RenderGraph/RenderPass.h"
-#include "std.h"
 
 namespace wind {
 void FrameParms::Init(const vk::Device& device) {
@@ -61,6 +63,7 @@ void SceneRenderer::Render(Swapchain& swapchain) {
     frameData.swapchainImageIndex =
         swapchain.AcquireNextImage(frameData.flightFence, frameData.imageAvailableSemaphore)
             .value();
+
     frameData.ResetCommanEncoders();
 
     // init render graph

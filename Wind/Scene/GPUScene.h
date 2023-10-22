@@ -1,7 +1,5 @@
 #pragma once
 
 namespace wind {
-struct GPUScene {
-
-};
+// todo
 }; // namespace wind

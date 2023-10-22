@@ -1,10 +1,9 @@
 #pragma once
 
-#include "RenderBackend/Descriptor.h"
 #include "std.h"
 
-#include "RenderBackend/Command.h"
 #include "RenderBackend/Fwd.h"
+#include "RenderBackend/Command.h"
 #include "Renderbackend/SwapChain.h"
 
 #include "RenderGraph/RenderGraph.h"
@@ -29,7 +28,7 @@ struct FrameParms {
 
     u32 swapchainImageIndex;
 
-    Ref<DescriptorAllocator> dynamicDescriptorAllocator;
+    Ref<DescriptorAllocator> dynamicDescriptorAllocator; // have a list of descriptor pool
 };
 
 class SceneRenderer {
