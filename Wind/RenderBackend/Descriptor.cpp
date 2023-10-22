@@ -96,9 +96,10 @@ vk::DescriptorPool CreatePool(vk::Device device, const DescriptorAllocator::Pool
     return device.createDescriptorPool(createInfo);
 }
 
-void DescriptorAllocator::Init(vk::Device device) { m_device = device; }
+DescriptorAllocator::DescriptorAllocator(const vk::Device& device, u32 descriptorBaseNum)
+    : m_device(device), m_descriptorBaseNum(descriptorBaseNum) {}
 
-void DescriptorAllocator::CleanUp() {
+DescriptorAllocator::~DescriptorAllocator() {
     for (auto p : m_freePools) {
         m_device.destroyDescriptorPool(p);
     }
@@ -123,9 +124,8 @@ vk::DescriptorSet DescriptorAllocator::Allocate(const vk::DescriptorSetLayout& l
         m_usedPools.push_back(m_currentPool);
     }
 
-    vk::DescriptorSetAllocateInfo allcateInfo{.descriptorPool     = m_currentPool,
-                                              .descriptorSetCount = 1,
-                                              .pSetLayouts        = &layout};
+    vk::DescriptorSetAllocateInfo allcateInfo{
+        .descriptorPool = m_currentPool, .descriptorSetCount = 1, .pSetLayouts = &layout};
 
     return m_device.allocateDescriptorSets(allcateInfo).front();
 }

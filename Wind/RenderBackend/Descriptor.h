@@ -42,14 +42,14 @@ public:
             {vk::DescriptorType::eUniformBufferDynamic, 0.5f},
             {vk::DescriptorType::eStorageBufferDynamic, 0.5f}};
     };
-
-    void Init(vk::Device);
-    void CleanUp();
+    DescriptorAllocator(const vk::Device& device, u32 descriptorBaseNum = 1000);
+    ~DescriptorAllocator();
 
     vk::DescriptorSet Allocate(const vk::DescriptorSetLayout& layout);
 
 private:
-    vk::Device         m_device;
+    const vk::Device&  m_device;
+    u32                m_descriptorBaseNum;
     vk::DescriptorPool GrabPool();
 
     PoolSizes descriptorSizes;

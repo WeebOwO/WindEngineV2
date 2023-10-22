@@ -78,8 +78,6 @@ private:
     Scope<VkAllocator> m_allocator;
     bool               m_enableDebug{true};
 
-    Scope<DescriptorAllocator> m_descriptorAllocator;
-
     vk::CommandPool   m_backupCommandPool;
     vk::CommandBuffer m_backupCommandBuffer;
 

@@ -150,8 +150,6 @@ void GPUDevice::CreateDevice() {
 
 void GPUDevice::InitAllocator() {
     m_allocator           = scope::Create<VkAllocator>(*this);
-    m_descriptorAllocator = scope::Create<DescriptorAllocator>();
-    m_descriptorAllocator->Init(*m_device);
 }
 
 VkAllocator* GPUDevice::GetAllocator() const { return m_allocator.get(); }
@@ -167,7 +165,6 @@ GPUDevice::GPUDevice() {
 
 GPUDevice::~GPUDevice() {
     m_device->waitIdle();
-    m_descriptorAllocator->CleanUp();
     m_device->destroyCommandPool(m_backupCommandPool);
     m_device->destroyFence(m_backupCommandfence);
 }
@@ -187,10 +184,6 @@ AllocatedImage GPUDevice::AllocateImage(const vk::ImageCreateInfo&     imageCrea
 }
 
 void GPUDevice::DestroyImage(AllocatedImage& image) const { m_allocator->DestroyImage(image); }
-
-vk::DescriptorSet GPUDevice::AllocateDescriptor(const vk::DescriptorSetLayout& layout) const {
-    return m_descriptorAllocator->Allocate(layout);
-}
 
 void GPUDevice::InitBackupCommandBuffer() {
     vk::CommandPoolCreateInfo poolCreateInfo{

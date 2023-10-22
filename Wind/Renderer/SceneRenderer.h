@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RenderBackend/Descriptor.h"
 #include "std.h"
 
 #include "RenderBackend/Command.h"
@@ -26,7 +27,9 @@ struct FrameParms {
     vk::Semaphore renderFinishedSemaphore;
     vk::Fence     flightFence;
 
-    u32           swapchainImageIndex;
+    u32 swapchainImageIndex;
+
+    Ref<DescriptorAllocator> dynamicDescriptorAllocator;
 };
 
 class SceneRenderer {

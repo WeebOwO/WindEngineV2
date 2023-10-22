@@ -1,6 +1,7 @@
 #include "SceneRenderer.h"
 
 #include "Core/Log.h"
+#include "RenderBackend/Descriptor.h"
 #include "Renderer/SceneRenderer.h"
 #include "Resource/Loader.h"
 
@@ -9,6 +10,7 @@
 #include "RenderBackend/ComputeShader.h"
 
 #include "RenderGraph/RenderPass.h"
+#include "std.h"
 
 namespace wind {
 void FrameParms::Init(const vk::Device& device) {
@@ -20,6 +22,8 @@ void FrameParms::Init(const vk::Device& device) {
 
     imageAvailableSemaphore = device.createSemaphore({});
     renderFinishedSemaphore = device.createSemaphore({});
+
+    dynamicDescriptorAllocator = ref::Create<DescriptorAllocator>(device);
 }
 
 void FrameParms::Destroy(const vk::Device& device) {
