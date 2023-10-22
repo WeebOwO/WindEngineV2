@@ -1,16 +1,17 @@
 #include "SceneRenderer.h"
 
+#include "View.h"
+
 #include "Core/Log.h"
+#include "Scene/Scene.h"
 
 #include "Resource/Loader.h"
-
 #include "Renderer/SceneRenderer.h"
 
 #include "RenderBackend/Buffer.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/ComputeShader.h"
 #include "RenderBackend/Descriptor.h"
-
 
 #include "RenderGraph/RenderPass.h"
 
@@ -57,8 +58,7 @@ SceneRenderer::SceneRenderer() : m_device(Backend::GetGPUDevice()) {
 
 FrameParms& SceneRenderer::GetCurrentFrameData() { return m_frameParams[m_frameNumber]; }
 
-void SceneRenderer::Render(Swapchain& swapchain) {
-
+void SceneRenderer::Render(Swapchain& swapchain, Scene& scene, View& view) {
     auto& frameData = GetCurrentFrameData();
     frameData.swapchainImageIndex =
         swapchain.AcquireNextImage(frameData.flightFence, frameData.imageAvailableSemaphore)

@@ -5,6 +5,7 @@
 namespace wind {
 class SceneRenderer;
 class Window;
+class Scene;
 
 class Engine {
 public:
@@ -20,11 +21,13 @@ private:
     void RenderTick(float delta);
     void LogicTick(float delta);
 
+    void  LoadScene();
     float CalcDeltaTime();
 
-    Scope<Window>        m_window;
-    Scope<SceneRenderer> m_sceneRenderer;
-
+    Scope<Window>                         m_window;
+    Scope<SceneRenderer>                  m_sceneRenderer;
+    std::vector<Scope<Scene>>             m_scenes;
+    u32                                   m_activeSceneIndex;
     std::chrono::steady_clock::time_point m_lastTickTimePoint{std::chrono::steady_clock::now()};
 };
 

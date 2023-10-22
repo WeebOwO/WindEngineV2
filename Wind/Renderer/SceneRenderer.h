@@ -2,13 +2,17 @@
 
 #include "std.h"
 
-#include "RenderBackend/Fwd.h"
 #include "RenderBackend/Command.h"
+#include "RenderBackend/Fwd.h"
 #include "Renderbackend/SwapChain.h"
+
 
 #include "RenderGraph/RenderGraph.h"
 
 namespace wind {
+class Scene;
+class View;
+
 struct RenderConfig {
     uint32_t MAX_FRAME_IN_FLIGHT = 2;
 };
@@ -36,7 +40,7 @@ public:
     SceneRenderer();
     ~SceneRenderer();
 
-    void        Render(Swapchain& swapchain);
+    void        Render(Swapchain& swapchain, Scene& scene, View& view);
     FrameParms& GetCurrentFrameData();
 
 private:

@@ -1,12 +1,15 @@
 #include "Engine.h"
 
-#include "tracy/Tracy.hpp"
+#include <tracy/Tracy.hpp>
 
-#include "Window.h"
 #include "Core/Log.h"
 #include "ECS/JobSystem.h"
 #include "RenderBackend/Backend.h"
 #include "Renderer/SceneRenderer.h"
+#include "Renderer/View.h"
+#include "Scene/Scene.h"
+#include "Window.h"
+
 
 namespace wind {
 Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {
@@ -14,14 +17,18 @@ Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {
     PostInit();
 }
 
-Engine::~Engine() { 
-    Quit(); 
+Engine::~Engine() { Quit(); }
+
+void Engine::LoadScene() {
+    m_activeSceneIndex = 0;
+    m_scenes.push_back(scope::Create<Scene>());
 }
 
 void Engine::Run() {
 #ifdef TRACY_ENABLE
     WIND_CORE_INFO("Start Tracy");
 #endif
+    LoadScene();
     while (!glfwWindowShouldClose(m_window->GetWindow())) {
         ZoneScoped;
         float fs = CalcDeltaTime();
@@ -36,12 +43,12 @@ void Engine::Init() {
     Backend::Init();
     JobSystem::Init();
     WIND_CORE_INFO("Init the engine core!");
-    
+
     m_sceneRenderer = scope::Create<SceneRenderer>();
 }
 
 float Engine::CalcDeltaTime() {
-    float dalta; 
+    float dalta;
     {
         using namespace std::chrono;
         steady_clock::time_point tickTimePoint = steady_clock::now();
@@ -53,9 +60,7 @@ float Engine::CalcDeltaTime() {
     return dalta;
 }
 
-void Engine::PostInit() { 
-    m_window->Init(); 
-}
+void Engine::PostInit() { m_window->Init(); }
 
 void Engine::Quit() {
     JobSystem::Quit();
@@ -64,7 +69,8 @@ void Engine::Quit() {
 
 void Engine::RenderTick(float delta) {
     ZoneScopedN("RenderTick");
-    m_sceneRenderer->Render(*m_window->GetSwapChain());
+    View view{};
+    m_sceneRenderer->Render(*m_window->GetSwapChain(), *m_scenes[m_activeSceneIndex], view);
 }
 
 void Engine::LogicTick(float delta) {
