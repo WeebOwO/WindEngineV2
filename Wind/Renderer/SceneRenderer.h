@@ -6,7 +6,6 @@
 #include "RenderBackend/Fwd.h"
 #include "Renderbackend/SwapChain.h"
 
-
 #include "RenderGraph/RenderGraph.h"
 
 namespace wind {

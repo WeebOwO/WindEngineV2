@@ -17,14 +17,12 @@ enum class RHIResourceType : u8 {
     RenderPass
 };
 
-template <RHIResourceType ResourceType> 
-struct ResourceHandle {
+template <RHIResourceType ResourceType> struct ResourceHandle {
     static constexpr RHIResourceType handleType = ResourceType;
-    u32                                 handle;
+    u32                              handle;
 };
 
-template <RHIResourceType ResourceType> 
-struct RHIResource {
+template <RHIResourceType ResourceType> struct RHIResource {
     RHIResource() : device(Backend::GetGPUDevice()) {}
 
     GPUDevice&                   device;

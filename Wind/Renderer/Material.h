@@ -18,7 +18,6 @@ public:
 
 private:
     ShadingModel      m_shadingModel;
-    Ref<RasterShader> m_rasterShader;
     std::string       m_debugName;
 };
 

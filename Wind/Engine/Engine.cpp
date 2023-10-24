@@ -2,12 +2,11 @@
 
 #include <tracy/Tracy.hpp>
 
+#include "Engine/RuntimeContext.h"
 #include "Window.h"
 #include "Core/Log.h"
 #include "Scene/Scene.h"
 #include "Renderer/View.h"
-#include "ECS/JobSystem.h"
-#include "RenderBackend/Backend.h"
 #include "Renderer/SceneRenderer.h"
 
 namespace wind {
@@ -38,11 +37,8 @@ void Engine::Run() {
 }
 
 void Engine::Init() {
-    Log::Init();
-    Backend::Init();
-    JobSystem::Init();
+    g_runtimeContext.Init();
     WIND_CORE_INFO("Init the engine core!");
-
     m_sceneRenderer = scope::Create<SceneRenderer>();
 }
 
@@ -62,7 +58,7 @@ float Engine::CalcDeltaTime() {
 void Engine::PostInit() { m_window->Init(); }
 
 void Engine::Quit() {
-    JobSystem::Quit();
+    g_runtimeContext.Quit();
     WIND_CORE_INFO("Shutdown engine");
 }
 

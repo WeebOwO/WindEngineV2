@@ -11,5 +11,4 @@ struct RenderGraphResource {
     std::unordered_set<std::string> producer;
     std::unordered_set<std::string> consumer;
 };
-
 } // namespace wind

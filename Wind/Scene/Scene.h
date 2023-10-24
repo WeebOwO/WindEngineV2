@@ -26,5 +26,6 @@ public:
 
 private:
     std::vector<Entity> m_entities;
+    LightSceneInfo      m_lightSceneInfo;
 };
 } // namespace wind

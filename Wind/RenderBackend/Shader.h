@@ -46,15 +46,4 @@ protected:
 
     std::vector<vk::DescriptorSetLayout> m_descriptorSetLayouts;
 };
-
-class ShaderCache {
-public:
-    ShaderCache(const vk::Device& device) : m_device(device) {}
-
-    void Destroy();
-
-private:
-    const vk::Device&                                 m_device;
-    std::unordered_map<std::string, vk::ShaderModule> m_cache;
-};
 } // namespace wind

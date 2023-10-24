@@ -22,6 +22,7 @@
 #include <string_view>
 
 #include <cstdint>
+#include <variant>
 
 using i8  = int8_t;
 using i32 = int32_t;
