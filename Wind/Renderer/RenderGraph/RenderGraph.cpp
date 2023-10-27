@@ -33,9 +33,10 @@ RenderGraphPass& RenderGraph::AddPass(const std::string& passName, RenderCommand
 
 void RenderGraph::Exec() {
     auto vkDevice      = m_device.GetVkDeviceHandle();
-    auto renderEncoder = m_currentFrameData->renderEncoder->CreateRenderEncoder();
-    renderEncoder->Begin();
+    auto renderEncoder = m_currentFrameData->renderEncoder;
 
+    renderEncoder->Begin();
+    
     for (const auto& [passDebugName, graphPass] : m_renderGraphPasses) {
         if (graphPass->IsWriteToBackBuffer()) {
             vk::RenderPassBeginInfo beginInfo{

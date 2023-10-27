@@ -11,7 +11,7 @@ public:
     GPUTexture() = default;
 
     virtual void GenerateMips();
-    virtual void Init();
+    virtual void InitView();
 
 protected:
     AllocatedImage allocatedImage;

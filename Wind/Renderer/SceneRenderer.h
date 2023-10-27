@@ -22,8 +22,8 @@ struct FrameParms {
 
     void ResetCommanEncoders();
 
-    Ref<CommandEncoder> renderEncoder;
-    Ref<CommandEncoder> computeEncoder;
+    Ref<RenderEncoder>  renderEncoder;
+    Ref<ComputeEncoder> computeEncoder;
 
     vk::Semaphore imageAvailableSemaphore;
     vk::Semaphore renderFinishedSemaphore;

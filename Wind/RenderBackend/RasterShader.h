@@ -3,8 +3,9 @@
 #include "Shader.h"
 
 namespace wind {
-
 class Material;
+class VertexFactory;
+
 class RasterShader : public Shader {
 public:
     friend class GraphicsPipelineBuilder;

@@ -73,12 +73,11 @@ private:
 
     RenderCommandQueueType m_queueType;
 
-    vk::RenderPass  m_vkHandle;
+    vk::RenderPass  m_renderPass;
     vk::Framebuffer m_frameBuffer;
+    vk::Rect2D      m_renderArea;
 
     std::unordered_map<std::string, AttachmentInfo> m_colorAttachmentLUT;
     std::optional<DepthOuput>                       m_depthOutput;
-
-    vk::Rect2D m_renderArea;
 };
 }; // namespace wind

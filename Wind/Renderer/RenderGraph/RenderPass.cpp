@@ -37,13 +37,9 @@ bool RenderGraphPass::IsWriteToDepth() { return m_writeToDepth; }
 
 bool RenderGraphPass::IsWriteToBackBuffer() { return m_writeToBackBuffer; }
 
-void RenderGraphPass::MarkWriteDepth() {
-    m_writeToDepth = true;
-}
+void RenderGraphPass::MarkWriteDepth() { m_writeToDepth = true; }
 
-void RenderGraphPass::MarkWriteBackBuffer() {
-    m_writeToBackBuffer = true;
-}
+void RenderGraphPass::MarkWriteBackBuffer() { m_writeToBackBuffer = true; }
 
 bool RenderGraphPass::ContainsResource(const std::string& resourceName) {
     return m_colorAttachmentLUT.contains(resourceName);

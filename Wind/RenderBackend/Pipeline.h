@@ -22,7 +22,8 @@ struct StencilState {
 };
 
 struct PipelineState {
-
+    Ref<RasterState>  rasterState;
+    Ref<StencilState> stencilState;
 };
 
 class GraphicsPipelineBuilder {
@@ -30,12 +31,8 @@ public:
     vk::Pipeline Build(const vk::Device& device, const Material& material,
                        const vk::RenderPass& renderPass);
 
-    void SetInput();
-
 private:
-    vk::RenderPass m_renderPass;
-
-    vk::GraphicsPipelineCreateInfo           m_pipelineCreateInfo;
+    vk::RenderPass                           m_renderPass;
     vk::PipelineShaderStageCreateInfo        m_ShaderStages;
     vk::PipelineVertexInputStateCreateInfo   m_vertexInputState;
     vk::PipelineInputAssemblyStateCreateInfo m_inputAssemblyState;

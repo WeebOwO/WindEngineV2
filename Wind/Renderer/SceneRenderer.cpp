@@ -5,8 +5,8 @@
 #include "Core/Log.h"
 #include "Scene/Scene.h"
 
-#include "Resource/Loader.h"
 #include "Renderer/SceneRenderer.h"
+#include "Resource/Loader.h"
 
 #include "RenderBackend/Buffer.h"
 #include "RenderBackend/Command.h"

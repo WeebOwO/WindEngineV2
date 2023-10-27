@@ -1,6 +1,11 @@
 #pragma once
 
 namespace wind {
-// todo
-
-}
+class RenderThread {
+public:
+    enum class State {
+        Idle = 0,
+        Kick, 
+    };  
+};
+} // namespace wind

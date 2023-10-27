@@ -1,7 +1,10 @@
 #pragma once
 
+#include "glm/glm.hpp"
+
 namespace wind {
-class View {
-    
+struct View {
+    glm::mat4 view;
+    glm::mat4 projection;
 };
 } // namespace wind

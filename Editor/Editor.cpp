@@ -9,9 +9,14 @@ public:
     void Init() override {}
     void Quit() override {}
     void Run() override {
-        uint32_t                  width = 1920, height = 1080;
-        std::string               title  = "WindEngineV2";
-        wind::Scope<wind::Window> window = wind::scope::Create<wind::Window>(width, height, title);
+        wind::Window::WindowDesc desc {
+            .width = 1920,
+            .height = 1080,
+            .windowTitle = "WindEngineV2",
+            .vsync = true
+        };
+
+        wind::Scope<wind::Window> window = wind::scope::Create<wind::Window>(desc);
 
         wind::Engine engine(std::move(window));
         engine.Run();

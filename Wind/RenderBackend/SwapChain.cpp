@@ -11,6 +11,7 @@ Swapchain::Swapchain(const GPUDevice& device, const Window& window) : m_device(d
     m_surface = rawSurface;
     CreateSwapChainInteral(window.width(), window.height());
     WIND_CORE_INFO("Create swapchain");
+    m_vsync = window.IsVsyncEnable();
 }
 
 void Swapchain::QuerySurfaceProperty() {

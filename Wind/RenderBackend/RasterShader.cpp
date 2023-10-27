@@ -1,5 +1,7 @@
 #include "RasterShader.h"
 
+#include "Renderer/Material.h"
+
 namespace wind {
 RasterShader::RasterShader(const std::string& name, const std::vector<u32>& vertexCode, const std::vector<u32>& fragcode) {
     SetShaderName(name);

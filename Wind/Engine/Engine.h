@@ -30,5 +30,4 @@ private:
     u32                                   m_activeSceneIndex;
     std::chrono::steady_clock::time_point m_lastTickTimePoint{std::chrono::steady_clock::now()};
 };
-
 } // namespace wind

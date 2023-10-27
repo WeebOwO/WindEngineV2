@@ -34,16 +34,6 @@ CommandEncoder::~CommandEncoder() {
     vkDevice.destroyCommandPool(m_cmdPool);
 }
 
-ComputeEncoder* CommandEncoder::CreateComputeEncoder() {
-    assert(m_queueType == RenderCommandQueueType::Compute || m_queueType == RenderCommandQueueType::AsyncCompute);
-    return static_cast<ComputeEncoder*>(this);
-}
-
-RenderEncoder* CommandEncoder::CreateRenderEncoder() {
-    assert(m_queueType == RenderCommandQueueType::Graphics);
-    return static_cast<RenderEncoder*>(this);
-}
-
 // reset the whole command pool, this is faster than reset the commandbuffer in multithread context
 // https://github.com/KhronosGroup/Vulkan-Samples/blob/main/samples/performance/command_buffer_usage/README.adoc
 void CommandEncoder::Reset() { device.GetVkDeviceHandle().resetCommandPool(m_cmdPool); }

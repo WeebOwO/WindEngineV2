@@ -1,24 +1,22 @@
 #pragma once
 
 #include "RenderBackend/Pipeline.h"
-#include "RenderBackend/RasterShader.h"
 
 namespace wind {
+class VertexFactory;
+class RasterShader;
+
 class Material {
 public:
     enum class ShadingModel { UnLit = 0, Lit };
-    enum class BlendMode { Opaque, Tanslucency };
+    enum class BlendMode { Opaque, Tanslucency, Additive};
 
-    struct Desc {
-        std::string  debugName;
-        ShadingModel shaingModel;
-    };
-
-    static Ref<Material> Create(const Desc& desc);
-
+    static Ref<Material> Create(ShadingModel ShadingModel, BlendMode blendMode,
+                                const VertexFactory& vertexFactory);
 private:
-    ShadingModel      m_shadingModel;
     std::string       m_debugName;
+    RasterState       m_rasterState;
+    ShadingModel      m_shadingModel;
 };
 
 } // namespace wind
