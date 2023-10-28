@@ -7,7 +7,7 @@
 
 namespace wind {
 
-struct LightSceneInfo {
+struct LightSceneInfo final {
     static constexpr size_t MaxDirectionalLights = 4;
     DirectionalLight        DirectionalLights[MaxDirectionalLights];
     std::vector<PointLight> PointLights;
@@ -20,12 +20,12 @@ struct LightSceneInfo {
     }
 };
 
-class Scene {
+class Scene final {
 public:
     void Init();
 
 private:
-    std::vector<Entity> m_entities;
-    LightSceneInfo      m_lightSceneInfo;
+    entt::registry m_Registry;
+    LightSceneInfo m_lightSceneInfo;
 };
 } // namespace wind
