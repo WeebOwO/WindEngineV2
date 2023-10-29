@@ -2,6 +2,8 @@
 
 #include <tracy/Tracy.hpp>
 
+#include "ECS/Component.h"
+#include "Ecs/Entity.h"
 #include "Window.h"
 #include "Core/Log.h"
 #include "Scene/Scene.h"
@@ -21,7 +23,12 @@ void Engine::LoadScene() {
     m_activeSceneIndex = 0;
     m_scenes.push_back(scope::Create<Scene>());
 
-    auto defaultGameObject = 
+    auto& scene = m_scenes[m_activeSceneIndex];
+
+    auto defaultGameObject = scene->CreateGameObject("Test");
+
+    auto tag = defaultGameObject.GetComponent<TagComponent>();
+    WIND_CORE_INFO("this is {}", tag.tag);
 }
 
 void Engine::Run() {

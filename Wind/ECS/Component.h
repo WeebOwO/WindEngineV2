@@ -2,12 +2,27 @@
 
 #include "std.h"
 
+#include "Core/UUID.h"
+
 namespace wind {
 class MeshDesc;
 
-struct Component {};
+struct IDComponent {
+    UUID id = 0;
+};
 
-struct MeshComponent : public Component {
+struct TagComponent {
+    std::string tag;
+
+    TagComponent()                          = default;
+    TagComponent(const TagComponent& other) = default;
+    TagComponent(const std::string& tag) : tag(tag) {}
+
+    operator std::string&() { return tag; }
+    operator const std::string&() const { return tag; }
+};
+
+struct MeshComponent {
     Ref<MeshDesc> meshDesc;
 };
 

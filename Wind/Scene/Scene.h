@@ -4,7 +4,9 @@
 
 #include <entt/entt.hpp>
 
+#include "Core/UUID.h"
 #include "Scene/LightCaster.h"
+
 
 namespace wind {
 class GameObject;
@@ -25,13 +27,18 @@ struct LightSceneInfo final {
 
 class Scene final {
 public:
+    using GameObjectMap = std::unordered_map<UUID, GameObject>;
+
     void Init();
 
-    GameObject CreateGameObject();
-    
+    GameObject CreateGameObject(std::string name = {});
+
 private:
     friend class GameObject;
+
     entt::registry m_registry;
     LightSceneInfo m_lightSceneInfo;
+
+    GameObjectMap m_gameObjectMap;
 };
 } // namespace wind
