@@ -7,6 +7,7 @@
 #include <condition_variable>
 #include <functional>
 #include <map>
+#include <cassert>
 #include <memory>
 #include <mutex>
 #include <span>

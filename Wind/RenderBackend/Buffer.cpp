@@ -1,4 +1,5 @@
 #include "Buffer.h"
+
 #include "RenderBackend/Buffer.h"
 
 namespace wind {
@@ -21,6 +22,18 @@ UploadBuffer::UploadBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags)
                     .usage    = VMA_MEMORY_USAGE_AUTO,
                     .priority = 1.0f,
                 }) {}
+
+u8* UploadBuffer::MapMemory() {
+    auto& nativeHandle = device.GetAllocator()->NativeHandle();
+    
+    if (m_mapMemory == nullptr) {
+        void* memory = nullptr;
+        vmaMapMemory(nativeHandle, GetAllocatedBuffer().allocation, &memory);
+        m_mapMemory = (u8*)memory;
+    }
+
+    return m_mapMemory;
+}
 
 DeviceBuffer::DeviceBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags)
     : GPUBuffer(byteSize, usageFlags,
@@ -48,6 +61,15 @@ u8* ReadBackBuffer::MapMemory() {
     }
 
     return m_mapMemory;
+}
+
+UploadBuffer::~UploadBuffer() {
+    if (m_mapMemory != nullptr) { UnmapMemory(); }
+}
+
+void UploadBuffer::UnmapMemory() {
+    auto& nativeHandle = device.GetAllocator()->NativeHandle();
+    vmaUnmapMemory(nativeHandle, GetAllocatedBuffer().allocation);
 }
 
 void ReadBackBuffer::UnmapMemory() {

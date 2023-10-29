@@ -49,10 +49,12 @@ public:
 class ImmCommandEncoder : public RHIResource<RHIResourceType::CommandBuffer> {
 public:
     using TaskFunc = std::function<void(const vk::CommandBuffer&)>;
+    
     ImmCommandEncoder();
     ~ImmCommandEncoder() = default;
 
     void PushTask(const TaskFunc& func);
+    void CopyBuffer();
     void Submit();
 
 private:

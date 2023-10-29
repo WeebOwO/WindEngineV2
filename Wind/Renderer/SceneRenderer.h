@@ -39,6 +39,7 @@ public:
     SceneRenderer();
     ~SceneRenderer();
 
+    void        SetScene(Scene& scene);
     void        Render(Swapchain& swapchain, Scene& scene, View& view);
     FrameParms& GetCurrentFrameData();
 
@@ -48,6 +49,7 @@ private:
     void BasePassRendering();
     void PresentPass();
 
+    Scene*           m_renderScene;
     GPUDevice&       m_device;
     FrameParms       m_frameParams[Swapchain::MAX_FRAME_IN_FLIGHT];
     u32              m_frameNumber{0};

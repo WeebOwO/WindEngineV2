@@ -58,6 +58,10 @@ SceneRenderer::SceneRenderer() : m_device(Backend::GetGPUDevice()) {
 
 FrameParms& SceneRenderer::GetCurrentFrameData() { return m_frameParams[m_frameNumber]; }
 
+void SceneRenderer::SetScene(Scene& scene) {
+    m_renderScene = &scene;
+}
+
 void SceneRenderer::Render(Swapchain& swapchain, Scene& scene, View& view) {
     auto& frameData = GetCurrentFrameData();
     frameData.swapchainImageIndex =

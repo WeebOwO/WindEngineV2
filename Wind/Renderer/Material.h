@@ -11,8 +11,8 @@ public:
     enum class ShadingModel { UnLit = 0, Lit };
     enum class BlendMode { Opaque, Tanslucency, Additive};
 
-    static Ref<Material> Create(ShadingModel ShadingModel, BlendMode blendMode,
-                                const VertexFactory& vertexFactory);
+    static Ref<Material> Create(ShadingModel ShadingModel, BlendMode blendMode);
+
 private:
     std::string       m_debugName;
     RasterState       m_rasterState;
