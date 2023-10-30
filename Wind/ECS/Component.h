@@ -1,17 +1,23 @@
 #pragma once
 
+#include "Core/Log.h"
 #include "std.h"
 
 #include "Core/UUID.h"
 
 namespace wind {
-class MeshDesc;
+class RawMesh;
 
-struct IDComponent {
+struct Component {
+    virtual void RegisterComponent() {}
+    virtual void UnRegister() {}
+};
+
+struct IDComponent : public Component {
     UUID id = 0;
 };
 
-struct TagComponent {
+struct TagComponent : public Component {
     std::string tag;
 
     TagComponent()                          = default;
@@ -22,8 +28,13 @@ struct TagComponent {
     operator const std::string&() const { return tag; }
 };
 
-struct MeshComponent {
-    Ref<MeshDesc> meshDesc;
+struct MeshComponent : public Component {
+    void RegisterComponent() override;
+    void UnRegister() override;
+
+    Ref<RawMesh> meshSource;
+
+    MeshComponent() = default;
 };
 
 } // namespace wind

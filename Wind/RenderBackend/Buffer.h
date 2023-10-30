@@ -3,8 +3,8 @@
 #include "std.h"
 
 #include "Allocator.h"
-#include "VulkanHeader.h"
 #include "RenderResource.h"
+#include "VulkanHeader.h"
 
 namespace wind {
 class GPUBuffer : public RHIResource<RHIResourceType::Buffer> {
@@ -34,11 +34,12 @@ public:
                  vk::BufferUsageFlags usageFlags = vk::BufferUsageFlagBits::eTransferSrc);
     ~UploadBuffer();
 
-    u8* MapMemory();
+    void  WriteData(void* data, u32 size, u32 offset = 0);
+    void* MapMemory();
 
 private:
-    void UnmapMemory();
-    u8*  m_mapMemory;
+    void  UnmapMemory();
+    void* m_mapMemory;
 };
 
 class DeviceBuffer : public GPUBuffer {
@@ -51,12 +52,12 @@ public:
     ReadBackBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags);
     ~ReadBackBuffer();
 
-    u8* MapMemory();
+    void* MapMemory();
 
 private:
     void UnmapMemory();
 
-    u8* m_mapMemory{nullptr};
+    void* m_mapMemory{nullptr};
 };
 
 class PushBuffer : public GPUBuffer {

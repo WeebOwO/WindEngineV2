@@ -48,6 +48,4 @@ private:
     static std::condition_variable s_condition;
 };
 
-void JobEntry(Job&& job);
-void JobEntry(std::function<void()> job, int id = -1, std::vector<int> deps = {});
 } // namespace wind

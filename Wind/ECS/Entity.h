@@ -1,8 +1,10 @@
 #pragma once
 
+#include "ECS/Component.h"
 #include "entt/entt.hpp"
 
 #include "Scene/Scene.h"
+#include <type_traits>
 
 namespace wind {
 class Scene;
@@ -15,6 +17,7 @@ public:
     ~GameObject() {}
 
     template <typename T, typename... Args> T& AddComponent(Args&&... args) {
+        static_assert(std::is_base_of<Component, T>::value, "T must be component!");
         return m_scene->m_registry.emplace<T>(m_enttHandle, std::forward<Args>(args)...);
     }
 

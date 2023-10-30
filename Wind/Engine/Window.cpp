@@ -1,6 +1,6 @@
 #include "Window.h"
 
-#include "RenderBackend/Backend.h"
+#include "Engine/RuntimeContext.h"
 #include "RenderBackend/SwapChain.h"
 
 namespace wind {
@@ -16,7 +16,7 @@ Window::Window(const WindowDesc& desc)
 }
 
 void Window::Init() {
-    auto& Device = Backend::GetGPUDevice();
+    auto& Device = *g_runtimeContext.device;
     m_swapchain  = scope::Create<Swapchain>(Device, *this);
 }
 

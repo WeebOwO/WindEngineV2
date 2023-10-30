@@ -1,6 +1,9 @@
 #include "Buffer.h"
 
-#include "RenderBackend/Buffer.h"
+#include <vcruntime_string.h>
+
+#include "Device.h"
+#include "Engine/RuntimeContext.h"
 
 namespace wind {
 GPUBuffer::GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,
@@ -23,16 +26,35 @@ UploadBuffer::UploadBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags)
                     .priority = 1.0f,
                 }) {}
 
-u8* UploadBuffer::MapMemory() {
+void* UploadBuffer::MapMemory() {
     auto& nativeHandle = device.GetAllocator()->NativeHandle();
-    
+
     if (m_mapMemory == nullptr) {
         void* memory = nullptr;
         vmaMapMemory(nativeHandle, GetAllocatedBuffer().allocation, &memory);
-        m_mapMemory = (u8*)memory;
+        m_mapMemory = memory;
     }
 
     return m_mapMemory;
+}
+
+UploadBuffer::~UploadBuffer() {
+    if (m_mapMemory != nullptr) { UnmapMemory(); }
+}
+
+void UploadBuffer::UnmapMemory() {
+    auto& nativeHandle = device.GetAllocator()->NativeHandle();
+    vmaUnmapMemory(nativeHandle, GetAllocatedBuffer().allocation);
+}
+
+void UploadBuffer::WriteData(void* data, u32 size, u32 offset) {
+    assert(size + offset < GetByteSize());
+    if (m_mapMemory == nullptr) MapMemory();
+
+    u8* memory = (u8*)m_mapMemory;
+    memory += offset;
+
+    memcpy(memory, data, size);
 }
 
 DeviceBuffer::DeviceBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags)
@@ -52,24 +74,15 @@ ReadBackBuffer::ReadBackBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags)
                     .priority = 1.0f,
                 }) {}
 
-u8* ReadBackBuffer::MapMemory() {
+void* ReadBackBuffer::MapMemory() {
     auto& nativeHandle = device.GetAllocator()->NativeHandle();
     if (m_mapMemory == nullptr) {
         void* memory = nullptr;
         vmaMapMemory(nativeHandle, GetAllocatedBuffer().allocation, &memory);
-        m_mapMemory = (u8*)memory;
+        m_mapMemory = (void*)memory;
     }
 
     return m_mapMemory;
-}
-
-UploadBuffer::~UploadBuffer() {
-    if (m_mapMemory != nullptr) { UnmapMemory(); }
-}
-
-void UploadBuffer::UnmapMemory() {
-    auto& nativeHandle = device.GetAllocator()->NativeHandle();
-    vmaUnmapMemory(nativeHandle, GetAllocatedBuffer().allocation);
 }
 
 void ReadBackBuffer::UnmapMemory() {
@@ -89,7 +102,7 @@ void PushBuffer::Reset() { m_currentOffset = 0; }
 
 namespace wind::utils {
 u32 PadUniformBufferSize(u32 originSize) {
-    auto limits          = Backend::GetGPUDevice().GetLimits();
+    auto limits          = g_runtimeContext.device->GetLimits();
     u32  minUboAlignment = limits.minUniformBufferOffsetAlignment;
     u32  alignedSize     = originSize;
     if (minUboAlignment > 0) {

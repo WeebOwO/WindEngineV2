@@ -1,7 +1,7 @@
 #pragma once
 
-#include "RenderBackend/Texture.h"
 #include "Resource/Interface.h"
+#include "RenderBackend/Texture.h"
 
 namespace wind {
 class Texture2D final : public RenderResourceInterface {

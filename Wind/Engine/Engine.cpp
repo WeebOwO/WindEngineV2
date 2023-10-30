@@ -25,10 +25,12 @@ void Engine::LoadScene() {
 
     auto& scene = m_scenes[m_activeSceneIndex];
 
-    auto defaultGameObject = scene->CreateGameObject("Test");
+    auto gameobject = scene->CreateGameObject("Test");
 
-    auto tag = defaultGameObject.GetComponent<TagComponent>();
+    auto tag = gameobject.GetComponent<TagComponent>();
     WIND_CORE_INFO("this is {}", tag.tag);
+
+    gameobject.RemoveComponent<TagComponent>();
 }
 
 void Engine::Run() {

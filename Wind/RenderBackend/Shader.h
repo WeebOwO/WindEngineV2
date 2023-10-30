@@ -1,8 +1,8 @@
 #pragma once
 
-#include "VulkanHeader.h"
 #include "std.h"
 
+#include "VulkanHeader.h"
 #include "RenderResource.h"
 
 namespace wind {
@@ -15,9 +15,8 @@ public:
 
     ~Shader();
 
-    void BindResource(const std::string& resourceName, const vk::DescriptorBufferInfo& bufferInfo);
     virtual void BindCommandBuffer(const vk::CommandBuffer& cmdBuffer) const;
-
+    
 protected:
     auto SetShaderName(const std::string& name) { m_debugName = name; }
     void CollectMetaData(const std::vector<u32>& spirvCode, vk::ShaderStageFlags flag);

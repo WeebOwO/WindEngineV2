@@ -21,7 +21,6 @@ class ShaderCache;
 
 class GPUDevice {
 public:
-    friend class Backend;
     GPUDevice();
     ~GPUDevice();
 

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "VulkanHeader.h"
-
 #include "Device.h"
 #include "Texture.h"
+#include "VulkanHeader.h"
 
 namespace wind {
 

@@ -1,5 +1,6 @@
 #include "SceneRenderer.h"
 
+#include "Engine/RuntimeContext.h"
 #include "View.h"
 
 #include "Core/Log.h"
@@ -8,7 +9,6 @@
 #include "Renderer/SceneRenderer.h"
 #include "Resource/Loader.h"
 
-#include "RenderBackend/Buffer.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/ComputeShader.h"
 #include "RenderBackend/Descriptor.h"
@@ -47,7 +47,7 @@ SceneRenderer::~SceneRenderer() {
     }
 }
 
-SceneRenderer::SceneRenderer() : m_device(Backend::GetGPUDevice()) {
+SceneRenderer::SceneRenderer() : m_device(*g_runtimeContext.device) {
     auto vkDevice = m_device.GetVkDeviceHandle();
     m_renderGraph = ref::Create<RenderGraph>(m_device);
     // create frame parms
@@ -64,10 +64,10 @@ void SceneRenderer::SetScene(Scene& scene) {
 
 void SceneRenderer::Render(Swapchain& swapchain, Scene& scene, View& view) {
     auto& frameData = GetCurrentFrameData();
+
     frameData.swapchainImageIndex =
         swapchain.AcquireNextImage(frameData.flightFence, frameData.imageAvailableSemaphore)
             .value();
-
     frameData.ResetCommanEncoders();
 
     // init render graph
@@ -86,7 +86,7 @@ void SceneRenderer::PresentPass() {
     auto& presentPass = m_renderGraph->AddPass("PresentPass", RenderCommandQueueType::Graphics);
     presentPass.MarkWriteBackBuffer();
     presentPass.SetRenderExecCallBack([](RenderEncoder& encoder) {
-
+        
     });
 }
 } // namespace wind

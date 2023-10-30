@@ -2,7 +2,7 @@
 
 #include "std.h"
 
-#include "Backend.h"
+#include "Engine/RuntimeContext.h"
 
 namespace wind {
 class GPUDevice;
@@ -23,7 +23,7 @@ template <RHIResourceType ResourceType> struct ResourceHandle {
 };
 
 template <RHIResourceType ResourceType> struct RHIResource {
-    RHIResource() : device(Backend::GetGPUDevice()) {}
+    RHIResource() : device(*g_runtimeContext.device) {}
 
     GPUDevice&                   device;
     ResourceHandle<ResourceType> handle;
