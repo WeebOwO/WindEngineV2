@@ -1,15 +1,17 @@
 #include "Engine.h"
 
+#include <filesystem>
 #include <tracy/Tracy.hpp>
 
+#include "Core/Log.h"
 #include "ECS/Component.h"
 #include "Ecs/Entity.h"
-#include "Window.h"
-#include "Core/Log.h"
-#include "Scene/Scene.h"
-#include "Renderer/View.h"
 #include "Engine/RuntimeContext.h"
 #include "Renderer/SceneRenderer.h"
+#include "Renderer/View.h"
+#include "Scene/Scene.h"
+#include "Window.h"
+
 
 namespace wind {
 Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {
@@ -31,6 +33,9 @@ void Engine::LoadScene() {
     WIND_CORE_INFO("this is {}", tag.tag);
 
     gameobject.RemoveComponent<TagComponent>();
+
+    auto p = GetPath("d");
+    std::cout << p.string() << std::endl;
 }
 
 void Engine::Run() {
@@ -59,16 +64,14 @@ float Engine::CalcDeltaTime() {
         using namespace std::chrono;
         steady_clock::time_point tickTimePoint = steady_clock::now();
         auto timeSpan = duration_cast<duration<float>>(tickTimePoint - m_lastTickTimePoint);
-        dalta         = timeSpan.count();   
+        dalta         = timeSpan.count();
 
         m_lastTickTimePoint = tickTimePoint;
     }
     return dalta;
 }
 
-void Engine::PostInit() { 
-    m_window->Init(); 
-}
+void Engine::PostInit() { m_window->Init(); }
 
 void Engine::Quit() {
     g_runtimeContext.Quit();

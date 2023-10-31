@@ -9,7 +9,7 @@ namespace wind {
 class RawMesh;
 
 struct Component {
-    virtual void RegisterComponent() {}
+    virtual void Register() {}
     virtual void UnRegister() {}
 };
 
@@ -29,7 +29,7 @@ struct TagComponent : public Component {
 };
 
 struct MeshComponent : public Component {
-    void RegisterComponent() override;
+    void Register() override;
     void UnRegister() override;
 
     Ref<RawMesh> meshSource;

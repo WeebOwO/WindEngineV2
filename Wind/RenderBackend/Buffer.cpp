@@ -7,7 +7,7 @@
 
 namespace wind {
 GPUBuffer::GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,
-                     const VmaAllocationCreateInfo& AllocationCreateInfo)
+                     const VmaAllocationCreateInfo& AllocationCreateInfo) noexcept
     : m_byteSize(byteSize) {
 
     vk::BufferCreateInfo BufferCreateInfo = {

@@ -6,6 +6,7 @@
 
 namespace wind {
 // Raster state descriptor
+class Material;
 struct RasterState {
     vk::CullModeFlags cullingMode;
     vk::CompareOp     depthCompareOps;

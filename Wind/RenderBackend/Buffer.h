@@ -10,7 +10,7 @@ namespace wind {
 class GPUBuffer : public RHIResource<RHIResourceType::Buffer> {
 public:
     GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,
-              const VmaAllocationCreateInfo& AllocationCreateInfo);
+              const VmaAllocationCreateInfo& AllocationCreateInfo) noexcept;
     ~GPUBuffer();
 
     GPUBuffer(const GPUBuffer& other)            = delete;

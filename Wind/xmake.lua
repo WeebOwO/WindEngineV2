@@ -1,4 +1,4 @@
-add_requires("vulkansdk", "vulkan-memory-allocator", "spdlog", "glfw", "glm", "entt", "boost", "tracy", "spirv-cross")
+add_requires("vulkansdk", "vulkan-memory-allocator", "spdlog", "glfw", "glm", "entt", "boost", "tracy", "spirv-cross", "shaderc")
 
 option("tracy")
     set_default(true)
@@ -12,4 +12,4 @@ target("WindRuntime")
     add_options("tracy")
     set_kind("static")
     add_files("/**.cpp")
-    add_packages("vulkansdk", "vulkan-memory-allocator", "glfw", "spdlog", "glm", "boost", "tracy", "entt", "spirv-cross")
+    add_packages("vulkansdk", "vulkan-memory-allocator", "glfw", "spdlog", "glm", "tracy", "entt", "spirv-cross", "shaderc")   
