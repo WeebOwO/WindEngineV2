@@ -3,7 +3,6 @@
 #include <spirv_cross/spirv_glsl.hpp>
 
 #include "Device.h"
-
 #include "Core/Log.h"
 
 namespace wind {

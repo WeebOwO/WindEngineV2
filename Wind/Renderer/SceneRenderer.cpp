@@ -1,18 +1,14 @@
 #include "SceneRenderer.h"
 
-#include "Engine/RuntimeContext.h"
 #include "View.h"
-
+#include "Engine/RuntimeContext.h"
 #include "Core/Log.h"
 #include "Scene/Scene.h"
-
 #include "Renderer/SceneRenderer.h"
 #include "Resource/Loader.h"
-
 #include "RenderBackend/Command.h"
 #include "RenderBackend/ComputeShader.h"
 #include "RenderBackend/Descriptor.h"
-
 #include "RenderGraph/RenderPass.h"
 
 namespace wind {

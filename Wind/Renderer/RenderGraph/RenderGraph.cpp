@@ -1,12 +1,9 @@
 #include "RenderGraph.h"
 
 #include "Core/Log.h"
-
 #include "RenderPass.h"
-
 #include "RenderBackend/Command.h"
 #include "RenderBackend/SwapChain.h"
-
 #include "Renderer/SceneRenderer.h"
 
 namespace wind {
@@ -34,7 +31,7 @@ void RenderGraph::Exec() {
     if(m_dirty) {
         Compile();
     }
-    
+
     auto vkDevice      = m_device.GetVkDeviceHandle();
     auto renderEncoder = m_currentFrameData->renderEncoder;
 

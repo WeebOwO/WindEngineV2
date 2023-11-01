@@ -1,7 +1,6 @@
 #include "Scene.h"
 
 #include "ECS/Entity.h"
-
 #include "ECS/Component.h"
 
 namespace wind {

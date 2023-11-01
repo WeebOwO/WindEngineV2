@@ -7,7 +7,6 @@
 #include "Core/UUID.h"
 #include "Scene/LightCaster.h"
 
-
 namespace wind {
 class GameObject;
 
