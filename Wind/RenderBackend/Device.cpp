@@ -81,7 +81,7 @@ void GPUDevice::PickupPhysicalDevice() {
 
     auto properties = m_physicalDevice.getProperties();
     m_limits        = properties.limits;
-    
+
     WIND_CORE_INFO(properties.deviceName);
 
     auto supportedExtensions = m_physicalDevice.enumerateDeviceExtensionProperties();
@@ -90,7 +90,11 @@ void GPUDevice::PickupPhysicalDevice() {
         m_supportedExtensions.insert(extension.extensionName);
     }
 
-    m_enableExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+    m_enableExtensions = {
+        VK_KHR_SWAPCHAIN_EXTENSION_NAME,           VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME,
+        VK_KHR_MAINTENANCE2_EXTENSION_NAME,        VK_KHR_MULTIVIEW_EXTENSION_NAME,
+        VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME, VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME};
+
     m_enableExtensions.insert(m_enableExtensions.end(), rayTracingExtensions.begin(),
                               rayTracingExtensions.end());
 

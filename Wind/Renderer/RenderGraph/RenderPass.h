@@ -41,7 +41,6 @@ public:
 
     RenderGraphPass& SetRenderArea(const vk::Rect2D& rect);
 
-    void MarkWriteDepth();
     void MarkWriteBackBuffer();
 
     void SetRenderExecCallBack(const RenderExecCallBack& callback);
@@ -53,8 +52,12 @@ public:
 
     bool ContainsResource(const std::string& resourceName);
 
+    auto GetRenderPassHandle() { return m_renderPass; }
+
 private:
     friend class RenderGraph;
+    friend class SceneRenderer;
+
     bool m_writeToDepth      = false;
     bool m_writeToBackBuffer = false;
 
@@ -62,6 +65,9 @@ private:
         std::string    depthOutputName;
         AttachmentInfo attachmentInfo;
     };
+
+    Ref<RasterShader>  m_rastershader;
+    Ref<ComputeShader> m_computeShader;
 
     RenderGraph&           m_renderGraph;
     std::string            m_debugName;
@@ -78,6 +84,6 @@ private:
     vk::Rect2D      m_renderArea;
 
     std::unordered_map<std::string, AttachmentInfo> m_colorAttachmentLUT;
-    std::optional<DepthOuput>                       m_depthOutput;
+    std::optional<DepthOuput>                       m_depthOutput; 
 };
 }; // namespace wind

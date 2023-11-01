@@ -7,6 +7,7 @@
 namespace wind {
 // Raster state descriptor
 class Material;
+
 struct RasterState {
     vk::CullModeFlags cullingMode;
     vk::CompareOp     depthCompareOps;
@@ -18,23 +19,17 @@ struct RasterState {
     bool              inverseFrontFaces;
 };
 
-struct StencilState {
-    
-};
+struct StencilState {};
 
-struct PipelineState {
-    Ref<RasterState>  rasterState;
-    Ref<StencilState> stencilState;
-};
-
-class GraphicsPipelineBuilder {
+class GraphicsPipeline {
 public:
-    vk::Pipeline Build(const vk::Device& device, const Material& material,
-                       const vk::RenderPass& renderPass);
+    static Ref<GraphicsPipeline> Compile(const Material& material, const RasterShader& rasterShader,
+                                         vk::RenderPass& renderPass);
 
 private:
-    vk::RenderPass                           m_renderPass;
-    vk::PipelineShaderStageCreateInfo        m_ShaderStages;
+    vk::Pipeline m_vkHandle;
+
+    vk::PipelineShaderStageCreateInfo        m_shaderStages;
     vk::PipelineVertexInputStateCreateInfo   m_vertexInputState;
     vk::PipelineInputAssemblyStateCreateInfo m_inputAssemblyState;
     vk::PipelineRasterizationStateCreateInfo m_rasterState;

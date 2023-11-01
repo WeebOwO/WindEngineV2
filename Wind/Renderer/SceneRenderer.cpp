@@ -47,7 +47,9 @@ SceneRenderer::~SceneRenderer() {
     }
 }
 
-SceneRenderer::SceneRenderer() : m_device(*g_runtimeContext.device) {
+SceneRenderer::SceneRenderer() : m_device(*g_runtimeContext.device) {}
+
+void SceneRenderer::Init() {
     auto vkDevice = m_device.GetVkDeviceHandle();
     m_renderGraph = ref::Create<RenderGraph>(m_device);
     // create frame parms
@@ -58,9 +60,7 @@ SceneRenderer::SceneRenderer() : m_device(*g_runtimeContext.device) {
 
 FrameParms& SceneRenderer::GetCurrentFrameData() { return m_frameParams[m_frameNumber]; }
 
-void SceneRenderer::SetScene(Scene& scene) {
-    m_renderScene = &scene;
-}
+void SceneRenderer::SetScene(Scene& scene) { m_renderScene = &scene; }
 
 void SceneRenderer::Render(Swapchain& swapchain, Scene& scene, View& view) {
     auto& frameData = GetCurrentFrameData();
@@ -73,20 +73,15 @@ void SceneRenderer::Render(Swapchain& swapchain, Scene& scene, View& view) {
     // init render graph
     m_renderGraph->SetupSwapChain(swapchain);
     m_renderGraph->SetupFrameData(frameData);
-    m_renderGraph->ImportBackBuffer("BackBuffer");
 
-    // record render pass
-    PresentPass();
-
-    m_renderGraph->Exec();
-    m_frameNumber = (m_frameNumber + 1) % Swapchain::MAX_FRAME_IN_FLIGHT;
-}
-
-void SceneRenderer::PresentPass() {
+    // setup present pass
     auto& presentPass = m_renderGraph->AddPass("PresentPass", RenderCommandQueueType::Graphics);
     presentPass.MarkWriteBackBuffer();
     presentPass.SetRenderExecCallBack([](RenderEncoder& encoder) {
         
     });
+
+    m_renderGraph->Exec();
+    m_frameNumber = (m_frameNumber + 1) % Swapchain::MAX_FRAME_IN_FLIGHT;
 }
 } // namespace wind

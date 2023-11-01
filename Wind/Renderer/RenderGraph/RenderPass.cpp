@@ -26,7 +26,8 @@ RenderGraphPass& RenderGraphPass::AddColorOuput(const std::string&    resourceNa
 RenderGraphPass& RenderGraphPass::AddDepthStencilOutput(const std::string&    resourceName,
                                                         const AttachmentInfo& attachmentInfo) {
     if (!m_depthOutput.has_value()) {
-        m_depthOutput = std::make_optional<DepthOuput>(resourceName, attachmentInfo);
+        m_writeToDepth = true;
+        m_depthOutput  = std::make_optional<DepthOuput>(resourceName, attachmentInfo);
     } else {
         WIND_CORE_WARN("Pass {} already have a depth output", m_debugName);
     }
@@ -36,8 +37,6 @@ RenderGraphPass& RenderGraphPass::AddDepthStencilOutput(const std::string&    re
 bool RenderGraphPass::IsWriteToDepth() { return m_writeToDepth; }
 
 bool RenderGraphPass::IsWriteToBackBuffer() { return m_writeToBackBuffer; }
-
-void RenderGraphPass::MarkWriteDepth() { m_writeToDepth = true; }
 
 void RenderGraphPass::MarkWriteBackBuffer() { m_writeToBackBuffer = true; }
 

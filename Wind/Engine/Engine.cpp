@@ -12,7 +12,6 @@
 #include "Scene/Scene.h"
 #include "Window.h"
 
-
 namespace wind {
 Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {
     Init();
@@ -28,14 +27,7 @@ void Engine::LoadScene() {
     auto& scene = m_scenes[m_activeSceneIndex];
 
     auto gameobject = scene->CreateGameObject("Test");
-
     auto tag = gameobject.GetComponent<TagComponent>();
-    WIND_CORE_INFO("this is {}", tag.tag);
-
-    gameobject.RemoveComponent<TagComponent>();
-
-    auto p = GetPath("d");
-    std::cout << p.string() << std::endl;
 }
 
 void Engine::Run() {
@@ -56,6 +48,7 @@ void Engine::Init() {
     g_runtimeContext.Init();
     WIND_CORE_INFO("Init the engine core!");
     m_sceneRenderer = scope::Create<SceneRenderer>();
+    m_sceneRenderer->Init();
 }
 
 float Engine::CalcDeltaTime() {

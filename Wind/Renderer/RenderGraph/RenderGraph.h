@@ -31,6 +31,7 @@ private:
     void Compile();
     void WriteResource(const std::string& passName, const std::string& resourceName);
 
+    bool                                                  m_dirty = false;
     GPUDevice&                                            m_device;
     std::unordered_map<std::string, Ref<RenderGraphPass>> m_renderGraphPasses;
     std::unordered_map<std::string, RenderGraphResource>  m_resources;
@@ -41,5 +42,7 @@ private:
     std::string      m_backBufferDebugName{"None"};
 
     FrameParms* m_currentFrameData{nullptr};
+
+    std::unordered_map<std::string, vk::Pipeline> m_pipelines;
 };
 } // namespace wind

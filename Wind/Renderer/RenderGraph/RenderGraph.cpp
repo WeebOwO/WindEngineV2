@@ -22,9 +22,8 @@ void RenderGraph::SetupSwapChain(const Swapchain& swapchain) { m_swapchain = &sw
 void RenderGraph::SetupFrameData(FrameParms& frameData) { m_currentFrameData = &frameData; }
 
 RenderGraphPass& RenderGraph::AddPass(const std::string& passName, RenderCommandQueueType type) {
-    if (m_renderGraphPasses.contains(passName)) {
-        //
-    } else {
+    if (!m_renderGraphPasses.contains(passName)) {
+        m_dirty                       = true;
         m_renderGraphPasses[passName] = ref::Create<RenderGraphPass>(*this, passName, type);
     }
 
@@ -32,19 +31,23 @@ RenderGraphPass& RenderGraph::AddPass(const std::string& passName, RenderCommand
 }
 
 void RenderGraph::Exec() {
+    if(m_dirty) {
+        Compile();
+    }
+    
     auto vkDevice      = m_device.GetVkDeviceHandle();
     auto renderEncoder = m_currentFrameData->renderEncoder;
 
     renderEncoder->Begin();
-    
+
     for (const auto& [passDebugName, graphPass] : m_renderGraphPasses) {
         if (graphPass->IsWriteToBackBuffer()) {
             vk::RenderPassBeginInfo beginInfo{
-                .renderPass      = m_swapchain->GetRenderPass(),
-                .framebuffer     = m_swapchain->GetFrameBuffer(m_currentFrameData->swapchainImageIndex),
-                .renderArea      = vk::Rect2D{.offset = {},
-                                              .extent = {.width  = m_swapchain->GetWidth(),
-                                                         .height = m_swapchain->GetHeight()}},
+                .renderPass  = m_swapchain->GetRenderPass(),
+                .framebuffer = m_swapchain->GetFrameBuffer(m_currentFrameData->swapchainImageIndex),
+                .renderArea  = vk::Rect2D{.offset = {},
+                                          .extent = {.width  = m_swapchain->GetWidth(),
+                                                     .height = m_swapchain->GetHeight()}},
                 .clearValueCount = 1,
                 .pClearValues    = m_swapchain->GetClearValue()};
             renderEncoder->BeginRenderPass(beginInfo);
@@ -58,6 +61,19 @@ void RenderGraph::Exec() {
                                          m_currentFrameData->imageAvailableSemaphore,
                                          m_currentFrameData->renderFinishedSemaphore,
                                          m_currentFrameData->swapchainImageIndex);
+    }
+    m_dirty = false;
+}
+
+void RenderGraph::Compile() {
+    for (auto& [debugName, pass] : m_renderGraphPasses) {
+        if (pass->m_rastershader != nullptr && pass->m_computeShader != nullptr) {
+            // todo : async compute start
+        } else if (pass->m_rastershader != nullptr) {
+            // todo : graphics pass
+        } else if (pass->m_computeShader != nullptr) {
+            // todo : comptue pass
+        }
     }
 }
 } // namespace wind

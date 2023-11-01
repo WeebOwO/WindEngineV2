@@ -43,11 +43,10 @@ public:
     void        Render(Swapchain& swapchain, Scene& scene, View& view);
     FrameParms& GetCurrentFrameData();
 
+    void Init();
+
 private:
     void InitView();
-
-    void BasePassRendering();
-    void PresentPass();
 
     Scene*           m_renderScene;
     GPUDevice&       m_device;
