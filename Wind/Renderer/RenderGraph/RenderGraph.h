@@ -16,7 +16,7 @@ public:
     friend class RenderGraphPass;
 
     RenderGraph(GPUDevice& device);
-    RenderGraphPass& AddPass(const std::string& passName, RenderCommandQueueType type);
+    RenderGraphPass* AddPass(const std::string& passName, RenderCommandQueueType type);
 
     void ImportTexture(const std::string& resourceName, Ref<GPUTexture2D> externalTexture);
     void ImportBackBuffer(const std::string& backBufferName);
@@ -25,7 +25,7 @@ public:
     void SetupFrameData(FrameParms& frameData);
 
     void Exec();
-
+    
 private:
     void Compile();
     void WriteResource(const std::string& passName, const std::string& resourceName);

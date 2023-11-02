@@ -1,15 +1,15 @@
 #include "SceneRenderer.h"
 
-#include "View.h"
-#include "Engine/RuntimeContext.h"
 #include "Core/Log.h"
-#include "Scene/Scene.h"
-#include "Renderer/SceneRenderer.h"
-#include "Resource/Loader.h"
+#include "Engine/RuntimeContext.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/ComputeShader.h"
 #include "RenderBackend/Descriptor.h"
 #include "RenderGraph/RenderPass.h"
+#include "Resource/Loader.h"
+#include "Scene/Scene.h"
+#include "View.h"
+
 
 namespace wind {
 void FrameParms::Init(const vk::Device& device) {
@@ -52,6 +52,9 @@ void SceneRenderer::Init() {
     for (auto& frameParms : m_frameParams) {
         frameParms.Init(vkDevice);
     }
+    // setup present pass
+    m_Presentpass = m_renderGraph->AddPass("PresentPass", RenderCommandQueueType::Graphics);
+    m_Presentpass->MarkWriteBackBuffer();
 }
 
 FrameParms& SceneRenderer::GetCurrentFrameData() { return m_frameParams[m_frameNumber]; }
@@ -70,14 +73,16 @@ void SceneRenderer::Render(Swapchain& swapchain, Scene& scene, View& view) {
     m_renderGraph->SetupSwapChain(swapchain);
     m_renderGraph->SetupFrameData(frameData);
 
-    // setup present pass
-    auto& presentPass = m_renderGraph->AddPass("PresentPass", RenderCommandQueueType::Graphics);
-    presentPass.MarkWriteBackBuffer();
-    presentPass.SetRenderExecCallBack([](RenderEncoder& encoder) {
-        
-    });
+    PresentPass();
 
     m_renderGraph->Exec();
     m_frameNumber = (m_frameNumber + 1) % Swapchain::MAX_FRAME_IN_FLIGHT;
+}
+
+void SceneRenderer::PresentPass() {
+    // setup present pass
+    m_Presentpass->SetRenderExecCallBack([](RenderEncoder& encoder) {
+
+    });
 }
 } // namespace wind

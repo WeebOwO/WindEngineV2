@@ -84,6 +84,7 @@ private:
     vk::Rect2D      m_renderArea;
 
     std::unordered_map<std::string, AttachmentInfo> m_colorAttachmentLUT;
-    std::optional<DepthOuput>                       m_depthOutput; 
+    std::optional<DepthOuput>                       m_depthOutput;
 };
+
 }; // namespace wind

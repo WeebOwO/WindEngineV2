@@ -4,6 +4,7 @@
 
 #include "ECS/JobSystem.h"
 #include "RenderBackend/Device.h"
+#include "RenderBackend/Shader.h"
 
 namespace wind {
 RuntimeContext g_runtimeContext;
@@ -18,12 +19,9 @@ void RuntimeContext::Init() {
 
     pathManager.projectPath = currentPath.parent_path().parent_path().parent_path().parent_path();
     pathManager.shaderPath = pathManager.projectPath.append("Shaders");
-    std::cout << pathManager.shaderPath << std::endl;
+    // init shader map
+
     
-    auto InitShaderMap = [&]() {
-        shaderc::Compiler compiler;
-        
-    };
 }
 
 void RuntimeContext::Quit() { 

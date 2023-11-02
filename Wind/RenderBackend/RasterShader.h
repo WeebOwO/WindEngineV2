@@ -9,18 +9,19 @@ class RasterShader final : public Shader {
 public:
     friend class GraphicsPipelineBuilder;
 
-    RasterShader(const std::string& name, Ref<vk::ShaderModule> vertexModule,
-                 Ref<vk::ShaderModule> fragModule) noexcept;
+    RasterShader(const std::string& name, const vk::ShaderModule& vertexModule,
+                 const vk::ShaderModule& fragModule) noexcept;
 
     vk::PipelineLayout GetPipelineLayout() const noexcept { return m_layout; }
 
     auto GetShaderModules() const noexcept { return m_shaderModules; }
 
-    Ref<RasterShader> Compile(ShaderMap& shaderMap, const std::string& vertexFilePath,
-                              const std::string& fragfilePath);
+    static Ref<RasterShader> Compile(const std::string& debugName,
+                                     const std::string& vertexFilePath,
+                                     const std::string& fragfilePath);
 
 private:
-    std::array<Ref<vk::ShaderModule>, 2> m_shaderModules;
-    vk::Pipeline                         pipeline;
+    std::array<vk::ShaderModule, 2> m_shaderModules;
+    vk::Pipeline                    pipeline;
 };
 } // namespace wind

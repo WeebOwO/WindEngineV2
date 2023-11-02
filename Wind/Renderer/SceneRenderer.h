@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Renderer/RenderGraph/RenderPass.h"
 #include "std.h"
 
 #include "RenderBackend/Command.h"
@@ -48,10 +49,15 @@ public:
 private:
     void InitView();
 
+    void PresentPass();
+    
     Scene*           m_renderScene;
     GPUDevice&       m_device;
     FrameParms       m_frameParams[Swapchain::MAX_FRAME_IN_FLIGHT];
     u32              m_frameNumber{0};
     Ref<RenderGraph> m_renderGraph;
+
+    // all the renderpass are create by rendergraph
+    RenderGraphPass* m_Presentpass;
 };
 } // namespace wind

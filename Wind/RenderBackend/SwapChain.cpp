@@ -26,7 +26,7 @@ void Swapchain::QuerySurfaceProperty() {
     m_surfaceFormat = surfaceFormats.front();
 
     for (const auto& availableFormat : surfaceFormats) {
-        if (availableFormat.format == vk::Format::eB8G8R8A8Snorm &&
+        if (availableFormat.format == vk::Format::eB8G8R8A8Srgb &&
             availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
             m_surfaceFormat = availableFormat;
             break;
@@ -56,7 +56,7 @@ void Swapchain::CreateSwapChainInteral(u32 width, u32 height) {
     QuerySurfaceProperty();
     vk::SwapchainCreateInfoKHR swapchainCreateInfo{
         .surface          = m_surface,
-        .minImageCount    = MAX_FRAME_IN_FLIGHT,
+        .minImageCount    = 3,
         .imageFormat      = m_surfaceFormat.format,
         .imageColorSpace  = m_surfaceFormat.colorSpace,
         .imageExtent      = m_windowExtent,
@@ -148,6 +148,27 @@ void Swapchain::CreateRenderPass() {
                                                          .layers          = 1};
 
         m_framebuffers[i] = vkDevice.createFramebuffer(frameBufferCreateInfo);
+    }
+
+    m_renderingInfos.resize(m_swapchainViews.size());
+    m_attachmentInfos.resize(m_swapchainViews.size());
+    // create dynamic rendering part
+    for (u32 i = 0; i < m_swapchainViews.size(); ++i) {
+        // setup clear color
+        m_attachmentInfos[i] =
+            vk::RenderingAttachmentInfo{.sType       = vk::StructureType::eRenderingAttachmentInfo,
+                                        .imageView   = m_swapchainViews[i],
+                                        .imageLayout = vk::ImageLayout::eAttachmentOptimal,
+                                        .clearValue  = m_clearValue};
+
+        m_renderingInfos[i] = vk::RenderingInfo{
+            .sType = vk::StructureType::eRenderingInfo,
+            .renderArea =
+                vk::Rect2D{.offset = {}, .extent = {m_windowExtent.width, m_windowExtent.height}},
+            .layerCount           = 1,
+            .colorAttachmentCount = 1,
+            .pColorAttachments    = &m_attachmentInfos[i],
+        };
     }
 }
 

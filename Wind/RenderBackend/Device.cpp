@@ -2,8 +2,8 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Shader.h"
 #include "Core/Log.h"
+#include "Shader.h"
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
@@ -89,10 +89,8 @@ void GPUDevice::PickupPhysicalDevice() {
         m_supportedExtensions.insert(extension.extensionName);
     }
 
-    m_enableExtensions = {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME,           VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME,
-        VK_KHR_MAINTENANCE2_EXTENSION_NAME,        VK_KHR_MULTIVIEW_EXTENSION_NAME,
-        VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME, VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME};
+    m_enableExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+                          VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME};
 
     m_enableExtensions.insert(m_enableExtensions.end(), rayTracingExtensions.begin(),
                               rayTracingExtensions.end());
@@ -131,11 +129,13 @@ void GPUDevice::QueryQueueFamilyIndices() {
 
 void GPUDevice::CreateDevice() {
     // Create Device
-    vk::DeviceCreateInfo                   deviceCreateInfo;
     std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
 
     std::unordered_set<uint32_t> uniqueQueueIndices{m_queueIndices.graphicsQueueIndex.value(),
                                                     m_queueIndices.computeQueueIndex.value()};
+
+    vk::PhysicalDeviceDynamicRenderingFeaturesKHR dynamic_rendering = {};
+    dynamic_rendering.dynamicRendering                              = true;
 
     float queuePriority = 1.0f;
 
@@ -145,8 +145,14 @@ void GPUDevice::CreateDevice() {
         queueCreateInfos.push_back(queueCreateInfo);
     }
 
-    deviceCreateInfo.setQueueCreateInfos(queueCreateInfos)
-        .setPEnabledExtensionNames(m_enableExtensions);
+    vk::DeviceCreateInfo deviceCreateInfo{
+        .queueCreateInfoCount    = (u32)queueCreateInfos.size(),
+        .pQueueCreateInfos       = queueCreateInfos.data(),
+        .enabledExtensionCount   = (u32)m_enableExtensions.size(),
+        .ppEnabledExtensionNames = m_enableExtensions.data(),
+    };
+
+    deviceCreateInfo.setPNext(&dynamic_rendering);
 
     m_device = m_physicalDevice.createDeviceUnique(deviceCreateInfo);
     VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_device);
@@ -191,9 +197,8 @@ AllocatedImage GPUDevice::AllocateImage(const vk::ImageCreateInfo&     imageCrea
 void GPUDevice::DestroyImage(AllocatedImage& image) const { m_allocator->DestroyImage(image); }
 
 void GPUDevice::InitBackupCommandBuffer() {
-    vk::CommandPoolCreateInfo poolCreateInfo{
-        .flags            = vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
-        .queueFamilyIndex = m_queueIndices.graphicsQueueIndex.value()};
+    vk::CommandPoolCreateInfo poolCreateInfo{.queueFamilyIndex =
+                                                 m_queueIndices.graphicsQueueIndex.value()};
 
     m_backupCommandPool = m_device->createCommandPool(poolCreateInfo);
 
@@ -215,7 +220,7 @@ vk::CommandBuffer GPUDevice::GetBackUpCommandBuffer() {
     }
     m_device->resetFences(m_backupCommandfence);
 
-    m_backupCommandBuffer.reset();
+    m_device->resetCommandPool(m_backupCommandPool);
 
     return m_backupCommandBuffer;
 }

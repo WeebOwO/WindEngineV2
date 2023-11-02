@@ -2,8 +2,9 @@
 
 #include "std.h"
 
-#include "RenderBackend/VulkanHeader.h"
-#include <unordered_map>
+namespace vk {
+class ShaderModule;
+};
 
 namespace wind {
 // manage runtime resource and system
@@ -11,10 +12,22 @@ class RasterShader;
 class ComputeShader;
 class GPUDevice;
 
-struct ShaderMap {
+class ShaderMap {
+public:
+    void CacheRasterShader(Ref<RasterShader> shader);
+    void CacheComputeShader(Ref<ComputeShader> shader);
+
+    Ref<RasterShader> GetRasterShader(const std::string& shaderName) {
+        return rasterShaderCache[shaderName];
+    }
+
+    Ref<ComputeShader> GetComputeShader(const std::string& shaderName) {
+        return computeShaderCache[shaderName];
+    }
+
+private:
     std::unordered_map<std::string, Ref<RasterShader>>  rasterShaderCache;
     std::unordered_map<std::string, Ref<ComputeShader>> computeShaderCache;
-    std::unordered_map<std::string, vk::ShaderModule>   shaderModuleCache;
 };
 
 struct PathManager {
@@ -22,19 +35,13 @@ struct PathManager {
     std::filesystem::path shaderPath;
 };
 
-struct PsoManager {
-    std::unordered_map<const std::string, vk::Pipeline> psocache;
-};
-
 struct RuntimeContext {
     void Init();
     void Quit();
 
-    Scope<ShaderMap>  shaderMap;
-    Scope<GPUDevice>  device;
-    Scope<PsoManager> psoManager;
-
-    PathManager pathManager;
+    Scope<ShaderMap> shaderMap;
+    Scope<GPUDevice> device;
+    PathManager      pathManager;
 };
 
 std::filesystem::path GetPath(std::filesystem::path path);

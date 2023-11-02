@@ -33,9 +33,12 @@ class RenderEncoder : public CommandEncoder {
 public:
     RenderEncoder();
     void BindGraphicsShader(const RasterShader& shader);
-
+    // render pass
     void BeginRenderPass(const vk::RenderPassBeginInfo& renderPassBeginInfo);
     void EndRenderPass();
+    // dynamic rendering
+    void BeginRendering(const vk::RenderingInfo& renderingInfo);
+    void EndRendering();
 };
 
 class ComputeEncoder : public CommandEncoder {
@@ -49,7 +52,7 @@ public:
 class ImmCommandEncoder : public RHIResource<RHIResourceType::CommandBuffer> {
 public:
     using TaskFunc = std::function<void(const vk::CommandBuffer&)>;
-    
+
     ImmCommandEncoder();
     ~ImmCommandEncoder() = default;
 

@@ -1,9 +1,9 @@
 #include "RenderGraph.h"
 
 #include "Core/Log.h"
-#include "RenderPass.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/SwapChain.h"
+#include "RenderPass.h"
 #include "Renderer/SceneRenderer.h"
 
 namespace wind {
@@ -18,38 +18,31 @@ void RenderGraph::SetupSwapChain(const Swapchain& swapchain) { m_swapchain = &sw
 
 void RenderGraph::SetupFrameData(FrameParms& frameData) { m_currentFrameData = &frameData; }
 
-RenderGraphPass& RenderGraph::AddPass(const std::string& passName, RenderCommandQueueType type) {
+RenderGraphPass* RenderGraph::AddPass(const std::string& passName, RenderCommandQueueType type) {
     if (!m_renderGraphPasses.contains(passName)) {
         m_dirty                       = true;
         m_renderGraphPasses[passName] = ref::Create<RenderGraphPass>(*this, passName, type);
     }
 
-    return *m_renderGraphPasses[passName];
+    return m_renderGraphPasses[passName].get();
 }
 
 void RenderGraph::Exec() {
-    if(m_dirty) {
-        Compile();
-    }
+    if (m_dirty) { Compile(); }
 
     auto vkDevice      = m_device.GetVkDeviceHandle();
     auto renderEncoder = m_currentFrameData->renderEncoder;
 
+    auto swapchainImageIndex = m_currentFrameData->swapchainImageIndex;
     renderEncoder->Begin();
 
+    vk::Rect2D rect{.offset = {}, .extent{m_swapchain->GetWidth(), m_swapchain->GetHeight()}};
     for (const auto& [passDebugName, graphPass] : m_renderGraphPasses) {
         if (graphPass->IsWriteToBackBuffer()) {
-            vk::RenderPassBeginInfo beginInfo{
-                .renderPass  = m_swapchain->GetRenderPass(),
-                .framebuffer = m_swapchain->GetFrameBuffer(m_currentFrameData->swapchainImageIndex),
-                .renderArea  = vk::Rect2D{.offset = {},
-                                          .extent = {.width  = m_swapchain->GetWidth(),
-                                                     .height = m_swapchain->GetHeight()}},
-                .clearValueCount = 1,
-                .pClearValues    = m_swapchain->GetClearValue()};
-            renderEncoder->BeginRenderPass(beginInfo);
+            auto renderingInfo = m_swapchain->GetRenderingInfo(swapchainImageIndex);
+            renderEncoder->BeginRendering(renderingInfo);
             graphPass->m_renderExecCallback(*renderEncoder);
-            renderEncoder->EndRenderPass();
+            renderEncoder->EndRendering();
         }
     }
 
@@ -57,9 +50,8 @@ void RenderGraph::Exec() {
         m_swapchain->SubmitCommandBuffer(renderEncoder->Finish(), m_currentFrameData->flightFence,
                                          m_currentFrameData->imageAvailableSemaphore,
                                          m_currentFrameData->renderFinishedSemaphore,
-                                         m_currentFrameData->swapchainImageIndex);
+                                         swapchainImageIndex);
     }
-    m_dirty = false;
 }
 
 void RenderGraph::Compile() {
@@ -72,5 +64,6 @@ void RenderGraph::Compile() {
             // todo : comptue pass
         }
     }
+    m_dirty = false;
 }
 } // namespace wind

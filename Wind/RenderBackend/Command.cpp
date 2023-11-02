@@ -2,7 +2,6 @@
 
 #include "std.h"
 
-#include "ComputeShader.h"
 #include "Device.h"
 
 namespace wind {
@@ -14,9 +13,7 @@ CommandEncoder::CommandEncoder(RenderCommandQueueType queueType) : m_queueType(q
                          ? queueIndices.computeQueueIndex.value()
                          : queueIndices.graphicsQueueIndex.value();
 
-    vk::CommandPoolCreateInfo poolCreateInfo{.flags =
-                                                 vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
-                                             .queueFamilyIndex = queueIndex};
+    vk::CommandPoolCreateInfo poolCreateInfo{.queueFamilyIndex = queueIndex};
 
     m_cmdPool = vkDevice.createCommandPool(poolCreateInfo);
 
@@ -56,25 +53,6 @@ ImmCommandEncoder::ImmCommandEncoder() {
     m_handle.begin(beginInfo);
 }
 
-// Compute Encoder part
-ComputeEncoder::ComputeEncoder(bool isAsync)
-    : CommandEncoder(isAsync ? RenderCommandQueueType::AsyncCompute
-                             : RenderCommandQueueType::Compute) {}
-
-void ComputeEncoder::Dispatch(u32 x, u32 y, u32 z) { m_nativeHandle.dispatch(x, y, z); }
-
-void ComputeEncoder::BindComputShader(const ComputeShader& computeShader) {
-    computeShader.BindCommandBuffer(m_nativeHandle);
-}
-// Render Encoder part
-RenderEncoder::RenderEncoder() : CommandEncoder(RenderCommandQueueType::Graphics) {}
-
-void RenderEncoder::BeginRenderPass(const vk::RenderPassBeginInfo& renderPassBeginInfo) {
-    m_nativeHandle.beginRenderPass(renderPassBeginInfo, vk::SubpassContents::eInline);
-}
-
-void RenderEncoder::EndRenderPass() { m_nativeHandle.endRenderPass(); 
-}
 void ImmCommandEncoder::PushTask(const TaskFunc& func) { m_tasks.push_back(func); }
 
 void ImmCommandEncoder::Submit() {

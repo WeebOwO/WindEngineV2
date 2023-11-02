@@ -21,22 +21,14 @@ struct RasterState {
 
 struct StencilState {};
 
-class GraphicsPipeline {
+class GraphcisPipeline {
 public:
-    static Ref<GraphicsPipeline> Compile(const Material& material, const RasterShader& rasterShader,
-                                         vk::RenderPass& renderPass);
+    struct Desc {
+        RasterState         rasterState;
+        Ref<RasterShader>   rasterShader;
+        Ref<vk::RenderPass> renderPassHandle;
+    };
 
-private:
-    vk::Pipeline m_vkHandle;
-
-    vk::PipelineShaderStageCreateInfo        m_shaderStages;
-    vk::PipelineVertexInputStateCreateInfo   m_vertexInputState;
-    vk::PipelineInputAssemblyStateCreateInfo m_inputAssemblyState;
-    vk::PipelineRasterizationStateCreateInfo m_rasterState;
-    vk::PipelineMultisampleStateCreateInfo   m_multiSampleState;
-    vk::PipelineDepthStencilStateCreateInfo  m_depthStencilState;
-    vk::PipelineColorBlendStateCreateInfo    m_blendState;
-    vk::PipelineDynamicStateCreateInfo       m_dynamicState;
-    vk::PipelineViewportStateCreateInfo      m_viewPortState; // may be dynamic
+    static Ref<GraphcisPipeline> Create(const Desc& desc);
 };
 } // namespace wind
