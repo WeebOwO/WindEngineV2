@@ -43,6 +43,8 @@ void RenderGraph::Exec() {
             renderEncoder->BeginRendering(renderingInfo);
             graphPass->m_renderExecCallback(*renderEncoder);
             renderEncoder->EndRendering();
+        } else {
+            
         }
     }
 
@@ -56,13 +58,7 @@ void RenderGraph::Exec() {
 
 void RenderGraph::Compile() {
     for (auto& [debugName, pass] : m_renderGraphPasses) {
-        if (pass->m_rastershader != nullptr && pass->m_computeShader != nullptr) {
-            // todo : async compute start
-        } else if (pass->m_rastershader != nullptr) {
-            // todo : graphics pass
-        } else if (pass->m_computeShader != nullptr) {
-            // todo : comptue pass
-        }
+        
     }
     m_dirty = false;
 }

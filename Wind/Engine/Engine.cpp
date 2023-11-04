@@ -9,6 +9,7 @@
 #include "Engine/RuntimeContext.h"
 #include "Renderer/SceneRenderer.h"
 #include "Renderer/View.h"
+#include "Resource/Mesh.h"
 #include "Scene/Scene.h"
 #include "Window.h"
 
@@ -27,7 +28,22 @@ void Engine::LoadScene() {
     auto& scene = m_scenes[m_activeSceneIndex];
 
     auto gameobject = scene->CreateGameObject("Test");
-    auto tag = gameobject.GetComponent<TagComponent>();
+    auto tag        = gameobject.GetComponent<TagComponent>();
+
+    Ref<StaticMesh> mesh = ref::Create<StaticMesh>();
+
+    // init the triangle
+    StaticMeshVertexFactory::Vertex v1, v2, v3;
+    v1.position = {0.0f, -0.5f, 0.0f};
+    v2.position = {0.5f, 0.5f, 0.0f};
+    v3.position = {-0.5f, 0.5f, 0.0f};
+
+    mesh->meshSource.vertices = {v1, v2, v3};
+    mesh->meshSource.indices  = {{0, 1, 2}};
+
+    mesh->InitRHI();
+
+    gameobject.AddComponent<MeshComponent>(mesh);
 }
 
 void Engine::Run() {
@@ -74,11 +90,15 @@ void Engine::Quit() {
 void Engine::RenderTick(float delta) {
     ZoneScopedN("RenderTick");
     View view{};
-    m_sceneRenderer->Render(*m_window->GetSwapChain(), *m_scenes[m_activeSceneIndex], view);
+    m_sceneRenderer->Render(*m_window->GetSwapChain(), view);
 }
 
 void Engine::LogicTick(float delta) {
     ZoneScopedN("LogicTick");
     m_window->OnUpdate(delta);
+
+    auto& activeScene = m_scenes[m_activeSceneIndex];
+    activeScene->Update();
+    m_sceneRenderer->SetScene(*activeScene);
 }
 } // namespace wind

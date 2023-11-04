@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Renderer/RenderGraph/RenderPass.h"
 #include "std.h"
 
 #include "RenderBackend/Command.h"
@@ -41,16 +40,16 @@ public:
     ~SceneRenderer();
 
     void        SetScene(Scene& scene);
-    void        Render(Swapchain& swapchain, Scene& scene, View& view);
+    void        Render(Swapchain& swapchain, View& view);
     FrameParms& GetCurrentFrameData();
 
     void Init();
 
 private:
-    void InitView();
+    void InitView(View& view); // Dispatch MeshPass
 
     void PresentPass();
-    
+
     Scene*           m_renderScene;
     GPUDevice&       m_device;
     FrameParms       m_frameParams[Swapchain::MAX_FRAME_IN_FLIGHT];

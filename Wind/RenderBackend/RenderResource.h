@@ -14,7 +14,8 @@ enum class RHIResourceType : u8 {
     CommandEncoder,
     CommandBuffer,
     ShaderParamer,
-    RenderPass
+    RenderPass,
+    Pipeline
 };
 
 template <RHIResourceType ResourceType> struct ResourceHandle {

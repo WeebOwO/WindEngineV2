@@ -39,7 +39,7 @@ public:
 
 private:
     void  UnmapMemory();
-    void* m_mapMemory;
+    void* m_mapMemory{nullptr};
 };
 
 class DeviceBuffer : public GPUBuffer {

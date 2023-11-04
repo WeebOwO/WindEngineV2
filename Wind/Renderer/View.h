@@ -1,10 +1,9 @@
 #pragma once
 
-#include "glm/glm.hpp"
+#include "Renderer/MeshPass.h"
 
 namespace wind {
 struct View {
-    glm::mat4 view;
-    glm::mat4 projection;
+    std::array<MeshDrawCommand, MeshPassType::Count> visiableMeshDrawCommands;
 };
 } // namespace wind

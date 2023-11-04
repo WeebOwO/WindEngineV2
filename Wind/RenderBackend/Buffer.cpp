@@ -48,7 +48,7 @@ void UploadBuffer::UnmapMemory() {
 }
 
 void UploadBuffer::WriteData(void* data, u32 size, u32 offset) {
-    assert(size + offset < GetByteSize());
+    assert(size + offset <= GetByteSize());
     if (m_mapMemory == nullptr) MapMemory();
 
     u8* memory = (u8*)m_mapMemory;

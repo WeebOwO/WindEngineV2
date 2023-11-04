@@ -15,15 +15,17 @@ public:
         std::string  debugName;
         ShadingModel ShadingModel;
         BlendMode    blendMode;
-        RasterState  rasterState;
+        RenderState  renderState;
     };
+
+    void SetInput(); // set material parameter
 
     static Ref<Material> Create(const Desc& desc);
     
 private:
-    std::string  m_debugName;
-    RasterState  m_rasterState;
-    ShadingModel m_shadingModel;
+    std::string                    m_debugName;
+    std::vector<vk::DescriptorSet> m_descriptorSets;
+    BlendMode                      m_blendMode;
+    ShadingModel                   m_shadingModel;
 };
-
 } // namespace wind

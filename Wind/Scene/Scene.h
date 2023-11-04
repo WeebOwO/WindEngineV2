@@ -4,6 +4,8 @@
 
 #include <entt/entt.hpp>
 
+#include "Renderer/MeshPass.h"
+
 #include "Core/UUID.h"
 #include "Scene/LightCaster.h"
 
@@ -12,6 +14,7 @@ class GameObject;
 
 struct LightSceneInfo final {
     static constexpr size_t MaxDirectionalLights = 4;
+
     DirectionalLight        DirectionalLights[MaxDirectionalLights];
     std::vector<PointLight> PointLights;
     std::vector<SpotLight>  SpotLights;
@@ -31,13 +34,19 @@ public:
     void Init();
 
     GameObject CreateGameObject(std::string name = {});
+    void       Update();
 
 private:
+    struct GPUScene {};
     friend class GameObject;
 
     entt::registry m_registry;
     LightSceneInfo m_lightSceneInfo;
 
     GameObjectMap m_gameObjectMap;
+
+    std::array<MeshPass, MeshPassType::Count> m_meshPasses;
+
+    bool m_isDirty = true;
 };
 } // namespace wind

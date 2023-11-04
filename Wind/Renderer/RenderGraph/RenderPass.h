@@ -66,12 +66,8 @@ private:
         AttachmentInfo attachmentInfo;
     };
 
-    Ref<RasterShader>  m_rastershader;
-    Ref<ComputeShader> m_computeShader;
-
-    RenderGraph&           m_renderGraph;
-    std::string            m_debugName;
-    RenderCommandQueueType m_passtype;
+    RenderGraph& m_renderGraph;
+    std::string  m_debugName;
 
     RenderExecCallBack       m_renderExecCallback{nullptr};
     StencilClearCallBack     m_stencilCallback{nullptr};

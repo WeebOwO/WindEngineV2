@@ -20,8 +20,6 @@ void RuntimeContext::Init() {
     pathManager.projectPath = currentPath.parent_path().parent_path().parent_path().parent_path();
     pathManager.shaderPath = pathManager.projectPath.append("Shaders");
     // init shader map
-
-    
 }
 
 void RuntimeContext::Quit() { 

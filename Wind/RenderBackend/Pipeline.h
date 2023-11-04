@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RenderBackend/RenderResource.h"
 #include "VulkanHeader.h"
 
 #include "RasterShader.h"
@@ -21,14 +22,16 @@ struct RasterState {
 
 struct StencilState {};
 
-class GraphcisPipeline {
-public:
-    struct Desc {
-        RasterState         rasterState;
-        Ref<RasterShader>   rasterShader;
-        Ref<vk::RenderPass> renderPassHandle;
-    };
+struct RenderState {
+    RasterState  rasterState;
+    StencilState stencilState = {};
+};
 
-    static Ref<GraphcisPipeline> Create(const Desc& desc);
+class GraphcisPipeline : public RHIResource<RHIResourceType::Pipeline> {
+public:
+    static Ref<GraphcisPipeline> Create(const Material& material, const RasterShader& rasterShader);
+
+private:
+    vk::Pipeline m_pipelineHandle;
 };
 } // namespace wind

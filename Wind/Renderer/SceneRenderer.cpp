@@ -10,7 +10,6 @@
 #include "Scene/Scene.h"
 #include "View.h"
 
-
 namespace wind {
 void FrameParms::Init(const vk::Device& device) {
     computeEncoder = ref::Create<ComputeEncoder>();
@@ -61,7 +60,15 @@ FrameParms& SceneRenderer::GetCurrentFrameData() { return m_frameParams[m_frameN
 
 void SceneRenderer::SetScene(Scene& scene) { m_renderScene = &scene; }
 
-void SceneRenderer::Render(Swapchain& swapchain, Scene& scene, View& view) {
+void SceneRenderer::InitView(View& view) {
+
+    for (auto meshPassType = MeshPassType::BasePass; meshPassType != MeshPassType::Count;
+         meshPassType      = Step(meshPassType)) {
+         
+    }
+}
+
+void SceneRenderer::Render(Swapchain& swapchain, View& view) {
     auto& frameData = GetCurrentFrameData();
 
     frameData.swapchainImageIndex =
@@ -72,6 +79,8 @@ void SceneRenderer::Render(Swapchain& swapchain, Scene& scene, View& view) {
     // init render graph
     m_renderGraph->SetupSwapChain(swapchain);
     m_renderGraph->SetupFrameData(frameData);
+
+    InitView(view);
 
     PresentPass();
 
@@ -85,4 +94,5 @@ void SceneRenderer::PresentPass() {
 
     });
 }
+
 } // namespace wind

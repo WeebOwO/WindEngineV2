@@ -35,7 +35,7 @@ Ref<RasterShader> RasterShader::Compile(const std::string& debugName,
     shader->CollectMetaData(vertexSpirv, vk::ShaderStageFlagBits::eVertex);
     shader->CollectMetaData(fragSpirv, vk::ShaderStageFlagBits::eFragment);
     shader->GeneratePipelineLayout();
-    
+
     return shader;
 }
 } // namespace wind

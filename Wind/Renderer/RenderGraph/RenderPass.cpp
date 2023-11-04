@@ -5,7 +5,7 @@
 namespace wind {
 RenderGraphPass::RenderGraphPass(RenderGraph& renderGraph, const std::string& debugName,
                                  RenderCommandQueueType type)
-    : m_renderGraph(renderGraph), m_debugName(debugName), m_passtype(type) {}
+    : m_renderGraph(renderGraph), m_debugName(debugName), m_queueType(type) {}
 
 void RenderGraphPass::SetRenderExecCallBack(const RenderExecCallBack& callback) {
     m_renderExecCallback = callback;

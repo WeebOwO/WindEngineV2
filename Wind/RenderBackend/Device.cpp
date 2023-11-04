@@ -89,8 +89,7 @@ void GPUDevice::PickupPhysicalDevice() {
         m_supportedExtensions.insert(extension.extensionName);
     }
 
-    m_enableExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-                          VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME};
+    m_enableExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
     m_enableExtensions.insert(m_enableExtensions.end(), rayTracingExtensions.begin(),
                               rayTracingExtensions.end());

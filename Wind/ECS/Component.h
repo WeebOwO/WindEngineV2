@@ -6,15 +6,12 @@
 #include "Core/UUID.h"
 
 namespace wind {
-class RawMesh;
+class StaticMesh;
 
-struct Component {
-    virtual void Register() {}
-    virtual void UnRegister() {}
-};
+struct Component {};
 
 struct IDComponent : public Component {
-    UUID id = 0;
+    UUID id;
 };
 
 struct TagComponent : public Component {
@@ -29,12 +26,10 @@ struct TagComponent : public Component {
 };
 
 struct MeshComponent : public Component {
-    void Register() override;
-    void UnRegister() override;
-
-    Ref<RawMesh> meshSource;
-
     MeshComponent() = default;
+    MeshComponent(Ref<StaticMesh> mesh) : meshSource(mesh) {}
+
+    Ref<StaticMesh> meshSource;
 };
 
 } // namespace wind
