@@ -16,9 +16,8 @@ public:
 
     auto GetShaderModules() const noexcept { return m_shaderModules; }
 
-    static Ref<RasterShader> Compile(const std::string& debugName,
-                                     const std::string& vertexFilePath,
-                                     const std::string& fragfilePath);
+    static Ref<RasterShader> Create(const std::string& debugName, const std::string& vertexFilePath,
+                                    const std::string& fragfilePath);
 
 private:
     std::array<vk::ShaderModule, 2> m_shaderModules;

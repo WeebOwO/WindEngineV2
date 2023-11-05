@@ -3,6 +3,7 @@
 #include "std.h"
 
 #include "RenderBackend/Buffer.h"
+#include "RenderBackend/Pipeline.h"
 
 namespace wind {
 class Material;
@@ -41,12 +42,13 @@ struct MeshDrawCommand {
 };
 
 struct MeshPass {
+    using MaterialFilter = std::function<bool(const Material& material)>;
+
     MeshPassType             type;
     std::vector<StaticMesh*> meshes;
-};
-
-struct MeshProcesser {
-    virtual void Process(MeshPass& meshPass);
+    RasterShader*            passShader;
+    RenderState              renderState;
+    MaterialFilter           filter;
 };
 
 MeshPassType Step(MeshPassType type);

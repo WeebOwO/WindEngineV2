@@ -2,8 +2,8 @@
 
 #include "std.h"
 
-#include "VulkanHeader.h"
 #include "RenderResource.h"
+#include "VulkanHeader.h"
 
 namespace wind {
 class Shader : public RHIResource<RHIResourceType::Shader> {
@@ -16,7 +16,9 @@ public:
     ~Shader();
 
     virtual void BindCommandBuffer(const vk::CommandBuffer& cmdBuffer) const;
-    
+
+    auto GetShaderName() const { return m_debugName; }
+
 protected:
     auto SetShaderName(const std::string& name) { m_debugName = name; }
     void CollectMetaData(const std::vector<u32>& spirvCode, vk::ShaderStageFlags flag);

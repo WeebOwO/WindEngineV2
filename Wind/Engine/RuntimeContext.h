@@ -11,6 +11,7 @@ namespace wind {
 class RasterShader;
 class ComputeShader;
 class GPUDevice;
+class MaterialManager;
 
 class ShaderMap {
 public:
@@ -18,16 +19,16 @@ public:
     void CacheComputeShader(Ref<ComputeShader> shader);
 
     Ref<RasterShader> GetRasterShader(const std::string& shaderName) {
-        return rasterShaderCache[shaderName];
+        return m_rasterShaderCache[shaderName];
     }
 
     Ref<ComputeShader> GetComputeShader(const std::string& shaderName) {
-        return computeShaderCache[shaderName];
+        return m_computeShaderCache[shaderName];
     }
 
 private:
-    std::unordered_map<std::string, Ref<RasterShader>>  rasterShaderCache;
-    std::unordered_map<std::string, Ref<ComputeShader>> computeShaderCache;
+    std::unordered_map<std::string, Ref<RasterShader>>  m_rasterShaderCache;
+    std::unordered_map<std::string, Ref<ComputeShader>> m_computeShaderCache;
 };
 
 struct PathManager {
@@ -39,9 +40,11 @@ struct RuntimeContext {
     void Init();
     void Quit();
 
-    Scope<ShaderMap> shaderMap;
-    Scope<GPUDevice> device;
-    PathManager      pathManager;
+    Scope<ShaderMap>       shaderMap;
+    Scope<GPUDevice>       device;
+    Scope<MaterialManager> materialManager;
+
+    PathManager pathManager;
 };
 
 std::filesystem::path GetPath(std::filesystem::path path);

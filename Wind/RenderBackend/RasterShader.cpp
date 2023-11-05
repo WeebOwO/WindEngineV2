@@ -12,11 +12,11 @@ RasterShader::RasterShader(const std::string& name, const vk::ShaderModule& vert
     SetShaderName(name);
 }
 
-Ref<RasterShader> RasterShader::Compile(const std::string& debugName,
-                                        const std::string& vertexFilePath,
-                                        const std::string& fragfilePath) {
-    auto& shaderMap = g_runtimeContext.shaderMap;
-    auto  device    = g_runtimeContext.device->GetVkDeviceHandle();
+Ref<RasterShader> RasterShader::Create(const std::string& debugName,
+                                       const std::string& vertexFilePath,
+                                       const std::string& fragfilePath) {
+
+    auto device = g_runtimeContext.device->GetVkDeviceHandle();
 
     auto vertexSpirv = io::LoadBinary<u32>(vertexFilePath);
     auto fragSpirv   = io::LoadBinary<u32>(fragfilePath);
