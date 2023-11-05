@@ -13,5 +13,9 @@ void RenderEncoder::BeginRendering(const vk::RenderingInfo& renderingInfo) {
     m_nativeHandle.beginRendering(renderingInfo);
 }
 
+void RenderEncoder::BindPSO(const vk::Pipeline& pipeline) {
+    m_nativeHandle.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline);
+}
+
 void RenderEncoder::EndRendering() { m_nativeHandle.endRendering(); }
 } // namespace wind

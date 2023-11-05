@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Resource/VertexFactory.h"
 #include "std.h"
 
+#include "Core/UUID.h"
 #include "RenderBackend/Buffer.h"
 #include "RenderBackend/Pipeline.h"
 
@@ -36,16 +38,19 @@ struct DrawMesh {
 };
 
 struct MeshDrawCommand {
-    using PipelineStateId = u64;
-    PipelineStateId pipelineId;
-    DrawMesh        drawMesh;
+    u64               pipelineID;
+    DrawMesh          drawMesh;
+    Material*         materialProxy;
+    VertexFactoryType type;
 };
 
 struct MeshPass {
     using MaterialFilter = std::function<bool(const Material& material)>;
 
+    void Clear();
+
     MeshPassType             type;
-    std::vector<StaticMesh*> meshes;
+    std::vector<StaticMesh*> staticMeshes;
     RasterShader*            passShader;
     RenderState              renderState;
     MaterialFilter           filter;

@@ -11,6 +11,11 @@
 #include "View.h"
 
 namespace wind {
+
+void CalcPSOStateID() {
+
+}
+
 void FrameParms::Init(const vk::Device& device) {
     computeEncoder = ref::Create<ComputeEncoder>();
     renderEncoder  = ref::Create<RenderEncoder>();
@@ -64,7 +69,7 @@ void SceneRenderer::InitView(View& view) {
 
     for (auto meshPassType = MeshPassType::BasePass; meshPassType != MeshPassType::Count;
          meshPassType      = Step(meshPassType)) {
-         
+        BuildMeshDrawCommand(m_renderScene->m_meshPasses[meshPassType]);
     }
 }
 
@@ -88,10 +93,20 @@ void SceneRenderer::Render(Swapchain& swapchain, View& view) {
     m_frameNumber = (m_frameNumber + 1) % Swapchain::MAX_FRAME_IN_FLIGHT;
 }
 
+void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass) {
+    auto psocache = g_runtimeContext.psoCache.get();
+    for(auto meshProxy : meshPass.staticMeshes) {
+        
+    }
+}
+
 void SceneRenderer::PresentPass() {
     // setup present pass
-    m_Presentpass->SetRenderExecCallBack([](RenderEncoder& encoder) {
-
+    m_Presentpass->SetRenderExecCallBack([&](RenderEncoder& encoder) {
+        for (auto& meshDrawCommand : m_cacheMeshDrawCommands[MeshPassType::BasePass]) {
+            auto pso = g_runtimeContext.psoCache->pipelineCache[meshDrawCommand.pipelineID];
+            encoder.BindPSO(pso);
+        }
     });
 }
 

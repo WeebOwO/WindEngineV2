@@ -23,6 +23,9 @@ public:
 
     static Ref<Material> Create(const Desc& desc);
 
+    auto GetShadingModel() const { return m_shadingModel; }
+    auto GetBlendMode() const { return m_blendMode; }
+
 private:
     std::string                    m_debugName;
     BlendMode                      m_blendMode;

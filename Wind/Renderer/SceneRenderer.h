@@ -4,9 +4,9 @@
 
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Fwd.h"
-#include "Renderbackend/SwapChain.h"
-
 #include "RenderGraph/RenderGraph.h"
+#include "Renderbackend/SwapChain.h"
+#include "Renderer/MeshPass.h"
 
 namespace wind {
 class Scene;
@@ -49,6 +49,7 @@ private:
     void InitView(View& view); // Dispatch MeshPass
 
     void PresentPass();
+    void BuildMeshDrawCommand(const MeshPass& meshPass);
 
     Scene*           m_renderScene;
     GPUDevice&       m_device;
@@ -58,5 +59,7 @@ private:
 
     // all the renderpass are create by rendergraph
     RenderGraphPass* m_Presentpass;
+
+    std::array<std::vector<MeshDrawCommand>, MeshPassType::Count> m_cacheMeshDrawCommands;
 };
 } // namespace wind

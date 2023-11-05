@@ -38,7 +38,9 @@ public:
 
 private:
     struct GPUScene {};
+
     friend class GameObject;
+    friend class SceneRenderer;
 
     entt::registry m_registry;
     LightSceneInfo m_lightSceneInfo;

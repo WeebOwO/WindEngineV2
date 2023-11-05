@@ -36,6 +36,8 @@ public:
     // render pass
     void BeginRenderPass(const vk::RenderPassBeginInfo& renderPassBeginInfo);
     void EndRenderPass();
+    void BindPSO(const vk::Pipeline& pipeline);
+    void BindVertexBuffer();
     // dynamic rendering
     void BeginRendering(const vk::RenderingInfo& renderingInfo);
     void EndRendering();

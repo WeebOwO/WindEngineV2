@@ -2,6 +2,8 @@
 
 #include "std.h"
 
+#include "RenderBackend/VulkanHeader.h"
+
 namespace vk {
 class ShaderModule;
 };
@@ -36,6 +38,10 @@ struct PathManager {
     std::filesystem::path shaderPath;
 };
 
+struct PsoCache {
+    std::unordered_map<u64, vk::Pipeline> pipelineCache;
+};
+
 struct RuntimeContext {
     void Init();
     void Quit();
@@ -43,6 +49,7 @@ struct RuntimeContext {
     Scope<ShaderMap>       shaderMap;
     Scope<GPUDevice>       device;
     Scope<MaterialManager> materialManager;
+    Scope<PsoCache>        psoCache;
 
     PathManager pathManager;
 };

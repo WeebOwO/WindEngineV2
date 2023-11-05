@@ -34,9 +34,16 @@ void RuntimeContext::Init() {
     shaderMap->CacheRasterShader(
         RasterShader::Create("BasePassShader", "Triangle.vert.spv", "Triangle.frag.spv"));
     // init material manager
+    materialManager->InitDefaultMaterial();
 }
 
-void RuntimeContext::Quit() { JobSystem::Quit(); }
+void RuntimeContext::Quit() {
+    auto vkDevice = device->GetVkDeviceHandle();
+    for (const auto& [_, pipeline] : psoCache->pipelineCache) {
+        vkDevice.destroyPipeline(pipeline);
+    }
+    JobSystem::Quit();
+}
 
 std::filesystem::path GetPath(std::filesystem::path path) { return std::filesystem::path(); }
 } // namespace wind
