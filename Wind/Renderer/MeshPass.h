@@ -5,7 +5,6 @@
 
 #include "Core/UUID.h"
 #include "RenderBackend/Buffer.h"
-#include "RenderBackend/Pipeline.h"
 
 namespace wind {
 class Material;
@@ -51,8 +50,6 @@ struct MeshPass {
 
     MeshPassType             type;
     std::vector<StaticMesh*> staticMeshes;
-    RasterShader*            passShader;
-    RenderState              renderState;
     MaterialFilter           filter;
 };
 

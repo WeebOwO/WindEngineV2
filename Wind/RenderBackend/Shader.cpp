@@ -107,7 +107,8 @@ void Shader::GeneratePipelineLayout() {
 
 Shader::~Shader() {
     auto vkDevice = device.GetVkDeviceHandle();
-
+    vkDevice.waitIdle();
+    
     vkDevice.destroyPipelineLayout(m_layout);
 
     for (auto& setlayout : m_descriptorSetLayouts) {

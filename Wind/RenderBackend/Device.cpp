@@ -207,20 +207,11 @@ void GPUDevice::InitBackupCommandBuffer() {
 
     m_backupCommandBuffer = m_device->allocateCommandBuffers(allocateInfo).front();
 
-    vk::FenceCreateInfo fenceCreateInfo{.flags = vk::FenceCreateFlagBits::eSignaled};
+    vk::FenceCreateInfo fenceCreateInfo{};
     m_backupCommandfence = m_device->createFence(fenceCreateInfo);
 }
 
 vk::CommandBuffer GPUDevice::GetBackUpCommandBuffer() {
-    auto result =
-        m_device->waitForFences(m_backupCommandfence, true, std::numeric_limits<float>::max());
-    if (result != vk::Result::eSuccess) {
-        WIND_CORE_WARN("Backup ComandBuffer wait too long time");
-    }
-    m_device->resetFences(m_backupCommandfence);
-
-    m_device->resetCommandPool(m_backupCommandPool);
-
     return m_backupCommandBuffer;
 }
 
@@ -229,5 +220,14 @@ void GPUDevice::SubmitBackUpCommandBuffer(const vk::CommandBuffer& buffer) {
 
     vk::SubmitInfo submitInfo{.commandBufferCount = 1, .pCommandBuffers = &buffer};
     m_graphicsQueue.submit(submitInfo, m_backupCommandfence);
+
+        auto result =
+        m_device->waitForFences(m_backupCommandfence, true, std::numeric_limits<float>::max());
+    if (result != vk::Result::eSuccess) {
+        WIND_CORE_WARN("Backup ComandBuffer wait too long time");
+    }
+    m_device->resetFences(m_backupCommandfence);
+
+    m_device->resetCommandPool(m_backupCommandPool);
 }
 }; // namespace wind

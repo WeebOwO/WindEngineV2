@@ -12,15 +12,18 @@ public:
     RasterShader(const std::string& name, const vk::ShaderModule& vertexModule,
                  const vk::ShaderModule& fragModule) noexcept;
 
+    ~RasterShader();
+
     vk::PipelineLayout GetPipelineLayout() const noexcept { return m_layout; }
 
-    auto GetShaderModules() const noexcept { return m_shaderModules; }
+    auto GetVertexModule() const noexcept { return m_vertexModule; }
+    auto GetFragModule() const noexcept { return m_fragModule; }
 
     static Ref<RasterShader> Create(const std::string& debugName, const std::string& vertexFilePath,
                                     const std::string& fragfilePath);
 
 private:
-    std::array<vk::ShaderModule, 2> m_shaderModules;
-    vk::Pipeline                    pipeline;
+    vk::ShaderModule m_vertexModule;
+    vk::ShaderModule m_fragModule;
 };
 } // namespace wind

@@ -2,9 +2,10 @@
 
 #include "std.h"
 
-#include "RenderGraphResource.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Texture.h"
+#include "RenderGraphResource.h"
+
 
 namespace wind {
 class RenderGraphPass;
@@ -25,7 +26,7 @@ public:
     void SetupFrameData(FrameParms& frameData);
 
     void Exec();
-    
+
 private:
     void Compile();
     void WriteResource(const std::string& passName, const std::string& resourceName);

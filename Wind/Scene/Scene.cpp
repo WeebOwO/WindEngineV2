@@ -40,10 +40,9 @@ void Scene::Update() {
 
 void Scene::Init() {
     // init the base pass
-    auto& basePass      = m_meshPasses[MeshPassType::BasePass];
-    basePass.type       = MeshPassType::BasePass;
-    basePass.passShader = g_runtimeContext.shaderMap->GetRasterShader("BasePassShader").get();
-    basePass.filter     = [](const Material& material) {
+    auto& basePass  = m_meshPasses[MeshPassType::BasePass];
+    basePass.type   = MeshPassType::BasePass;
+    basePass.filter = [](const Material& material) {
         auto blendMode = material.GetBlendMode();
         return blendMode == Material::BlendMode::Opaque;
     };

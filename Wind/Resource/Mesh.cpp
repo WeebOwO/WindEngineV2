@@ -10,6 +10,7 @@ void StaticMesh::InitRHI() {
 
     UploadBuffer vertexUploadBuffer(vertexBufferByteSize);
     UploadBuffer indexUploadBuffer(indexBufferByteSize);
+    
     meshSource.vertexBuffer =
         ref::Create<DeviceBuffer>(vertexBufferByteSize, vk::BufferUsageFlagBits::eVertexBuffer |
                                                             vk::BufferUsageFlagBits::eTransferDst);

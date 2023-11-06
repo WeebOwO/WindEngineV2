@@ -2,7 +2,7 @@
 
 #include "VulkanHeader.h"
 
-#include "RenderResource.h"
+#include "RHIResource.h"
 
 namespace wind {
 class RenderEncoder;
@@ -10,6 +10,7 @@ class ComputeEncoder;
 
 class ComputeShader;
 class RasterShader;
+class MeshDrawCommand;
 
 enum class RenderCommandQueueType : uint8_t { Copy = 0, Graphics, Compute, AsyncCompute, General };
 
@@ -33,11 +34,30 @@ class RenderEncoder : public CommandEncoder {
 public:
     RenderEncoder();
     void BindGraphicsShader(const RasterShader& shader);
-    // render pass
+
     void BeginRenderPass(const vk::RenderPassBeginInfo& renderPassBeginInfo);
     void EndRenderPass();
     void BindPSO(const vk::Pipeline& pipeline);
     void BindVertexBuffer();
+    void Draw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance);
+    void DrawIndexed(u32 indexCount, u32 instanceCount, u32 firstIndex, u32 vertexOffset,
+                     u32 firstInstance);
+
+    void BindVertexBuffer(u32 firstBinding, u32 bindingCount, const vk::Buffer& buffer,
+                          vk::DeviceSize offset);
+    void BindIndexBuffer(const vk::Buffer& buffer, vk::DeviceSize offset, vk::IndexType indexType);
+
+    void ExecMeshDrawCommand(const MeshDrawCommand& meshDrawCommand);
+
+    void SetViewport(float width, float height, float minDepth, float maxDepth);
+    void SetScissor(i32 offsetx, i32 offsety, u32 width, u32 height);
+
+    // layout transfer
+    void TransferImageLayout(const vk::Image& image, vk::AccessFlags srcMask,
+                             vk::AccessFlags dstMask, vk::ImageLayout oldlayout,
+                             vk::ImageLayout newLayout, vk::PipelineStageFlags srcFlags,
+                             vk::PipelineStageFlags dstFlags, const vk::ImageSubresourceRange& subRange);
+
     // dynamic rendering
     void BeginRendering(const vk::RenderingInfo& renderingInfo);
     void EndRendering();

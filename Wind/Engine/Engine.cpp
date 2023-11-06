@@ -7,6 +7,7 @@
 #include "ECS/Component.h"
 #include "Ecs/Entity.h"
 #include "Engine/RuntimeContext.h"
+#include "Renderer/Material.h"
 #include "Renderer/SceneRenderer.h"
 #include "Renderer/View.h"
 #include "Resource/Mesh.h"
@@ -22,11 +23,13 @@ Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {
 Engine::~Engine() { Quit(); }
 
 void Engine::LoadScene() {
+
     m_activeSceneIndex = 0;
     m_scenes.push_back(scope::Create<Scene>());
 
     auto& scene = m_scenes[m_activeSceneIndex];
 
+    scene->Init();
     auto gameobject = scene->CreateGameObject("Test");
     auto tag        = gameobject.GetComponent<TagComponent>();
 
@@ -41,6 +44,8 @@ void Engine::LoadScene() {
     mesh->meshSource.vertices = {v1, v2, v3};
     mesh->meshSource.indices  = {{0, 1, 2}};
 
+    auto materialManager = g_runtimeContext.materialManager.get();
+    mesh->material       = materialManager->GetMaterial("default_lit").get();
     mesh->InitRHI();
 
     gameobject.AddComponent<MeshComponent>(mesh);

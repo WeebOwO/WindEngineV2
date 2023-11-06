@@ -6,15 +6,15 @@
 #include "RenderBackend/ComputeShader.h"
 #include "RenderBackend/Descriptor.h"
 #include "RenderGraph/RenderPass.h"
+#include "Renderer/MeshPass.h"
+#include "Renderer/RenderGraph/RenderPassEnum.h"
 #include "Resource/Loader.h"
+#include "Resource/Mesh.h"
+#include "Resource/VertexFactory.h"
 #include "Scene/Scene.h"
 #include "View.h"
 
 namespace wind {
-
-void CalcPSOStateID() {
-
-}
 
 void FrameParms::Init(const vk::Device& device) {
     computeEncoder = ref::Create<ComputeEncoder>();
@@ -94,9 +94,23 @@ void SceneRenderer::Render(Swapchain& swapchain, View& view) {
 }
 
 void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass) {
-    auto psocache = g_runtimeContext.psoCache.get();
-    for(auto meshProxy : meshPass.staticMeshes) {
-        
+    auto                psocache      = g_runtimeContext.psoCache.get();
+    RenderGraphPassType graphPassType = meshPass.type == MeshPassType::BasePass
+                                            ? RenderGraphPassType::MeshPassMRT
+                                            : RenderGraphPassType::MeshPass;
+    m_cacheMeshDrawCommands[meshPass.type].clear();
+    for (auto meshProxy : meshPass.staticMeshes) {
+        MeshDrawCommand meshDrawCommand;
+        meshDrawCommand.drawMesh.firstVertex = 0;
+        meshDrawCommand.drawMesh.meshSource  = &meshProxy->meshSource;
+        meshDrawCommand.drawMesh.vertexCount = meshProxy->meshSource.vertices.size();
+        meshDrawCommand.drawMesh.indexCount  = meshProxy->meshSource.indices.size();
+        meshDrawCommand.materialProxy        = meshProxy->material;
+
+        meshDrawCommand.pipelineID =
+            psocache->CachePso(*meshProxy->material, VertexFactoryType::StaicMesh, graphPassType);
+
+        m_cacheMeshDrawCommands[meshPass.type].push_back(meshDrawCommand);
     }
 }
 
@@ -104,8 +118,21 @@ void SceneRenderer::PresentPass() {
     // setup present pass
     m_Presentpass->SetRenderExecCallBack([&](RenderEncoder& encoder) {
         for (auto& meshDrawCommand : m_cacheMeshDrawCommands[MeshPassType::BasePass]) {
-            auto pso = g_runtimeContext.psoCache->pipelineCache[meshDrawCommand.pipelineID];
+            auto pso = g_runtimeContext.psoCache->GetPso(meshDrawCommand.pipelineID);
+
+            encoder.SetViewport(1920, 1080, 0.0, 1.0);
+            encoder.SetScissor(0, 0, 1920, 1080);
+
+            // not godd for usage
+            auto vertexBuffer = meshDrawCommand.drawMesh.meshSource->vertexBuffer;
+            auto indexBuffer  = meshDrawCommand.drawMesh.meshSource->indexBuffer;
+
             encoder.BindPSO(pso);
+            encoder.BindVertexBuffer(0, 1, vertexBuffer->GetNativeHandle(), 0);
+            encoder.BindIndexBuffer(indexBuffer->GetNativeHandle(), 0, vk::IndexType::eUint32);
+
+            encoder.DrawIndexed(3 * meshDrawCommand.drawMesh.meshSource->indices.size(), 1, 0, 0,
+                                0);
         }
     });
 }

@@ -1,7 +1,5 @@
 #include "Buffer.h"
 
-#include <vcruntime_string.h>
-
 #include "Device.h"
 #include "Engine/RuntimeContext.h"
 

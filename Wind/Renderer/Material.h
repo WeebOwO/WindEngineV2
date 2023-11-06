@@ -1,6 +1,8 @@
 #pragma once
 
-#include "RenderBackend/Pipeline.h"
+#include "std.h"
+
+#include "RenderBackend/VulkanHeader.h"
 
 namespace wind {
 class VertexFactory;
@@ -11,12 +13,14 @@ public:
     enum class ShadingModel : u8 { UnLit = 0, Lit };
     enum class BlendMode : u8 { Opaque, Tanslucency, Additive };
 
-    Material(const std::string& debugName, ShadingModel shadingModel, BlendMode blendMode);
+    Material(const std::string& debugName, ShadingModel shadingModel, BlendMode blendMode,
+             RasterShader* rasterShader);
 
     struct Desc {
-        std::string  debugName;
-        ShadingModel ShadingModel;
-        BlendMode    blendMode;
+        std::string   debugName;
+        ShadingModel  ShadingModel;
+        BlendMode     blendMode;
+        RasterShader* rasterShader;
     };
 
     void SetInput(); // set material parameter
@@ -25,9 +29,11 @@ public:
 
     auto GetShadingModel() const { return m_shadingModel; }
     auto GetBlendMode() const { return m_blendMode; }
+    auto GetShader() const { return m_rasterShader; }
 
 private:
     std::string                    m_debugName;
+    RasterShader*                  m_rasterShader;
     BlendMode                      m_blendMode;
     ShadingModel                   m_shadingModel;
     std::vector<vk::DescriptorSet> m_descriptorSets;
@@ -35,10 +41,12 @@ private:
 
 class MaterialManager {
 public:
-    void InitDefaultMaterial();
-    void GetMaterial(const std::string& name);
+    void          InitDefaultMaterial();
+    Ref<Material> GetMaterial(const std::string& name);
 
 private:
     std::unordered_map<std::string, Ref<Material>> m_materialCaches;
 };
 } // namespace wind
+
+namespace wind::utils {}

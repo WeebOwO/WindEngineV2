@@ -8,7 +8,7 @@ namespace wind {
 
 RasterShader::RasterShader(const std::string& name, const vk::ShaderModule& vertexModule,
                            const vk::ShaderModule& fragShaderModule) noexcept
-    : m_shaderModules({vertexModule, fragShaderModule}) {
+    : m_vertexModule(vertexModule), m_fragModule(fragShaderModule) {
     SetShaderName(name);
 }
 
@@ -25,7 +25,7 @@ Ref<RasterShader> RasterShader::Create(const std::string& debugName,
         .codeSize = vertexSpirv.size() * sizeof(u32), .pCode = vertexSpirv.data()};
 
     vk::ShaderModuleCreateInfo fragshaderModuleCreateInfo{
-        .codeSize = vertexSpirv.size() * sizeof(u32), .pCode = vertexSpirv.data()};
+        .codeSize = fragSpirv.size() * sizeof(u32), .pCode = fragSpirv.data()};
 
     auto vertexModule = device.createShaderModule(vertexshaderModuleCreateInfo);
     auto fragModule   = device.createShaderModule(fragshaderModuleCreateInfo);
@@ -37,5 +37,11 @@ Ref<RasterShader> RasterShader::Create(const std::string& debugName,
     shader->GeneratePipelineLayout();
 
     return shader;
+}
+
+RasterShader::~RasterShader() {
+    auto vkDevice = device.GetVkDeviceHandle();
+    vkDevice.destroyShaderModule(m_vertexModule);
+    vkDevice.destroyShaderModule(m_fragModule);
 }
 } // namespace wind

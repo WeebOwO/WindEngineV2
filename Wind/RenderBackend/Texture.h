@@ -2,7 +2,7 @@
 
 #include "Allocator.h"
 #include "VulkanHeader.h"
-#include "RenderResource.h"
+#include "RHIResource.h"
 
 namespace wind {
 

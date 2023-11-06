@@ -36,7 +36,14 @@ void RenderGraph::Exec() {
     auto swapchainImageIndex = m_currentFrameData->swapchainImageIndex;
     renderEncoder->Begin();
 
-    vk::Rect2D rect{.offset = {}, .extent{m_swapchain->GetWidth(), m_swapchain->GetHeight()}};
+    // start barrier ot
+    renderEncoder->TransferImageLayout(
+        m_swapchain->GetImage(swapchainImageIndex), vk::AccessFlagBits::eNone,
+        vk::AccessFlagBits::eColorAttachmentWrite, vk::ImageLayout::eUndefined,
+        vk::ImageLayout::eColorAttachmentOptimal, vk::PipelineStageFlagBits::eTopOfPipe,
+        vk::PipelineStageFlagBits::eColorAttachmentOutput,
+        vk::ImageSubresourceRange{vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1});
+
     for (const auto& [passDebugName, graphPass] : m_renderGraphPasses) {
         if (graphPass->IsWriteToBackBuffer()) {
             auto renderingInfo = m_swapchain->GetRenderingInfo(swapchainImageIndex);
@@ -44,11 +51,18 @@ void RenderGraph::Exec() {
             graphPass->m_renderExecCallback(*renderEncoder);
             renderEncoder->EndRendering();
         } else {
-            
         }
     }
 
     if (m_swapchain) {
+        // end sync with backbuffer
+        renderEncoder->TransferImageLayout(
+            m_swapchain->GetImage(swapchainImageIndex), vk::AccessFlagBits::eColorAttachmentWrite,
+            vk::AccessFlagBits::eNone, vk::ImageLayout::eColorAttachmentOptimal,
+            vk::ImageLayout::ePresentSrcKHR, vk::PipelineStageFlagBits::eColorAttachmentOutput,
+            vk::PipelineStageFlagBits::eBottomOfPipe,
+            vk::ImageSubresourceRange{vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1});
+
         m_swapchain->SubmitCommandBuffer(renderEncoder->Finish(), m_currentFrameData->flightFence,
                                          m_currentFrameData->imageAvailableSemaphore,
                                          m_currentFrameData->renderFinishedSemaphore,
@@ -57,9 +71,7 @@ void RenderGraph::Exec() {
 }
 
 void RenderGraph::Compile() {
-    for (auto& [debugName, pass] : m_renderGraphPasses) {
-        
-    }
+    for (auto& [debugName, pass] : m_renderGraphPasses) {}
     m_dirty = false;
 }
 } // namespace wind

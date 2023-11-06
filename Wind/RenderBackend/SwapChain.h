@@ -17,6 +17,8 @@ public:
     u32  ImageCount() const { return m_swapchainImages.size(); }
     auto GetFrameBuffer(u32 index) const { return m_framebuffers[index]; }
     auto GetImageView(u32 index) const { return m_swapchainViews[index]; }
+    auto GetImage(u32 index) const { return m_swapchainImages[index]; }
+
     auto GetClearValue() const { return &m_clearValue; }
     auto GetRenderingInfo(u32 index) const { return m_renderingInfos[index]; }
 

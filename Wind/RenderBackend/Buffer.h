@@ -3,7 +3,7 @@
 #include "std.h"
 
 #include "Allocator.h"
-#include "RenderResource.h"
+#include "RHIResource.h"
 #include "VulkanHeader.h"
 
 namespace wind {
