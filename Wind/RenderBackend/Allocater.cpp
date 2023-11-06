@@ -1,8 +1,8 @@
 #define VMA_IMPLEMENTATION
 
 #include "Allocator.h"
-#include "Device.h"
 
+#include "Device.h"
 #include "Core/Log.h"
 
 namespace wind {

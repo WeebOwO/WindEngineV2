@@ -4,7 +4,6 @@
 
 #include "Asset/Asset.h"
 #include "Interface.h"
-
 #include "VertexFactory.h"
 
 namespace wind {

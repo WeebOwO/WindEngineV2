@@ -1,5 +1,5 @@
 #include "VertexFactory.h"
-#include "Resource/VertexFactory.h"
+
 namespace wind {
 std::vector<vk::VertexInputBindingDescription>
 StaticMeshVertexFactory::GetInputBindingDescription() {

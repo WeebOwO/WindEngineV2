@@ -1,7 +1,5 @@
 #include "Command.h"
 
-#include "std.h"
-
 #include "Device.h"
 
 namespace wind {

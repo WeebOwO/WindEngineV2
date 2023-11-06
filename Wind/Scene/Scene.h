@@ -4,9 +4,8 @@
 
 #include <entt/entt.hpp>
 
-#include "Renderer/MeshPass.h"
-
 #include "Core/UUID.h"
+#include "Renderer/MeshPass.h"
 #include "Scene/LightCaster.h"
 
 namespace wind {
