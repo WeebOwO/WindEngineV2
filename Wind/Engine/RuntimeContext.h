@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RenderBackend/ImGuiContext.h"
 #include "std.h"
 
 #include "Resource/Mesh.h"
@@ -63,12 +64,14 @@ private:
 
 struct RuntimeContext {
     void Init();
+    void PostInit(const Window& window);
     void Quit();
 
     Scope<ShaderMap>       shaderMap;
     Scope<GPUDevice>       device;
     Scope<MaterialManager> materialManager;
     Scope<PsoCache>        psoCache;
+    Scope<ImGUIContext>    guiContext;
 
     PathManager pathManager;
 };

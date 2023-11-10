@@ -81,6 +81,9 @@ void SceneRenderer::Render(Swapchain& swapchain, View& view) {
             .value();
     frameData.ResetCommanEncoders();
 
+    m_viewPortWidth  = swapchain.GetWidth();
+    m_viewPortHeight = swapchain.GetHeight();
+
     // init render graph
     m_renderGraph->SetupSwapChain(swapchain);
     m_renderGraph->SetupFrameData(frameData);
@@ -120,10 +123,9 @@ void SceneRenderer::PresentPass() {
         for (auto& meshDrawCommand : m_cacheMeshDrawCommands[MeshPassType::BasePass]) {
             auto pso = g_runtimeContext.psoCache->GetPso(meshDrawCommand.pipelineID);
 
-            encoder.SetViewport(1920, 1080, 0.0, 1.0);
-            encoder.SetScissor(0, 0, 1920, 1080);
+            encoder.SetViewport(m_viewPortWidth, m_viewPortHeight, 0.0, 1.0);
+            encoder.SetScissor(0, 0, m_viewPortWidth, m_viewPortHeight);
 
-            // not godd for usage
             auto vertexBuffer = meshDrawCommand.drawMesh.meshSource->vertexBuffer;
             auto indexBuffer  = meshDrawCommand.drawMesh.meshSource->indexBuffer;
 
@@ -136,5 +138,4 @@ void SceneRenderer::PresentPass() {
         }
     });
 }
-
 } // namespace wind

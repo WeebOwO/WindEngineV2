@@ -2,11 +2,11 @@
 
 #include "std.h"
 
-#include "RenderBackend/Command.h"
-#include "RenderBackend/Fwd.h"
-#include "RenderGraph/RenderGraph.h"
-#include "Renderbackend/SwapChain.h"
 #include "Renderer/MeshPass.h"
+#include "RenderGraph/RenderGraph.h"
+#include "RenderBackend/Fwd.h"
+#include "RenderBackend/Command.h"
+#include "Renderbackend/SwapChain.h"
 
 namespace wind {
 class Scene;
@@ -61,5 +61,8 @@ private:
     RenderGraphPass* m_Presentpass;
 
     std::array<std::vector<MeshDrawCommand>, MeshPassType::Count> m_cacheMeshDrawCommands;
+
+    u32 m_viewPortWidth;
+    u32 m_viewPortHeight;
 };
 } // namespace wind

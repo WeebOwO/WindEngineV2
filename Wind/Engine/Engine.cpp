@@ -85,7 +85,10 @@ float Engine::CalcDeltaTime() {
     return dalta;
 }
 
-void Engine::PostInit() { m_window->Init(); }
+void Engine::PostInit() { 
+    m_window->Init(); 
+    g_runtimeContext.PostInit(*m_window);
+}
 
 void Engine::Quit() {
     g_runtimeContext.Quit();
@@ -95,6 +98,7 @@ void Engine::Quit() {
 void Engine::RenderTick(float delta) {
     ZoneScopedN("RenderTick");
     View view{};
+
     m_sceneRenderer->Render(*m_window->GetSwapChain(), view);
 }
 

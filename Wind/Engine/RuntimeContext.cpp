@@ -7,6 +7,7 @@
 #include "Engine/RuntimeContext.h"
 #include "RenderBackend/ComputeShader.h"
 #include "RenderBackend/Device.h"
+#include "RenderBackend/ImGuiContext.h"
 #include "RenderBackend/RasterShader.h"
 #include "RenderBackend/Shader.h"
 #include "Renderer/Material.h"
@@ -164,11 +165,16 @@ void RuntimeContext::Quit() {
     auto vkDevice = device->GetVkDeviceHandle();
     vkDevice.waitIdle();
     shaderMap.reset(nullptr);
-    
+    guiContext->Quit(*device);
     for (const auto& [_, pipeline] : psoCache->m_pipelineCache) {
         vkDevice.destroyPipeline(pipeline);
     }
     JobSystem::Quit();
+}
+
+void RuntimeContext::PostInit(const Window& window) {
+    guiContext = scope::Create<ImGUIContext>();
+    guiContext->Init(*device, window);
 }
 
 std::filesystem::path GetPath(std::filesystem::path path) { return std::filesystem::path(); }
