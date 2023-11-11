@@ -10,4 +10,3 @@ set_runtimes("MD")
 
 includes("Editor/")
 includes("Wind/")
-includes("3rdParty/")
