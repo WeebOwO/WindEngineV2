@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <tracy/Tracy.hpp>
+#include <vcruntime.h>
 
 #include "Core/Log.h"
 #include "ECS/Component.h"
@@ -97,8 +98,8 @@ void Engine::Quit() {
 
 void Engine::RenderTick(float delta) {
     ZoneScopedN("RenderTick");
-    View view{};
-
+    View view;
+    
     m_sceneRenderer->Render(*m_window->GetSwapChain(), view);
 }
 

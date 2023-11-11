@@ -138,6 +138,12 @@ vk::Pipeline PsoCache::GetPso(u64 pipelineStateID) {
 
 PsoCache::PsoCache() : m_device(g_runtimeContext.device->GetVkDeviceHandle()) {}
 
+void PsoCache::Destroy() {
+    for (const auto& [_, pipeline] : m_pipelineCache) {
+        m_device.destroyPipeline(pipeline);
+    }
+}
+
 void RuntimeContext::Init() {
     // Core engine part
     Log::Init();
@@ -165,9 +171,7 @@ void RuntimeContext::Quit() {
     vkDevice.waitIdle();
     shaderMap.reset(nullptr);
     guiContext->Quit(*device);
-    for (const auto& [_, pipeline] : psoCache->m_pipelineCache) {
-        vkDevice.destroyPipeline(pipeline);
-    }
+    psoCache->Destroy();
     JobSystem::Quit();
 }
 

@@ -21,7 +21,7 @@ class MaterialManager;
 class ShaderMap {
 public:
     ShaderMap();
-
+  
     void CacheRasterShader(Ref<RasterShader> shader);
     void CacheComputeShader(Ref<ComputeShader> shader);
 
@@ -54,6 +54,8 @@ public:
                           RenderGraphPassType graphPassType);
     vk::Pipeline GetPso(u64 pipelineStateID);
 
+    void Destroy();
+    
 private:
     friend class RuntimeContext;
 

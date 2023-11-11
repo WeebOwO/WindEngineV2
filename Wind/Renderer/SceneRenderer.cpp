@@ -1,5 +1,6 @@
 #include "SceneRenderer.h"
 
+#include "View.h"
 #include "Core/Log.h"
 #include "Engine/RuntimeContext.h"
 #include "RenderBackend/Command.h"
@@ -12,7 +13,6 @@
 #include "Resource/Mesh.h"
 #include "Resource/VertexFactory.h"
 #include "Scene/Scene.h"
-#include "View.h"
 
 namespace wind {
 
