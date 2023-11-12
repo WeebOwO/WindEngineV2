@@ -2,10 +2,10 @@
 
 #include "std.h"
 
-#include "Resource/Mesh.h"
 #include "RenderBackend/ImGuiContext.h"
 #include "RenderBackend/VulkanHeader.h"
 #include "Renderer/RenderGraph/RenderPassEnum.h"
+#include "Resource/Mesh.h"
 
 namespace vk {
 class ShaderModule;
@@ -17,11 +17,12 @@ class RasterShader;
 class ComputeShader;
 class GPUDevice;
 class MaterialManager;
+class Scene;
 
 class ShaderMap {
 public:
     ShaderMap();
-  
+
     void CacheRasterShader(Ref<RasterShader> shader);
     void CacheComputeShader(Ref<ComputeShader> shader);
 
@@ -55,7 +56,7 @@ public:
     vk::Pipeline GetPso(u64 pipelineStateID);
 
     void Destroy();
-    
+
 private:
     friend class RuntimeContext;
 
@@ -73,6 +74,7 @@ struct RuntimeContext {
     Scope<MaterialManager> materialManager;
     Scope<PsoCache>        psoCache;
     Scope<ImGUIContext>    guiContext;
+    Scene*                 activeScene;
 
     PathManager pathManager;
 };
@@ -80,4 +82,13 @@ struct RuntimeContext {
 std::filesystem::path GetPath(std::filesystem::path path);
 
 extern RuntimeContext g_runtimeContext;
+
+// utils func
+class RuntimeUtils {
+public:
+    static void       GPUWaitIdle();
+    static vk::Device GetVulkanDevice();
+    static Scene*     GetActiveScene();
+};
+
 } // namespace wind

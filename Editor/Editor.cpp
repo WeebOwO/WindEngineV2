@@ -9,6 +9,7 @@ public:
     void Init() override {}
     void Quit() override {}
     void Run() override {
+        
         wind::Window::WindowDesc desc {
             .width = 1920,
             .height = 1080,
@@ -18,7 +19,7 @@ public:
 
         wind::Scope<wind::Window> window = wind::scope::Create<wind::Window>(desc);
 
-        wind::Engine engine(std::move(window));
+        wind::Engine engine(std::move(window)); 
         engine.Run();
     }
 };

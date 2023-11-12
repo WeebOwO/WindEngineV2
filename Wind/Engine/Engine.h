@@ -1,6 +1,9 @@
 #pragma once
 
+#include "Engine/RenderThread.h"
 #include "std.h"
+
+#include "Engine/LayerStack.h"
 
 namespace wind {
 class SceneRenderer;
@@ -14,10 +17,16 @@ public:
 
     void Run();
 
+    void PushLayer(Layer* layer);
+    void PushOverlay(Layer* layer);
+    void PopLayer(Layer* layer);
+    void PopOverlay(Layer* layer);
+
 private:
     void Init();
     void PostInit();
     void Quit();
+
     void RenderTick(float delta);
     void LogicTick(float delta);
 
@@ -25,9 +34,10 @@ private:
     float CalcDeltaTime();
 
     Scope<Window>                         m_window;
-    Scope<SceneRenderer>                  m_sceneRenderer;
     std::vector<Scope<Scene>>             m_scenes;
     u32                                   m_activeSceneIndex;
     std::chrono::steady_clock::time_point m_lastTickTimePoint{std::chrono::steady_clock::now()};
+    LayerStack                            m_layerStack; // store app's function
+    RenderThread                          m_renderThread;
 };
 } // namespace wind

@@ -181,4 +181,19 @@ void RuntimeContext::PostInit(const Window& window) {
 }
 
 std::filesystem::path GetPath(std::filesystem::path path) { return std::filesystem::path(); }
+
+void RuntimeUtils::GPUWaitIdle() {
+    assert(g_runtimeContext.device != nullptr);
+    g_runtimeContext.device->GetVkDeviceHandle().waitIdle();
+}
+
+vk::Device RuntimeUtils::GetVulkanDevice() {
+    assert(g_runtimeContext.device != nullptr);
+    return g_runtimeContext.device->GetVkDeviceHandle();
+}
+
+Scene* RuntimeUtils::GetActiveScene() {
+    assert(g_runtimeContext.activeScene != nullptr);
+    return g_runtimeContext.activeScene;
+}
 } // namespace wind

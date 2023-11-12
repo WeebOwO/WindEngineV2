@@ -173,7 +173,7 @@ void Swapchain::CreateRenderPass() {
 }
 
 std::optional<u32> Swapchain::AcquireNextImage(const vk::Fence&     waitFence,
-                                               const vk::Semaphore& imageAvailableSemaphore) {
+                                               const vk::Semaphore& imageAvailableSemaphore) const {
     auto vkDevice = m_device.GetVkDeviceHandle();
     auto _        = vkDevice.waitForFences(waitFence, true, std::numeric_limits<uint64_t>::max());
 

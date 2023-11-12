@@ -9,7 +9,6 @@ namespace wind {
 class Window;
 class Swapchain {
 public:
-    static constexpr uint32_t MAX_FRAME_IN_FLIGHT = 2;
     Swapchain(const GPUDevice& device, const Window& window);
     ~Swapchain();
 
@@ -37,7 +36,8 @@ public:
     void SetClearColor(float r, float g, float b, float a);
 
     std::optional<u32> AcquireNextImage(const vk::Fence&     waitFence,
-                                        const vk::Semaphore& imageAvailableSemaphore);
+                                        const vk::Semaphore& imageAvailableSemaphore) const;
+
     void SubmitCommandBuffer(const vk::CommandBuffer& cmdBuffer, const vk::Fence& signalFence,
                              const vk::Semaphore& imageAvailableSemaphore,
                              const vk::Semaphore& imageFinishSemaphre, u32 imageIndex) const;

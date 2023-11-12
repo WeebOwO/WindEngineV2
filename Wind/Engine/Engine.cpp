@@ -1,8 +1,6 @@
 #include "Engine.h"
 
-#include <filesystem>
 #include <tracy/Tracy.hpp>
-#include <vcruntime.h>
 
 #include "Core/Log.h"
 #include "ECS/Component.h"
@@ -68,9 +66,8 @@ void Engine::Run() {
 
 void Engine::Init() {
     g_runtimeContext.Init();
+    m_renderThread.Init();
     WIND_CORE_INFO("Init the engine core!");
-    m_sceneRenderer = scope::Create<SceneRenderer>();
-    m_sceneRenderer->Init();
 }
 
 float Engine::CalcDeltaTime() {
@@ -86,29 +83,55 @@ float Engine::CalcDeltaTime() {
     return dalta;
 }
 
-void Engine::PostInit() { 
-    m_window->Init(); 
+void Engine::PostInit() {
+    m_window->Init();
     g_runtimeContext.PostInit(*m_window);
 }
 
 void Engine::Quit() {
+    m_renderThread.Quit();
     g_runtimeContext.Quit();
     WIND_CORE_INFO("Shutdown engine");
 }
 
 void Engine::RenderTick(float delta) {
     ZoneScopedN("RenderTick");
-    View view;
-    
-    m_sceneRenderer->Render(*m_window->GetSwapChain(), view);
+
+    m_renderThread.NextFrame(*m_window->GetSwapChain());
 }
 
 void Engine::LogicTick(float delta) {
     ZoneScopedN("LogicTick");
     m_window->OnUpdate(delta);
+    
+    // update app logic
+    for (Layer* layer : m_layerStack) {
+        layer->OnUpdate(delta);
+    }
 
     auto& activeScene = m_scenes[m_activeSceneIndex];
     activeScene->Update();
-    m_sceneRenderer->SetScene(*activeScene);
+    g_runtimeContext.activeScene = activeScene.get();
 }
+
+void Engine::PushLayer(Layer* layer) {
+    m_layerStack.PushLayer(layer);
+    layer->OnAttach();
+}
+
+void Engine::PushOverlay(Layer* layer) {
+    m_layerStack.PushOverlay(layer);
+    layer->OnAttach();
+}
+
+void Engine::PopLayer(Layer* layer) {
+    m_layerStack.PopLayer(layer);
+    layer->OnDetach();
+}
+
+void Engine::PopOverlay(Layer* layer) {
+    m_layerStack.PopOverlay(layer);
+    layer->OnDetach();
+}
+
 } // namespace wind

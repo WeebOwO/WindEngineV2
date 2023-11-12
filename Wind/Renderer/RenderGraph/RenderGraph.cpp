@@ -1,14 +1,15 @@
 #include "RenderGraph.h"
 
-#include "RenderPass.h"
 #include "Core/Log.h"
+#include "Engine/RuntimeContext.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/SwapChain.h"
+#include "RenderPass.h"
 #include "Renderer/SceneRenderer.h"
 
 namespace wind {
 
-RenderGraph::RenderGraph(GPUDevice& device) : m_device(device) {}
+RenderGraph::RenderGraph() {}
 
 void RenderGraph::ImportBackBuffer(const std::string& backBufferName) {
     m_backBufferDebugName = backBufferName;
@@ -30,7 +31,7 @@ RenderGraphPass* RenderGraph::AddPass(const std::string& passName, RenderCommand
 void RenderGraph::Exec() {
     if (m_dirty) { Compile(); }
 
-    auto vkDevice      = m_device.GetVkDeviceHandle();
+    auto vkDevice      = RuntimeUtils::GetVulkanDevice();
     auto renderEncoder = m_currentFrameData->renderEncoder;
 
     auto swapchainImageIndex = m_currentFrameData->swapchainImageIndex;

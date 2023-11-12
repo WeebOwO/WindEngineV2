@@ -2,10 +2,9 @@
 
 #include "std.h"
 
-#include "RenderGraphResource.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Texture.h"
-
+#include "RenderGraphResource.h"
 
 namespace wind {
 class RenderGraphPass;
@@ -16,7 +15,7 @@ class RenderGraph {
 public:
     friend class RenderGraphPass;
 
-    RenderGraph(GPUDevice& device);
+    RenderGraph();
     RenderGraphPass* AddPass(const std::string& passName, RenderCommandQueueType type);
 
     void ImportTexture(const std::string& resourceName, Ref<GPUTexture2D> externalTexture);
@@ -32,7 +31,6 @@ private:
     void WriteResource(const std::string& passName, const std::string& resourceName);
 
     bool                                                  m_dirty = false;
-    GPUDevice&                                            m_device;
     std::unordered_map<std::string, Ref<RenderGraphPass>> m_renderGraphPasses;
     std::unordered_map<std::string, RenderGraphResource>  m_resources;
 
@@ -42,7 +40,5 @@ private:
     std::string      m_backBufferDebugName{"None"};
 
     FrameParms* m_currentFrameData{nullptr};
-
-    std::unordered_map<std::string, vk::Pipeline> m_pipelines;
 };
 } // namespace wind

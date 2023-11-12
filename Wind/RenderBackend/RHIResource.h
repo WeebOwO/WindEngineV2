@@ -18,7 +18,8 @@ enum class RHIResourceType : u8 {
     Pipeline
 };
 
-template <RHIResourceType ResourceType> struct ResourceHandle {
+template <RHIResourceType ResourceType> 
+struct ResourceHandle {
     static constexpr RHIResourceType handleType = ResourceType;
     u32                              handle;
 };
