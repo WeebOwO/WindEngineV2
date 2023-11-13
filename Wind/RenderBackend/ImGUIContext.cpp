@@ -42,21 +42,25 @@ void ImGUIContext::Init(const GPUDevice& device, const Window& window) {
     ImGuiIO& io = ImGui::GetIO();
     (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
+     // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
     ImGui_ImplGlfw_InitForVulkan(window.GetWindow(), true);
 
     ImGui_ImplVulkan_InitInfo initInfo;
-    initInfo.Instance       = device.GetVkInstance();
-    initInfo.PhysicalDevice = device.GetVkPhysicalDevice();
-    initInfo.Device         = vkdevice;
-    initInfo.Queue          = device.GetGraphicsQueue();
-    initInfo.DescriptorPool = m_imguiPool;
-    initInfo.MinImageCount  = 3;
-    initInfo.ImageCount     = 3;
-    initInfo.MSAASamples    = VK_SAMPLE_COUNT_1_BIT;
+    initInfo.Instance              = device.GetVkInstance();
+    initInfo.PhysicalDevice        = device.GetVkPhysicalDevice();
+    initInfo.Device                = vkdevice;
+    initInfo.Queue                 = device.GetGraphicsQueue();
+    initInfo.QueueFamily           = device.GetQueueIndices().graphicsQueueIndex.value();
+    initInfo.PipelineCache         = nullptr;
+    initInfo.DescriptorPool        = m_imguiPool;
+    initInfo.MinImageCount         = 3;
+    initInfo.ImageCount            = 3;
+    initInfo.Allocator             = nullptr;
+    initInfo.MSAASamples           = VK_SAMPLE_COUNT_1_BIT;
     initInfo.ColorAttachmentFormat = VkFormat(window.GetSwapChain()->GetFormat());
-    initInfo.CheckVkResultFn = CheckVkResult;
-    initInfo.UseDynamicRendering = true;
+    initInfo.CheckVkResultFn       = CheckVkResult;
+    initInfo.UseDynamicRendering   = true;
 
     ImGui_ImplVulkan_Init(&initInfo, nullptr);
 

@@ -27,7 +27,7 @@ public:
     vk::Queue GetGraphicsQueue() const noexcept { return m_graphicsQueue; }
     vk::Queue GetComputeQueue() const noexcept { return m_computeQueue; }
 
-    auto GetQueueIndices() noexcept { return m_queueIndices; }
+    auto GetQueueIndices() const noexcept { return m_queueIndices; }
 
     auto GetVkDeviceHandle() const noexcept { return *m_device; }
     auto GetVkPhysicalDevice() const noexcept { return m_physicalDevice; }

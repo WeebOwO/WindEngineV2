@@ -6,12 +6,17 @@
 #include "ECS/Component.h"
 #include "Ecs/Entity.h"
 #include "Engine/RuntimeContext.h"
+// renderer part
 #include "Renderer/Material.h"
 #include "Renderer/SceneRenderer.h"
 #include "Renderer/View.h"
 #include "Resource/Mesh.h"
 #include "Scene/Scene.h"
 #include "Window.h"
+// imgui part
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_vulkan.h"
 
 namespace wind {
 Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {
@@ -95,10 +100,23 @@ void Engine::Quit() {
 
 void Engine::RenderTick(float delta) {
     ZoneScopedN("RenderTick");
-    m_renderThread.RenderJob(*m_window->GetSwapChain());
-    // render the ui part
-    for (auto layer : m_layerStack) {
+    // imgui start part
+    ImGui_ImplVulkan_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    for (const auto& layer : m_layerStack) {
         layer->OnImGuiRender();
+    }
+    // execute main render job
+    m_renderThread.RenderJob(*m_window->GetSwapChain());
+
+    // imgui end part
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
     }
     m_renderThread.NextFrame();
 }
@@ -108,7 +126,7 @@ void Engine::LogicTick(float delta) {
     m_window->OnUpdate(delta);
 
     // update app logic
-    for (Layer* layer : m_layerStack) {
+    for (const auto& layer : m_layerStack) {
         layer->OnUpdate(delta);
     }
 
@@ -118,24 +136,24 @@ void Engine::LogicTick(float delta) {
     g_runtimeContext.activeScene = activeScene.get();
 }
 
-void Engine::PushLayer(Layer* layer) {
-    m_layerStack.PushLayer(layer);
+void Engine::PushLayer(Scope<Layer> layer) {
     layer->OnAttach();
+    m_layerStack.PushLayer(std::move(layer));
 }
 
-void Engine::PushOverlay(Layer* layer) {
-    m_layerStack.PushOverlay(layer);
+void Engine::PushOverlay(Scope<Layer> layer) {
     layer->OnAttach();
+    m_layerStack.PushOverlay(std::move(layer));
 }
 
-void Engine::PopLayer(Layer* layer) {
-    m_layerStack.PopLayer(layer);
+void Engine::PopLayer(Scope<Layer> layer) {
     layer->OnDetach();
+    m_layerStack.PopLayer(std::move(layer));
 }
 
-void Engine::PopOverlay(Layer* layer) {
-    m_layerStack.PopOverlay(layer);
+void Engine::PopOverlay(Scope<Layer> layer) {
     layer->OnDetach();
+    m_layerStack.PopOverlay(std::move(layer));
 }
 
 } // namespace wind

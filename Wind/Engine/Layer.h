@@ -7,8 +7,8 @@
 namespace wind {
 class Layer {
 public:
-    Layer(const std::string& name = "layer");
-    virtual ~Layer();
+    Layer(const std::string& name = "layer") : m_debugName(name) {}
+    virtual ~Layer() = default;
 
     virtual void OnAttach() {}
     virtual void OnDetach() {}

@@ -19,7 +19,7 @@ struct RenderConfig {
 
 class SceneRenderer {
 public:
-    SceneRenderer() = default;
+    SceneRenderer()  = default;
     ~SceneRenderer() = default;
 
     void SetViewPort(u32 width, u32 height);

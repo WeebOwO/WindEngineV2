@@ -35,6 +35,7 @@ public:
         Idle = 0,
         Kick,
     };
+    
     void Init();
     void Quit();
 

@@ -5,14 +5,14 @@ LayerStack::LayerStack() {}
 
 LayerStack::~LayerStack() {}
 
-void LayerStack::PushLayer(Layer* layer) {
-    m_layers.emplace(m_layers.begin() + m_layerInsertIndex, layer);
+void LayerStack::PushLayer(Scope<Layer> layer) {
+    m_layers.emplace(m_layers.begin() + m_layerInsertIndex, std::move(layer));
     m_layerInsertIndex++;
 }
 
-void LayerStack::PushOverlay(Layer* overlay) { m_layers.emplace_back(overlay); }
+void LayerStack::PushOverlay(Scope<Layer> overlay) { m_layers.emplace_back(std::move(overlay)); }
 
-void LayerStack::PopLayer(Layer* layer) {
+void LayerStack::PopLayer(Scope<Layer> layer) {
     auto it = std::find(m_layers.begin(), m_layers.end(), layer);
     if (it != m_layers.end()) {
         m_layers.erase(it);
@@ -20,7 +20,7 @@ void LayerStack::PopLayer(Layer* layer) {
     }
 }
 
-void LayerStack::PopOverlay(Layer* overlay) {
+void LayerStack::PopOverlay(Scope<Layer> overlay) {
     auto it = std::find(m_layers.begin(), m_layers.end(), overlay);
     if (it != m_layers.end()) m_layers.erase(it);
 }

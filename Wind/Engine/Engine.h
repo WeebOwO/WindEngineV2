@@ -17,10 +17,10 @@ public:
 
     void Run();
 
-    void PushLayer(Layer* layer);
-    void PushOverlay(Layer* layer);
-    void PopLayer(Layer* layer);
-    void PopOverlay(Layer* layer);
+    void PushLayer(Scope<Layer> layer);
+    void PushOverlay(Scope<Layer> layer);
+    void PopLayer(Scope<Layer> layer);
+    void PopOverlay(Scope<Layer> layer);
 
 private:
     void Init();

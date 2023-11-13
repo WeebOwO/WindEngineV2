@@ -56,7 +56,6 @@ void SceneRenderer::Render(View& view, RenderGraph& renderGraph) {
             encoder.DrawIndexed(3 * meshDrawCommand.drawMesh.meshSource->indices.size(), 1, 0, 0,
                                 0);
 
-            ImGui::ShowDemoWindow();
             encoder.RenderUI();
         }
     });

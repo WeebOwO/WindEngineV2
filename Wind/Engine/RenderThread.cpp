@@ -1,15 +1,13 @@
 #include "RenderThread.h"
 
-// imgui part
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_vulkan.h"
-
-#include "ECS/JobSystem.h"
+// engine header
 #include "Engine/RuntimeContext.h"
+// renderer part
 #include "Renderer/RenderGraph/RenderGraph.h"
+#include "Renderer/RenderGraph/RenderPass.h"
 #include "Renderer/SceneRenderer.h"
 #include "Renderer/View.h"
+
 
 namespace wind {
 
@@ -66,21 +64,17 @@ void RenderThread::RenderJob(const Swapchain& swapchain) {
             .value();
     frameData.ResetCommanEncoders();
 
-    // ui part
-    ImGui_ImplVulkan_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
     m_renderGraph->SetupFrameData(frameData);
     m_renderGraph->SetupSwapChain(swapchain);
 
     View view; // create view
- 
+
     m_sceneRenderer->SetViewPort(swapchain.GetWidth(), swapchain.GetHeight());
     m_sceneRenderer->Render(view, *m_renderGraph);
-
-    m_renderGraph->Exec();
 }
 
-void RenderThread::NextFrame() { m_frameNumber = (m_frameNumber + 1) % MAX_FRAME_IN_FLIGHT; }
+void RenderThread::NextFrame() {
+    m_renderGraph->Exec();
+    m_frameNumber = (m_frameNumber + 1) % MAX_FRAME_IN_FLIGHT;
+}
 } // namespace wind
