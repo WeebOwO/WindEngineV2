@@ -1,6 +1,8 @@
 #include "Command.h"
 
+#include "imgui.h"
 #include "Renderer/MeshPass.h"
+#include "imgui_impl_vulkan.h"
 
 namespace wind {
 RenderEncoder::RenderEncoder() : CommandEncoder(RenderCommandQueueType::Graphics) {}
@@ -71,5 +73,11 @@ void RenderEncoder::TransferImageLayout(const vk::Image& image, vk::AccessFlags 
 
     m_nativeHandle.pipelineBarrier(srcFlags, dstFlags, {}, 0, nullptr, 0, nullptr, 1,
                                    &imageBarrier);
+}
+
+void RenderEncoder::RenderUI() {
+    ImGui::Render();
+    ImDrawData* main_draw_data = ImGui::GetDrawData();
+    ImGui_ImplVulkan_RenderDrawData(main_draw_data, m_nativeHandle);
 }
 } // namespace wind

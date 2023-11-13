@@ -1,14 +1,18 @@
 #pragma once
 
-#include "Resource/Interface.h"
 #include "RenderBackend/Texture.h"
 
 namespace wind {
-class Texture2D final : public RenderResourceInterface {
+
+struct Texture : public RenderResource {
+    
+};
+
+class Texture2D final : public Texture {
 public:
     void InitRHI() override;
     void RelaseRHI() override;
-
+    
 private:
     Ref<GPUTexture2D> m_rhiHandle;
 };

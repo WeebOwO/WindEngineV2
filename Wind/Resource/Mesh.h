@@ -3,8 +3,8 @@
 #include "std.h"
 
 #include "Asset/Asset.h"
-#include "Interface.h"
 #include "VertexFactory.h"
+#include "RenderResource.h"
 
 namespace wind {
 class DeviceBuffer;
@@ -20,7 +20,7 @@ struct MeshSource {
     i32 materialIndex{-1};
 };
 
-class StaticMesh : public RenderResourceInterface {
+class StaticMesh : public RenderResource {
 public:
     void InitRHI() override;
     void RelaseRHI() override;

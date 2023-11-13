@@ -26,7 +26,7 @@ void Swapchain::QuerySurfaceProperty() {
     m_surfaceFormat = surfaceFormats.front();
 
     for (const auto& availableFormat : surfaceFormats) {
-        if (availableFormat.format == vk::Format::eB8G8R8A8Srgb &&
+        if (availableFormat.format == vk::Format::eR8G8B8A8Srgb &&
             availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
             m_surfaceFormat = availableFormat;
             break;
@@ -155,11 +155,14 @@ void Swapchain::CreateRenderPass() {
     // create dynamic rendering part
     for (u32 i = 0; i < m_swapchainViews.size(); ++i) {
         // setup clear color
-        m_attachmentInfos[i] =
-            vk::RenderingAttachmentInfo{.sType       = vk::StructureType::eRenderingAttachmentInfo,
-                                        .imageView   = m_swapchainViews[i],
-                                        .imageLayout = vk::ImageLayout::eAttachmentOptimal,
-                                        .clearValue  = m_clearValue};
+        m_attachmentInfos[i] = vk::RenderingAttachmentInfo{
+            .sType       = vk::StructureType::eRenderingAttachmentInfo,
+            .imageView   = m_swapchainViews[i],
+            .imageLayout = vk::ImageLayout::eAttachmentOptimal,
+            .loadOp      = vk::AttachmentLoadOp::eClear,
+            .storeOp     = vk::AttachmentStoreOp::eStore,
+            .clearValue  = m_clearValue,
+        };
 
         m_renderingInfos[i] = vk::RenderingInfo{
             .sType = vk::StructureType::eRenderingInfo,

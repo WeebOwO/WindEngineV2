@@ -29,7 +29,7 @@ struct LightSceneInfo final {
 class Scene final {
 public:
     using GameObjectMap = std::unordered_map<UUID, GameObject>;
-
+    
     void Init();
 
     GameObject CreateGameObject(std::string name = {});

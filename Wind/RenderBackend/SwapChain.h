@@ -17,7 +17,7 @@ public:
     auto GetFrameBuffer(u32 index) const { return m_framebuffers[index]; }
     auto GetImageView(u32 index) const { return m_swapchainViews[index]; }
     auto GetImage(u32 index) const { return m_swapchainImages[index]; }
-
+    auto GetFormat() const { return m_surfaceFormat.format; }
     auto GetClearValue() const { return &m_clearValue; }
     auto GetRenderingInfo(u32 index) const { return m_renderingInfos[index]; }
 

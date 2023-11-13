@@ -5,8 +5,9 @@
 #include "Core/Log.h"
 
 namespace wind::io {
-template <typename T>
-std::vector<T> LoadBinary(std::string_view fileName) {
+class Scene;
+
+template <typename T> std::vector<T> LoadBinary(std::string_view fileName) {
     std::ifstream file(fileName.data(), std::ios::binary);
 
     if (!file.is_open()) { WIND_CORE_ERROR("Failed to open file with file path {}!", fileName); }
@@ -22,4 +23,9 @@ std::vector<T> LoadBinary(std::string_view fileName) {
 
     return spv;
 }
+
+class GLTFLoader {
+public:
+    void LoadGLTFScene(Scene& scene, const std::string& filePath);
+};
 } // namespace wind::io

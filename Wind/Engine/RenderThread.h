@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Engine/LayerStack.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Descriptor.h"
 
@@ -37,12 +38,14 @@ public:
     void Init();
     void Quit();
 
-    void NextFrame(const Swapchain& swapchain);
+    void RenderJob(const Swapchain& swapchain);
+    void NextFrame();
 
-    auto& GetCurrentFrameData()  { return m_frameParams[m_frameNumber]; }
+    auto& GetCurrentFrameData() { return m_frameParams[m_frameNumber]; }
 
 private:
     static constexpr u32 MAX_FRAME_IN_FLIGHT = 2;
+
     FrameParms           m_frameParams[MAX_FRAME_IN_FLIGHT];
     u32                  m_frameNumber = 0;
     Scope<SceneRenderer> m_sceneRenderer;

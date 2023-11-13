@@ -1,11 +1,15 @@
 #include "RenderThread.h"
 
+// imgui part
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_vulkan.h"
+
+#include "ECS/JobSystem.h"
 #include "Engine/RuntimeContext.h"
 #include "Renderer/RenderGraph/RenderGraph.h"
 #include "Renderer/SceneRenderer.h"
 #include "Renderer/View.h"
-#include "std.h"
-
 
 namespace wind {
 
@@ -54,20 +58,29 @@ void RenderThread::Quit() {
     }
 }
 
-void RenderThread::NextFrame(const Swapchain& swapchain) {
+void RenderThread::RenderJob(const Swapchain& swapchain) {
     auto& frameData = GetCurrentFrameData();
+
     frameData.swapchainImageIndex =
         swapchain.AcquireNextImage(frameData.flightFence, frameData.imageAvailableSemaphore)
             .value();
     frameData.ResetCommanEncoders();
 
+    // ui part
+    ImGui_ImplVulkan_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
     m_renderGraph->SetupFrameData(frameData);
     m_renderGraph->SetupSwapChain(swapchain);
 
     View view; // create view
+ 
     m_sceneRenderer->SetViewPort(swapchain.GetWidth(), swapchain.GetHeight());
     m_sceneRenderer->Render(view, *m_renderGraph);
 
-    m_frameNumber = (m_frameNumber + 1) % MAX_FRAME_IN_FLIGHT;
+    m_renderGraph->Exec();
 }
+
+void RenderThread::NextFrame() { m_frameNumber = (m_frameNumber + 1) % MAX_FRAME_IN_FLIGHT; }
 } // namespace wind

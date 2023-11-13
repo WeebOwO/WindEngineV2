@@ -1,5 +1,7 @@
 #include "SceneRenderer.h"
 
+#include "View.h"
+#include "imgui.h"
 #include "Core/Log.h"
 #include "Engine/RuntimeContext.h"
 #include "RenderBackend/Command.h"
@@ -12,7 +14,6 @@
 #include "Resource/Mesh.h"
 #include "Resource/VertexFactory.h"
 #include "Scene/Scene.h"
-#include "View.h"
 
 namespace wind {
 
@@ -54,10 +55,11 @@ void SceneRenderer::Render(View& view, RenderGraph& renderGraph) {
 
             encoder.DrawIndexed(3 * meshDrawCommand.drawMesh.meshSource->indices.size(), 1, 0, 0,
                                 0);
+
+            ImGui::ShowDemoWindow();
+            encoder.RenderUI();
         }
     });
-
-    renderGraph.Exec();
 }
 
 void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass) {

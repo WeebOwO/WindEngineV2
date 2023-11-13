@@ -55,7 +55,6 @@ private:
 };
 
 class GPUTextureCube : public GPUTexture {
-public:
 private:
     std::vector<vk::ImageView> m_cubeViews;
 };

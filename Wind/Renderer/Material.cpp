@@ -23,6 +23,7 @@ void MaterialManager::InitDefaultMaterial() {
                         .ShadingModel = Material::ShadingModel::Lit,
                         .blendMode    = Material::BlendMode::Opaque,
                         .rasterShader = shaderMap->GetRasterShader("BasePassShader").get()};
+    
     m_materialCaches[desc.debugName] = Material::Create(desc);
 
     desc = {.debugName    = "default_unlit",

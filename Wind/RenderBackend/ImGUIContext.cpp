@@ -54,9 +54,11 @@ void ImGUIContext::Init(const GPUDevice& device, const Window& window) {
     initInfo.MinImageCount  = 3;
     initInfo.ImageCount     = 3;
     initInfo.MSAASamples    = VK_SAMPLE_COUNT_1_BIT;
+    initInfo.ColorAttachmentFormat = VkFormat(window.GetSwapChain()->GetFormat());
     initInfo.CheckVkResultFn = CheckVkResult;
+    initInfo.UseDynamicRendering = true;
 
-    ImGui_ImplVulkan_Init(&initInfo, swapchain->GetRenderPass());
+    ImGui_ImplVulkan_Init(&initInfo, nullptr);
 
     ImmCommandEncoder taskEncoder;
     taskEncoder.PushTask([](const vk::CommandBuffer& buffer) {
@@ -64,6 +66,7 @@ void ImGUIContext::Init(const GPUDevice& device, const Window& window) {
         ImGui_ImplVulkan_CreateFontsTexture(Cbuffer);
     });
 
+    ImGui_ImplVulkan_DestroyFontUploadObjects();
     taskEncoder.Submit();
 }
 

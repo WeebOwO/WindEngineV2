@@ -22,7 +22,6 @@ Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {
 Engine::~Engine() { Quit(); }
 
 void Engine::LoadScene() {
-
     m_activeSceneIndex = 0;
     m_scenes.push_back(scope::Create<Scene>());
 
@@ -96,14 +95,18 @@ void Engine::Quit() {
 
 void Engine::RenderTick(float delta) {
     ZoneScopedN("RenderTick");
-
-    m_renderThread.NextFrame(*m_window->GetSwapChain());
+    m_renderThread.RenderJob(*m_window->GetSwapChain());
+    // render the ui part
+    for (auto layer : m_layerStack) {
+        layer->OnImGuiRender();
+    }
+    m_renderThread.NextFrame();
 }
 
 void Engine::LogicTick(float delta) {
     ZoneScopedN("LogicTick");
     m_window->OnUpdate(delta);
-    
+
     // update app logic
     for (Layer* layer : m_layerStack) {
         layer->OnUpdate(delta);
@@ -111,6 +114,7 @@ void Engine::LogicTick(float delta) {
 
     auto& activeScene = m_scenes[m_activeSceneIndex];
     activeScene->Update();
+
     g_runtimeContext.activeScene = activeScene.get();
 }
 

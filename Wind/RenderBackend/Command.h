@@ -61,6 +61,10 @@ public:
     // dynamic rendering
     void BeginRendering(const vk::RenderingInfo& renderingInfo);
     void EndRendering();
+
+
+    // uipart 
+    void RenderUI();
 };
 
 class ComputeEncoder : public CommandEncoder {

@@ -1,7 +1,7 @@
 #pragma once
 
 namespace wind {
-struct RenderResourceInterface {
+struct RenderResource {
     virtual void InitRHI()   = 0;
     virtual void RelaseRHI() = 0;
 };
