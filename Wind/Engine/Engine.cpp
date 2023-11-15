@@ -25,7 +25,7 @@ Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {
 }
 
 Engine::~Engine() { Quit(); }
-
+    
 void Engine::LoadScene() {
     m_activeSceneIndex = 0;
     m_scenes.push_back(scope::Create<Scene>());

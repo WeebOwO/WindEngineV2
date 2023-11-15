@@ -1,7 +1,7 @@
 #include "Command.h"
 
-#include "imgui.h"
 #include "Renderer/MeshPass.h"
+#include "imgui.h"
 #include "imgui_impl_vulkan.h"
 
 namespace wind {
@@ -42,10 +42,8 @@ void RenderEncoder::BindIndexBuffer(const vk::Buffer& buffer, vk::DeviceSize off
     m_nativeHandle.bindIndexBuffer(buffer, offset, indexType);
 }
 
-void RenderEncoder::SetViewport(float width, float height, float minDepth, float maxDepth) {
-    vk::Viewport viewPort{
-        .width = (float)width, .height = (float)height, .minDepth = minDepth, .maxDepth = maxDepth};
-    m_nativeHandle.setViewport(0, 1, &viewPort);
+void RenderEncoder::SetViewport(const vk::Viewport& viewport) {
+    m_nativeHandle.setViewport(0, 1, &viewport);
 }
 
 void RenderEncoder::SetScissor(i32 offsetx, i32 offsety, u32 width, u32 height) {

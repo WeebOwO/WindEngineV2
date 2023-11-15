@@ -9,5 +9,8 @@ public:
     ~EditorLayer() = default;
     
     void OnImGuiRender() override;
+
+private:
+    
 };
 } // namespace wind

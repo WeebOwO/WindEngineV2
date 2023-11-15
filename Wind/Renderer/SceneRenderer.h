@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/RenderThread.h"
+#include "Resource/Texture.h"
 #include "std.h"
 
 #include "RenderBackend/Command.h"
@@ -17,12 +18,16 @@ struct RenderConfig {
     uint32_t MAX_FRAME_IN_FLIGHT = 2;
 };
 
+struct SceneTexture {
+    Texture2D sceneColor;
+};
+
 class SceneRenderer {
 public:
     SceneRenderer()  = default;
     ~SceneRenderer() = default;
 
-    void SetViewPort(u32 width, u32 height);
+    void SetViewPort(float offsetX, float offsetY, float width, float height);
 
     void Render(View& view, RenderGraph& renderGraph);
     void Init();
@@ -35,12 +40,10 @@ private:
     Scene*      m_renderScene;
     FrameParms* m_framedata;
 
+    vk::Viewport m_viewPort;
     // all the renderpass are create by rendergraph
     RenderGraphPass* m_Presentpass;
 
     std::array<std::vector<MeshDrawCommand>, MeshPassType::Count> m_cacheMeshDrawCommands;
-
-    u32 m_viewPortWidth;
-    u32 m_viewPortHeight;
 };
 } // namespace wind

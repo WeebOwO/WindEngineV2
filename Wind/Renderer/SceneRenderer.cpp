@@ -1,7 +1,5 @@
 #include "SceneRenderer.h"
 
-#include "View.h"
-#include "imgui.h"
 #include "Core/Log.h"
 #include "Engine/RuntimeContext.h"
 #include "RenderBackend/Command.h"
@@ -14,10 +12,14 @@
 #include "Resource/Mesh.h"
 #include "Resource/VertexFactory.h"
 #include "Scene/Scene.h"
+#include "View.h"
+#include "imgui.h"
 
 namespace wind {
 
-void SceneRenderer::Init() {}
+void SceneRenderer::Init() {
+
+}
 
 void SceneRenderer::InitView(View& view) {
     for (auto meshPassType = MeshPassType::BasePass; meshPassType != MeshPassType::Count;
@@ -26,9 +28,13 @@ void SceneRenderer::InitView(View& view) {
     }
 }
 
-void SceneRenderer::SetViewPort(u32 width, u32 height) {
-    m_viewPortWidth  = width;
-    m_viewPortHeight = height;
+void SceneRenderer::SetViewPort(float offsetX, float offsetY, float width, float height) {
+    m_viewPort.setWidth(width)
+        .setHeight(height)
+        .setX(offsetX)
+        .setY(offsetY)
+        .setMinDepth(0.0)
+        .setMaxDepth(1.0);
 }
 
 void SceneRenderer::Render(View& view, RenderGraph& renderGraph) {
@@ -37,14 +43,15 @@ void SceneRenderer::Render(View& view, RenderGraph& renderGraph) {
     InitView(view);
 
     m_Presentpass = renderGraph.AddPass("PresentPass", RenderCommandQueueType::Graphics);
+    
     m_Presentpass->MarkWriteBackBuffer();
 
     m_Presentpass->SetRenderExecCallBack([&](RenderEncoder& encoder) {
         for (auto& meshDrawCommand : m_cacheMeshDrawCommands[MeshPassType::BasePass]) {
             auto pso = g_runtimeContext.psoCache->GetPso(meshDrawCommand.pipelineID);
 
-            encoder.SetViewport(m_viewPortWidth, m_viewPortHeight, 0.0, 1.0);
-            encoder.SetScissor(0, 0, m_viewPortWidth, m_viewPortHeight);
+            encoder.SetViewport(m_viewPort);
+            encoder.SetScissor(0, 0, m_viewPort.width, m_viewPort.height);
 
             auto vertexBuffer = meshDrawCommand.drawMesh.meshSource->vertexBuffer;
             auto indexBuffer  = meshDrawCommand.drawMesh.meshSource->indexBuffer;

@@ -49,21 +49,21 @@ public:
 
     void ExecMeshDrawCommand(const MeshDrawCommand& meshDrawCommand);
 
-    void SetViewport(float width, float height, float minDepth, float maxDepth);
+    void SetViewport(const vk::Viewport& viewport);
     void SetScissor(i32 offsetx, i32 offsety, u32 width, u32 height);
 
     // layout transfer
     void TransferImageLayout(const vk::Image& image, vk::AccessFlags srcMask,
                              vk::AccessFlags dstMask, vk::ImageLayout oldlayout,
                              vk::ImageLayout newLayout, vk::PipelineStageFlags srcFlags,
-                             vk::PipelineStageFlags dstFlags, const vk::ImageSubresourceRange& subRange);
+                             vk::PipelineStageFlags           dstFlags,
+                             const vk::ImageSubresourceRange& subRange);
 
     // dynamic rendering
     void BeginRendering(const vk::RenderingInfo& renderingInfo);
     void EndRendering();
 
-
-    // uipart 
+    // uipart
     void RenderUI();
 };
 

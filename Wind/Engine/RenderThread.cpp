@@ -3,11 +3,13 @@
 // engine header
 #include "Engine/RuntimeContext.h"
 // renderer part
+#include "RenderBackend/Command.h"
 #include "Renderer/RenderGraph/RenderGraph.h"
 #include "Renderer/RenderGraph/RenderPass.h"
 #include "Renderer/SceneRenderer.h"
 #include "Renderer/View.h"
-
+// imgui
+#include "imgui.h"
 
 namespace wind {
 
@@ -67,10 +69,24 @@ void RenderThread::RenderJob(const Swapchain& swapchain) {
     m_renderGraph->SetupFrameData(frameData);
     m_renderGraph->SetupSwapChain(swapchain);
 
-    View view; // create view
+    View           view; 
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
 
-    m_sceneRenderer->SetViewPort(swapchain.GetWidth(), swapchain.GetHeight());
+    ImGui::SetNextWindowPos(viewport->Pos);
+    ImGui::SetNextWindowSize(viewport->Size);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    auto viewportOffset = ImGui::GetCursorPos(); // includes tab bar
+    auto viewportSize   = ImGui::GetContentRegionAvail();
+
+    m_sceneRenderer->SetViewPort(viewportOffset.x, viewportOffset.y, viewportSize.x, viewportSize.y);
     m_sceneRenderer->Render(view, *m_renderGraph);
+
+    auto uiPass = m_renderGraph->AddPass("UI_Pass", RenderCommandQueueType::Graphics);
+    
+    uiPass->SetRenderExecCallBack([](RenderEncoder& encoder) {
+        encoder.RenderUI();
+    });
 }
 
 void RenderThread::NextFrame() {
