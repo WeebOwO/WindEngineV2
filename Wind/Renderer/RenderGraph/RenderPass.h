@@ -2,21 +2,14 @@
 
 #include "std.h"
 
+#include "RenderGraphResource.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Texture.h"
 
 namespace wind {
 class RenderGraph;
 
-struct AttachmentInfo {
-    u32        width;
-    u32        height;
-    vk::Format format{vk::Format::eUndefined};
-    u32        samples{1};
-    u32        levels{1};
-    u32        layers{1};
-    bool       persistent{true};
-};
+struct DepthStencilInfo {};
 
 struct BufferInfo {
     size_t               byteSize;
@@ -33,11 +26,11 @@ public:
     RenderGraphPass(RenderGraph& renderGraph, const std::string& debugName,
                     RenderCommandQueueType type);
 
-    RenderGraphPass& AddColorOuput(const std::string&    resourceName,
-                                   const AttachmentInfo& attachmentInfo);
+    RenderGraphPass& DeclareRenderTarget(const std::string&    resourceName,
+                                         const AttachmentInfo& attachmentInfo);
 
-    RenderGraphPass& AddDepthStencilOutput(const std::string&    resourceName,
-                                           const AttachmentInfo& attachmentInfo);
+    RenderGraphPass& DeclareDepthStencil(const std::string&    resourceName,
+                                         const AttachmentInfo& attachmentInfo);
 
     RenderGraphPass& SetRenderArea(const vk::Rect2D& rect);
 
@@ -52,18 +45,17 @@ public:
 
     bool ContainsResource(const std::string& resourceName);
 
-    auto GetRenderPassHandle() { return m_renderPass; }
-
 private:
     friend class RenderGraph;
-    friend class SceneRenderer;
+
+    void Bake();
 
     bool m_writeToDepth      = false;
     bool m_writeToBackBuffer = false;
 
     struct DepthOuput {
-        std::string    depthOutputName;
-        AttachmentInfo attachmentInfo;
+        std::string                 depthOutputName;
+        vk::RenderingAttachmentInfo attachmentInfo;
     };
 
     RenderGraph& m_renderGraph;
@@ -75,12 +67,12 @@ private:
 
     RenderCommandQueueType m_queueType;
 
-    vk::RenderPass  m_renderPass;
-    vk::Framebuffer m_frameBuffer;
-    vk::Rect2D      m_renderArea;
+    vk::Rect2D m_renderArea;
 
-    std::unordered_map<std::string, AttachmentInfo> m_colorAttachmentLUT;
+    std::unordered_map<std::string, AttachmentInfo> m_renderTargets;
     std::optional<DepthOuput>                       m_depthOutput;
+
+    vk::RenderingInfo m_renderingInfo;  
 };
 
 }; // namespace wind

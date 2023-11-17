@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Renderer/RenderGraph/RenderGraphResource.h"
 #include "std.h"
 
 #include "RenderBackend/Command.h"
@@ -18,7 +19,6 @@ public:
     RenderGraph();
     RenderGraphPass* AddPass(const std::string& passName, RenderCommandQueueType type);
 
-    void ImportTexture(const std::string& resourceName, Ref<GPUTexture2D> externalTexture);
     void ImportBackBuffer(const std::string& backBufferName);
 
     void SetupSwapChain(const Swapchain& swapchain);
@@ -26,19 +26,19 @@ public:
 
     void Exec();
 
+    auto& GetBlackBoard() noexcept { return m_blackBoard; }
+
 private:
     void Compile();
     void WriteResource(const std::string& passName, const std::string& resourceName);
 
+    const Swapchain* m_swapchain;
+
     bool                                                  m_dirty = false;
     std::unordered_map<std::string, Ref<RenderGraphPass>> m_renderGraphPasses;
-    std::unordered_map<std::string, RenderGraphResource>  m_resources;
+    Blackboard                                            m_blackBoard;
 
-    std::vector<Ref<GPUTexture2D>> m_importTexture;
-
-    const Swapchain* m_swapchain;
-    std::string      m_backBufferDebugName{"None"};
-
+    std::string m_backBufferDebugName{"None"};
     FrameParms* m_currentFrameData{nullptr};
 };
 } // namespace wind

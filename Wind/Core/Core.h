@@ -10,6 +10,7 @@
 
 #define BIT(x) (1 << x)
 
-template <typename T> struct Handle {
+template <typename T> 
+struct Handle {
     u32 handle;
 };

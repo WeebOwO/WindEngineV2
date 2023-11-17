@@ -4,7 +4,6 @@
 #include "RenderBackend/Texture.h"
 
 namespace wind {
-
 struct Texture : public RenderResource {
     
 };
@@ -17,6 +16,6 @@ public:
     void RelaseRHI() override;
     
 private:
-    Ref<GPUTexture2D> m_rhiHandle;
+    
 };
 } // namespace wind

@@ -18,6 +18,7 @@ class ComputeShader;
 class GPUDevice;
 class MaterialManager;
 class Scene;
+class Engine;
 
 class ShaderMap {
 public:

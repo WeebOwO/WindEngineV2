@@ -118,6 +118,7 @@ void Engine::RenderTick(float delta) {
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
     }
+
     m_renderThread.NextFrame();
 }
 

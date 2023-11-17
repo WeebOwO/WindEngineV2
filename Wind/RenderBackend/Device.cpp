@@ -211,9 +211,7 @@ void GPUDevice::InitBackupCommandBuffer() {
     m_backupCommandfence = m_device->createFence(fenceCreateInfo);
 }
 
-vk::CommandBuffer GPUDevice::GetBackUpCommandBuffer() {
-    return m_backupCommandBuffer;
-}
+vk::CommandBuffer GPUDevice::GetBackUpCommandBuffer() { return m_backupCommandBuffer; }
 
 void GPUDevice::SubmitBackUpCommandBuffer(const vk::CommandBuffer& buffer) {
     buffer.end();
@@ -221,7 +219,7 @@ void GPUDevice::SubmitBackUpCommandBuffer(const vk::CommandBuffer& buffer) {
     vk::SubmitInfo submitInfo{.commandBufferCount = 1, .pCommandBuffers = &buffer};
     m_graphicsQueue.submit(submitInfo, m_backupCommandfence);
 
-        auto result =
+    auto result =
         m_device->waitForFences(m_backupCommandfence, true, std::numeric_limits<float>::max());
     if (result != vk::Result::eSuccess) {
         WIND_CORE_WARN("Backup ComandBuffer wait too long time");

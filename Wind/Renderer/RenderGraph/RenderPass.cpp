@@ -1,6 +1,10 @@
 #include "RenderPass.h"
 
 #include "Core/Log.h"
+#include "Engine/RuntimeContext.h"
+#include "RenderGraph.h"
+#include "Renderer/RenderGraph/RenderGraphResource.h"
+#include "std.h"
 
 namespace wind {
 RenderGraphPass::RenderGraphPass(RenderGraph& renderGraph, const std::string& debugName,
@@ -17,20 +21,15 @@ void RenderGraphPass::SetRenderColorClearCallBack(const RenderColorClearCallBack
     m_renderColorClearCallBack = callback;
 }
 
-RenderGraphPass& RenderGraphPass::AddColorOuput(const std::string&    resourceName,
-                                                const AttachmentInfo& attachmentInfo) {
-    m_colorAttachmentLUT[resourceName] = attachmentInfo;
+RenderGraphPass& RenderGraphPass::DeclareRenderTarget(const std::string&    resourceName,
+                                                      const AttachmentInfo& attachmentInfo) {
+
     return *this;
 }
 
-RenderGraphPass& RenderGraphPass::AddDepthStencilOutput(const std::string&    resourceName,
-                                                        const AttachmentInfo& attachmentInfo) {
-    if (!m_depthOutput.has_value()) {
-        m_writeToDepth = true;
-        m_depthOutput  = std::make_optional<DepthOuput>(resourceName, attachmentInfo);
-    } else {
-        WIND_CORE_WARN("Pass {} already have a depth output", m_debugName);
-    }
+RenderGraphPass& RenderGraphPass::DeclareDepthStencil(const std::string&    resourceName,
+                                                      const AttachmentInfo& attachmentInfo) {
+
     return *this;
 }
 
@@ -41,11 +40,18 @@ bool RenderGraphPass::IsWriteToBackBuffer() { return m_writeToBackBuffer; }
 void RenderGraphPass::MarkWriteBackBuffer() { m_writeToBackBuffer = true; }
 
 bool RenderGraphPass::ContainsResource(const std::string& resourceName) {
-    return m_colorAttachmentLUT.contains(resourceName);
+    return m_renderTargets.contains(resourceName);
 }
 
 RenderGraphPass& RenderGraphPass::SetRenderArea(const vk::Rect2D& rect) {
     m_renderArea = rect;
     return *this;
+}
+
+void RenderGraphPass::Bake() {
+    auto& blackBoard = m_renderGraph.GetBlackBoard();
+    auto  device     = RuntimeUtils::GetVulkanDevice();
+
+    
 }
 } // namespace wind

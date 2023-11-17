@@ -69,6 +69,7 @@ void RenderThread::RenderJob(const Swapchain& swapchain) {
     m_renderGraph->SetupFrameData(frameData);
     m_renderGraph->SetupSwapChain(swapchain);
 
+    // set viewport
     View           view; 
     ImGuiViewport* viewport = ImGui::GetMainViewport();
 
@@ -81,12 +82,6 @@ void RenderThread::RenderJob(const Swapchain& swapchain) {
 
     m_sceneRenderer->SetViewPort(viewportOffset.x, viewportOffset.y, viewportSize.x, viewportSize.y);
     m_sceneRenderer->Render(view, *m_renderGraph);
-
-    auto uiPass = m_renderGraph->AddPass("UI_Pass", RenderCommandQueueType::Graphics);
-    
-    uiPass->SetRenderExecCallBack([](RenderEncoder& encoder) {
-        encoder.RenderUI();
-    });
 }
 
 void RenderThread::NextFrame() {

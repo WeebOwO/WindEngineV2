@@ -7,6 +7,7 @@
 #include "RenderBackend/Descriptor.h"
 #include "RenderGraph/RenderPass.h"
 #include "Renderer/MeshPass.h"
+#include "Renderer/RenderGraph/RenderPass.h"
 #include "Renderer/RenderGraph/RenderPassEnum.h"
 #include "Resource/Loader.h"
 #include "Resource/Mesh.h"
@@ -17,9 +18,7 @@
 
 namespace wind {
 
-void SceneRenderer::Init() {
-
-}
+void SceneRenderer::Init() {}
 
 void SceneRenderer::InitView(View& view) {
     for (auto meshPassType = MeshPassType::BasePass; meshPassType != MeshPassType::Count;
@@ -41,12 +40,13 @@ void SceneRenderer::Render(View& view, RenderGraph& renderGraph) {
     m_renderScene = RuntimeUtils::GetActiveScene();
 
     InitView(view);
+    auto lightPass = renderGraph.AddPass("LightPass", RenderCommandQueueType::Graphics);
+    lightPass->DeclareRenderTarget("SceneColor",
+                                   AttachmentInfo{.width  = (u32)m_viewPort.width,
+                                                  .height = (u32)m_viewPort.height,
+                                                  .format = vk::Format::eR16G16B16A16Sfloat});
 
-    m_Presentpass = renderGraph.AddPass("PresentPass", RenderCommandQueueType::Graphics);
-    
-    m_Presentpass->MarkWriteBackBuffer();
-
-    m_Presentpass->SetRenderExecCallBack([&](RenderEncoder& encoder) {
+    lightPass->SetRenderExecCallBack([&](RenderEncoder& encoder) {
         for (auto& meshDrawCommand : m_cacheMeshDrawCommands[MeshPassType::BasePass]) {
             auto pso = g_runtimeContext.psoCache->GetPso(meshDrawCommand.pipelineID);
 

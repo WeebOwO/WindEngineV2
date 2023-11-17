@@ -18,10 +18,6 @@ struct RenderConfig {
     uint32_t MAX_FRAME_IN_FLIGHT = 2;
 };
 
-struct SceneTexture {
-    Texture2D sceneColor;
-};
-
 class SceneRenderer {
 public:
     SceneRenderer()  = default;
