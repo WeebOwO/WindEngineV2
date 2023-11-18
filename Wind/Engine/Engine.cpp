@@ -5,6 +5,7 @@
 #include "Core/Log.h"
 #include "ECS/Component.h"
 #include "Ecs/Entity.h"
+#include "Engine/Engine.h"
 #include "Engine/RuntimeContext.h"
 // renderer part
 #include "Renderer/Material.h"
@@ -107,11 +108,8 @@ void Engine::RenderTick(float delta) {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    for (const auto& layer : m_layerStack) {
-        layer->OnImGuiRender();
-    }
     // execute main render job
-    auto& renderGraph = m_renderThread.BeginFrame(*m_window->GetSwapChain()); 
+    auto& renderGraph = m_renderThread.BeginFrame(*m_window->GetSwapChain());
     // set viewport
     View           view;
     ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -120,6 +118,8 @@ void Engine::RenderTick(float delta) {
     ImGui::SetNextWindowSize(viewport->Size);
     ImGui::SetNextWindowViewport(viewport->ID);
 
+    m_imguiCallback(*this);
+
     auto viewportOffset = ImGui::GetCursorPos(); // includes tab bar
     auto viewportSize   = ImGui::GetContentRegionAvail();
 
@@ -127,7 +127,7 @@ void Engine::RenderTick(float delta) {
                                  viewportSize.y);
 
     m_sceneRenderer->Render(view, renderGraph);
-    
+
     // imgui end part
     ImGuiIO& io = ImGui::GetIO();
     (void)io;
@@ -143,35 +143,9 @@ void Engine::LogicTick(float delta) {
     ZoneScopedN("LogicTick");
     m_window->OnUpdate(delta);
 
-    // update app logic
-    for (const auto& layer : m_layerStack) {
-        layer->OnUpdate(delta);
-    }
-
     auto& activeScene = m_scenes[m_activeSceneIndex];
     activeScene->Update();
 
     g_runtimeContext.activeScene = activeScene.get();
 }
-
-void Engine::PushLayer(Scope<Layer> layer) {
-    layer->OnAttach();
-    m_layerStack.PushLayer(std::move(layer));
-}
-
-void Engine::PushOverlay(Scope<Layer> layer) {
-    layer->OnAttach();
-    m_layerStack.PushOverlay(std::move(layer));
-}
-
-void Engine::PopLayer(Scope<Layer> layer) {
-    layer->OnDetach();
-    m_layerStack.PopLayer(std::move(layer));
-}
-
-void Engine::PopOverlay(Scope<Layer> layer) {
-    layer->OnDetach();
-    m_layerStack.PopOverlay(std::move(layer));
-}
-
 } // namespace wind

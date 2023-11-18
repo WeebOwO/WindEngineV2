@@ -1,9 +1,11 @@
+#include "Engine/Engine.h"
 #include "Engine/EntryPoint.h"
 
-#include "EditorLayer.h"
 #include "Engine/Window.h"
 #include "GLFW/glfw3.h"
+#include "imgui.h"
 #include "std.h"
+
 
 class Editor : public wind::Application {
 public:
@@ -17,7 +19,12 @@ public:
         wind::Scope<wind::Window> window = wind::scope::Create<wind::Window>(desc);
 
         wind::Engine engine(std::move(window));
-        engine.PushLayer(wind::scope::Create<wind::EditorLayer>());
+
+        engine.SetImguiCallBack([](wind::Engine& engine) {
+            ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+            ImGui::ShowDemoWindow();
+        });
+        
         engine.Run();
     }
 };

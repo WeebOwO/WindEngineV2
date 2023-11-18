@@ -2,7 +2,6 @@
 
 #include "std.h"
 
-#include "Engine/LayerStack.h"
 #include "Engine/RenderThread.h"
 
 namespace wind {
@@ -10,17 +9,15 @@ class SceneRenderer;
 class Window;
 class Scene;
 
+using ImGuiCallBack = std::function<void(Engine&)>;
+
 class Engine {
 public:
     Engine(Scope<Window> window); // here use unique ptr to transfer ownership from editor to engine
     ~Engine();
 
     void Run();
-
-    void PushLayer(Scope<Layer> layer);
-    void PushOverlay(Scope<Layer> layer);
-    void PopLayer(Scope<Layer> layer);
-    void PopOverlay(Scope<Layer> layer);
+    void SetImguiCallBack(ImGuiCallBack&& callback) { m_imguiCallback = std::move(callback); }
 
 private:
     void Init();
@@ -37,8 +34,8 @@ private:
     std::vector<Scope<Scene>>             m_scenes;
     u32                                   m_activeSceneIndex;
     std::chrono::steady_clock::time_point m_lastTickTimePoint{std::chrono::steady_clock::now()};
-    LayerStack                            m_layerStack; // store app's function
     RenderThread                          m_renderThread;
     Scope<SceneRenderer>                  m_sceneRenderer;
+    ImGuiCallBack                         m_imguiCallback;
 };
 } // namespace wind
