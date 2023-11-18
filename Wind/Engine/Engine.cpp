@@ -17,6 +17,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_vulkan.h"
+#include "std.h"
 
 namespace wind {
 Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {
@@ -25,7 +26,7 @@ Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {
 }
 
 Engine::~Engine() { Quit(); }
-    
+
 void Engine::LoadScene() {
     m_activeSceneIndex = 0;
     m_scenes.push_back(scope::Create<Scene>());
@@ -90,6 +91,7 @@ float Engine::CalcDeltaTime() {
 void Engine::PostInit() {
     m_window->Init();
     g_runtimeContext.PostInit(*m_window);
+    m_sceneRenderer = scope::Create<SceneRenderer>();
 }
 
 void Engine::Quit() {
@@ -109,8 +111,23 @@ void Engine::RenderTick(float delta) {
         layer->OnImGuiRender();
     }
     // execute main render job
-    m_renderThread.RenderJob(*m_window->GetSwapChain());
+    auto& renderGraph = m_renderThread.BeginFrame(*m_window->GetSwapChain()); 
+    // set viewport
+    View           view;
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
 
+    ImGui::SetNextWindowPos(viewport->Pos);
+    ImGui::SetNextWindowSize(viewport->Size);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    auto viewportOffset = ImGui::GetCursorPos(); // includes tab bar
+    auto viewportSize   = ImGui::GetContentRegionAvail();
+
+    m_sceneRenderer->SetViewPort(viewportOffset.x, viewportOffset.y, viewportSize.x,
+                                 viewportSize.y);
+
+    m_sceneRenderer->Render(view, renderGraph);
+    
     // imgui end part
     ImGuiIO& io = ImGui::GetIO();
     (void)io;

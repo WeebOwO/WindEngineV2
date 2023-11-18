@@ -23,14 +23,14 @@ public:
     };
 
     GPUTexture() = default;
+    GPUTexture(const vk::ImageCreateInfo&     imageCreateInfo,
+               const VmaAllocationCreateInfo& vmaCreateInfo);
     ~GPUTexture();
 
     static Ref<GPUTexture> Create(const Desc& desc);
 
 private:
-    GPUTexture(const vk::ImageCreateInfo&     imageCreateInfo,
-               const VmaAllocationCreateInfo& vmaCreateInfo);
-    void           SetDesc(const Desc& desc) { m_desc = desc; }
+    void SetDesc(const Desc& desc) { m_desc = desc; }
 
     AllocatedImage m_allocatedImage;
     Desc           m_desc;

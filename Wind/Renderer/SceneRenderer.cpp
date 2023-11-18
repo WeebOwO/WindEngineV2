@@ -40,12 +40,9 @@ void SceneRenderer::Render(View& view, RenderGraph& renderGraph) {
     m_renderScene = RuntimeUtils::GetActiveScene();
 
     InitView(view);
-    auto lightPass = renderGraph.AddPass("LightPass", RenderCommandQueueType::Graphics);
-    lightPass->DeclareRenderTarget("SceneColor",
-                                   AttachmentInfo{.width  = (u32)m_viewPort.width,
-                                                  .height = (u32)m_viewPort.height,
-                                                  .format = vk::Format::eR16G16B16A16Sfloat});
 
+    auto lightPass = renderGraph.AddPass("LightPass", RenderCommandQueueType::Graphics);
+    lightPass->MarkWriteBackBuffer();
     lightPass->SetRenderExecCallBack([&](RenderEncoder& encoder) {
         for (auto& meshDrawCommand : m_cacheMeshDrawCommands[MeshPassType::BasePass]) {
             auto pso = g_runtimeContext.psoCache->GetPso(meshDrawCommand.pipelineID);

@@ -37,8 +37,6 @@ private:
     FrameParms* m_framedata;
 
     vk::Viewport m_viewPort;
-    // all the renderpass are create by rendergraph
-    RenderGraphPass* m_Presentpass;
 
     std::array<std::vector<MeshDrawCommand>, MeshPassType::Count> m_cacheMeshDrawCommands;
 };

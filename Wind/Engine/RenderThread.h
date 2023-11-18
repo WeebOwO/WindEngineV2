@@ -35,12 +35,12 @@ public:
         Idle = 0,
         Kick,
     };
-    
+
     void Init();
     void Quit();
 
-    void RenderJob(const Swapchain& swapchain);
-    void NextFrame();
+    RenderGraph& BeginFrame(const Swapchain& swapchain);
+    void         NextFrame();
 
     auto& GetCurrentFrameData() { return m_frameParams[m_frameNumber]; }
 

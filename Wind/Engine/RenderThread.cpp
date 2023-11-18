@@ -58,7 +58,7 @@ void RenderThread::Quit() {
     }
 }
 
-void RenderThread::RenderJob(const Swapchain& swapchain) {
+RenderGraph& RenderThread::BeginFrame(const Swapchain& swapchain) {
     auto& frameData = GetCurrentFrameData();
 
     frameData.swapchainImageIndex =
@@ -66,22 +66,10 @@ void RenderThread::RenderJob(const Swapchain& swapchain) {
             .value();
     frameData.ResetCommanEncoders();
 
-    m_renderGraph->SetupFrameData(frameData);
     m_renderGraph->SetupSwapChain(swapchain);
+    m_renderGraph->SetupFrameData(frameData);
 
-    // set viewport
-    View           view; 
-    ImGuiViewport* viewport = ImGui::GetMainViewport();
-
-    ImGui::SetNextWindowPos(viewport->Pos);
-    ImGui::SetNextWindowSize(viewport->Size);
-    ImGui::SetNextWindowViewport(viewport->ID);
-
-    auto viewportOffset = ImGui::GetCursorPos(); // includes tab bar
-    auto viewportSize   = ImGui::GetContentRegionAvail();
-
-    m_sceneRenderer->SetViewPort(viewportOffset.x, viewportOffset.y, viewportSize.x, viewportSize.y);
-    m_sceneRenderer->Render(view, *m_renderGraph);
+    return *m_renderGraph;
 }
 
 void RenderThread::NextFrame() {

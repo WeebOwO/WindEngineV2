@@ -11,16 +11,15 @@
 
 namespace wind {
 
+class VkAllocator;
+class CommandEncoder;
+
 struct QueueIndices {
     std::optional<uint32_t> graphicsQueueIndex;
     std::optional<uint32_t> computeQueueIndex;
 
     bool IsComplete() { return graphicsQueueIndex.has_value() && computeQueueIndex.has_value(); }
 };
-
-class VkAllocator;
-class CommandEncoder;
-class ShaderCache;
 
 class GPUDevice {
 public:
@@ -45,12 +44,13 @@ public:
     void DestroyBuffer(AllocatedBuffer& buffer) const;
 
     AllocatedImage AllocateImage(const vk::ImageCreateInfo&     imageCreateInfo,
-                                  const VmaAllocationCreateInfo& allocationCreateInfo) const;
+                                 const VmaAllocationCreateInfo& allocationCreateInfo) const;
 
     void DestroyImage(AllocatedImage& image) const;
 
     vk::DescriptorSet AllocateDescriptor(const vk::DescriptorSetLayout&) const;
 
+    // block style submit 
     vk::CommandBuffer GetBackUpCommandBuffer();
     void              SubmitBackUpCommandBuffer(const vk::CommandBuffer& buffer);
 
