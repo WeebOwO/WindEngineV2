@@ -2,9 +2,9 @@
 
 #include "std.h"
 
+#include "RenderGraphResource.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Texture.h"
-#include "RenderGraphResource.h"
 
 namespace wind {
 class RenderGraph;
@@ -21,12 +21,12 @@ public:
     RenderGraphPassExecutor& operator=(RenderGraphPassExecutor const&) = delete;
 };
 
-class RenderGraphPassBase {
+class RenderGraphPassBase : public RenderGraphPassExecutor {
 public:
     RenderGraphPassBase() = default;
     virtual ~RenderGraphPassBase() {}
 
-    virtual void Execute() {}
+    virtual void Execute() noexcept override {}
 
     EPassType passType;
 };
@@ -47,7 +47,8 @@ private:
 template <typename Data, typename ExecuteCallBack>
 class RenderGraphPassConcrete : public RenderGraphPass<Data> {
 public:
-    explicit RenderGraphPassConcrete(EPassType type, ExecuteCallBack&& callback)
+    explicit RenderGraphPassConcrete(ExecuteCallBack&& callback,
+                                     EPassType         type = EPassType::Graphics)
         : RenderGraphPass<Data>(type), m_execCallBack(std::move(callback)) {}
 
     void Execute() noexcept override { m_execCallBack(); }

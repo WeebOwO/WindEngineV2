@@ -4,7 +4,6 @@
 
 #include "Core/Core.h"
 #include "RenderBackend/Texture.h"
-#include <unordered_map>
 
 namespace wind {
 enum RenderGraphResourceType : u8 { Buffer, Texture };
@@ -36,7 +35,7 @@ public:
 
     RenderGraphTexture() = default;
     RenderGraphTexture(const Desc& desc);
-    
+
 private:
     Ref<GPUTexture> texture;
 };
@@ -46,10 +45,10 @@ public:
     Blackboard() noexcept  = default;
     ~Blackboard() noexcept = default;
 
-    void Put(const std::string& string, Scope<RenderGraphResource> resourceHandle);
+    void Put(const std::string& string, RenderGraphResource* resourceHandle);
 
     template <typename T> T* Get(const std::string& resourceName) noexcept {
-        return static_cast<T*>(m_resources[resourceName].get());
+        return static_cast<T*>(m_resources[resourceName]);
     }
 
     void Remove(const std::string& name) noexcept { m_resources.erase(name); }
@@ -57,6 +56,6 @@ public:
     void Clear();
 
 private:
-    std::unordered_map<std::string, Scope<RenderGraphResource>> m_resources;
+    std::unordered_map<std::string, RenderGraphResource*> m_resources;
 };
 } // namespace wind

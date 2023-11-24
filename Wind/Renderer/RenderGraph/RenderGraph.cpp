@@ -15,8 +15,6 @@ void RenderGraph::SetupSwapChain(const Swapchain& swapchain) { m_swapchain = &sw
 void RenderGraph::SetupFrameData(FrameParms& frameData) { m_currentFrameData = &frameData; }
 
 void RenderGraph::Exec() {
-    if (m_dirty) { Compile(); }
-
     auto vkDevice      = RuntimeUtils::GetVulkanDevice();
     auto renderEncoder = m_currentFrameData->renderEncoder;
 

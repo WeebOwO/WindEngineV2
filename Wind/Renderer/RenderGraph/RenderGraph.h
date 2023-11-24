@@ -1,12 +1,11 @@
 #pragma once
 
-#include "Renderer/RenderGraph/RenderPass.h"
 #include "std.h"
 
+#include "RenderPass.h"
+#include "RenderGraphResource.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Texture.h"
-#include "RenderGraphResource.h"
-#include "RenderPass.h"
 
 namespace wind {
 class RenderGraphPassBase;
@@ -18,12 +17,11 @@ public:
     struct Builder {
     public:
         Builder(RenderGraph* graph) : m_graph(graph) {}
-
+        
     private:
         RenderGraph* m_graph;
     };
 
-    friend class RenderGraphPassBase;
     RenderGraph();
 
     template <typename Data, typename Setup, typename Execute>
@@ -46,7 +44,9 @@ private:
     bool m_dirty = false;
 
     Blackboard                                                  m_blackBoard;
-    std::unordered_map<std::string, Scope<RenderGraphPassBase>> m_renderPasses;
+
+    std::unordered_map<std::string, Scope<RenderGraphPassBase>> m_renderPasses; // later will be abstract to passnode
+    std::unordered_map<std::string, Scope<RenderGraphResource>> m_graphResources;
 
     std::string m_backBufferDebugName{"None"};
     FrameParms* m_currentFrameData{nullptr};
