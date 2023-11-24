@@ -7,6 +7,7 @@
 #include "RenderBackend/Descriptor.h"
 #include "RenderGraph/RenderPass.h"
 #include "Renderer/MeshPass.h"
+#include "Renderer/RenderGraph/RenderGraphResource.h"
 #include "Renderer/RenderGraph/RenderPass.h"
 #include "Renderer/RenderGraph/RenderPassEnum.h"
 #include "Resource/Loader.h"
@@ -28,6 +29,9 @@ void SceneRenderer::InitView(View& view) {
 }
 
 void SceneRenderer::SetViewPort(float offsetX, float offsetY, float width, float height) {
+    m_viewPortWidth  = u32(width);
+    m_viewPortHeight = u32(height);
+
     m_viewPort.setWidth(width)
         .setHeight(height)
         .setX(offsetX)
@@ -41,28 +45,41 @@ void SceneRenderer::Render(View& view, RenderGraph& renderGraph) {
 
     InitView(view);
 
-    auto lightPass = renderGraph.AddPass("LightPass", RenderCommandQueueType::Graphics);
-    lightPass->MarkWriteBackBuffer();
-    lightPass->SetRenderExecCallBack([&](RenderEncoder& encoder) {
-        for (auto& meshDrawCommand : m_cacheMeshDrawCommands[MeshPassType::BasePass]) {
-            auto pso = g_runtimeContext.psoCache->GetPso(meshDrawCommand.pipelineID);
+    // // Create resource
+    // auto sceneColor = AttachmentInfo{.width  = m_viewPortWidth,
+    //                                  .height = m_viewPortHeight,
+    //                                  .format = vk::Format::eR16G16B16A16Sfloat}; // hdr color buffer
+    // auto sceneDepth = AttachmentInfo{.width  = m_viewPortWidth,
+    //                                  .height = m_viewPortHeight,
+    //                                  .format = vk::Format::eD32SfloatS8Uint};
 
-            encoder.SetViewport(m_viewPort);
-            encoder.SetScissor(0, 0, m_viewPort.width, m_viewPort.height);
+    // auto lightPass = renderGraph.AddPass("LightPass", RenderCommandQueueType::Graphics);
+    // lightPass->MarkWriteBackBuffer();
 
-            auto vertexBuffer = meshDrawCommand.drawMesh.meshSource->vertexBuffer;
-            auto indexBuffer  = meshDrawCommand.drawMesh.meshSource->indexBuffer;
+    // lightPass->SetRenderExecCallBack([&](RenderEncoder& encoder) {
+    //     for (auto& meshDrawCommand : m_cacheMeshDrawCommands[MeshPassType::BasePass]) {
+    //         auto pso = g_runtimeContext.psoCache->GetPso(meshDrawCommand.pipelineID);
 
-            encoder.BindPSO(pso);
-            encoder.BindVertexBuffer(0, 1, vertexBuffer->GetNativeHandle(), 0);
-            encoder.BindIndexBuffer(indexBuffer->GetNativeHandle(), 0, vk::IndexType::eUint32);
+    //         encoder.SetViewport(m_viewPort);
+    //         encoder.SetScissor(0, 0, m_viewPort.width, m_viewPort.height);
 
-            encoder.DrawIndexed(3 * meshDrawCommand.drawMesh.meshSource->indices.size(), 1, 0, 0,
-                                0);
+    //         auto vertexBuffer = meshDrawCommand.drawMesh.meshSource->vertexBuffer;
+    //         auto indexBuffer  = meshDrawCommand.drawMesh.meshSource->indexBuffer;
 
-            encoder.RenderUI();
-        }
-    });
+    //         encoder.BindPSO(pso);
+    //         encoder.BindVertexBuffer(0, 1, vertexBuffer->GetNativeHandle(), 0);
+    //         encoder.BindIndexBuffer(indexBuffer->GetNativeHandle(), 0, vk::IndexType::eUint32);
+
+    //         encoder.DrawIndexed(3 * meshDrawCommand.drawMesh.meshSource->indices.size(), 1, 0, 0,
+    //                             0);
+
+    //         encoder.RenderUI();
+    //     }
+    // });
+
+    // // composite pass
+    // auto compositePass = renderGraph.AddPass("CompositePass", RenderCommandQueueType::Graphics);
+    
 }
 
 void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass) {

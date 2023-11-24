@@ -1,5 +1,4 @@
 #include "RenderThread.h"
-
 // engine header
 #include "Engine/RuntimeContext.h"
 // renderer part
@@ -15,8 +14,8 @@ namespace wind {
 
 void FrameParms::Init() {
     auto device    = RuntimeUtils::GetVulkanDevice();
-    computeEncoder = ref::Create<ComputeEncoder>();
-    renderEncoder  = ref::Create<RenderEncoder>();
+    computeEncoder = ref::Create<CommandEncoder>();
+    renderEncoder  = ref::Create<CommandEncoder>();
 
     vk::FenceCreateInfo fenceCreateInfo{.flags = vk::FenceCreateFlagBits::eSignaled};
     flightFence = device.createFence(fenceCreateInfo);

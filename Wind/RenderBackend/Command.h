@@ -5,9 +5,6 @@
 #include "RHIResource.h"
 
 namespace wind {
-class RenderEncoder;
-class ComputeEncoder;
-
 class ComputeShader;
 class RasterShader;
 class MeshDrawCommand;
@@ -23,16 +20,7 @@ public:
     void              Reset();
     vk::CommandBuffer Finish();
 
-protected:
-    RenderCommandQueueType m_queueType;
-
-    vk::CommandBuffer m_nativeHandle;
-    vk::CommandPool   m_cmdPool;
-};
-
-class RenderEncoder : public CommandEncoder {
-public:
-    RenderEncoder();
+    // renderpart
     void BindGraphicsShader(const RasterShader& shader);
 
     void BeginRenderPass(const vk::RenderPassBeginInfo& renderPassBeginInfo);
@@ -65,13 +53,13 @@ public:
 
     // uipart
     void RenderUI();
-};
 
-class ComputeEncoder : public CommandEncoder {
-public:
-    ComputeEncoder(bool isAsync = false);
-    void BindComputShader(const ComputeShader& computeShader);
-    void Dispatch(u32 x, u32 y, u32 z);
+    // compute 
+protected:
+    RenderCommandQueueType m_queueType;
+
+    vk::CommandBuffer m_nativeHandle;
+    vk::CommandPool   m_cmdPool;
 };
 
 // always alloc from stack, try not to use this from heap memory

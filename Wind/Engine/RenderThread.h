@@ -9,8 +9,8 @@ class RenderGraph;
 
 class FrameParms {
 public:
-    Ref<RenderEncoder>  renderEncoder;
-    Ref<ComputeEncoder> computeEncoder;
+    Ref<CommandEncoder> renderEncoder;
+    Ref<CommandEncoder> computeEncoder;
 
     vk::Semaphore imageAvailableSemaphore;
     vk::Semaphore renderFinishedSemaphore;

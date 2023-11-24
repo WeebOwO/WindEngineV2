@@ -4,29 +4,15 @@
 #include "Engine/RuntimeContext.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/SwapChain.h"
-#include "RenderPass.h"
 #include "Renderer/SceneRenderer.h"
 
 namespace wind {
 
 RenderGraph::RenderGraph() {}
 
-void RenderGraph::ImportBackBuffer(const std::string& backBufferName) {
-    m_backBufferDebugName = backBufferName;
-}
-
 void RenderGraph::SetupSwapChain(const Swapchain& swapchain) { m_swapchain = &swapchain; }
 
 void RenderGraph::SetupFrameData(FrameParms& frameData) { m_currentFrameData = &frameData; }
-
-RenderGraphPass* RenderGraph::AddPass(const std::string& passName, RenderCommandQueueType type) {
-    if (!m_renderGraphPasses.contains(passName)) {
-        m_dirty                       = true;
-        m_renderGraphPasses[passName] = ref::Create<RenderGraphPass>(*this, passName, type);
-    }
-
-    return m_renderGraphPasses[passName].get();
-}
 
 void RenderGraph::Exec() {
     if (m_dirty) { Compile(); }
@@ -45,17 +31,6 @@ void RenderGraph::Exec() {
         vk::PipelineStageFlagBits::eColorAttachmentOutput,
         vk::ImageSubresourceRange{vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1});
 
-    for (const auto& [passDebugName, graphPass] : m_renderGraphPasses) {
-        if (graphPass->IsWriteToBackBuffer()) {
-            auto renderingInfo = m_swapchain->GetRenderingInfo(swapchainImageIndex);
-            renderEncoder->BeginRendering(renderingInfo);
-            graphPass->m_renderExecCallback(*renderEncoder);
-            renderEncoder->EndRendering();
-        } else {
-            
-        }
-    }
-
     if (m_swapchain) {
         // end sync with backbuffer
         renderEncoder->TransferImageLayout(
@@ -72,8 +47,11 @@ void RenderGraph::Exec() {
     }
 }
 
-void RenderGraph::Compile() {
-    for (auto& [debugName, pass] : m_renderGraphPasses) {}
-    m_dirty = false;
+RenderGraph::Builder RenderGraph::AddPassInternal(const std::string&         name,
+                                                  Scope<RenderGraphPassBase> pass) {
+    m_renderPasses[name] = std::move(pass);
+    return Builder{this};
 }
+
+void RenderGraph::Compile() { m_dirty = false; }
 } // namespace wind

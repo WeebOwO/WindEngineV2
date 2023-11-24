@@ -1,11 +1,10 @@
-#include "Engine/Engine.h"
-#include "Engine/EntryPoint.h"
-
-#include "Engine/Window.h"
-#include "GLFW/glfw3.h"
-#include "imgui.h"
 #include "std.h"
 
+#include <GLFW/glfw3.h>
+#include <imgui.h>
+
+#include "Engine/Engine.h"
+#include "Engine/EntryPoint.h"
 
 class Editor : public wind::Application {
 public:
@@ -24,7 +23,7 @@ public:
             ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
             ImGui::ShowDemoWindow();
         });
-        
+
         engine.Run();
     }
 };

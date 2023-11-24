@@ -2,77 +2,57 @@
 
 #include "std.h"
 
-#include "RenderGraphResource.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Texture.h"
+#include "RenderGraphResource.h"
 
 namespace wind {
 class RenderGraph;
+enum class EPassType { Graphics, Compute, AsyncCompute };
 
-struct DepthStencilInfo {};
+class RenderGraphPassExecutor {
+protected:
+    virtual void Execute() noexcept = 0;
 
-struct BufferInfo {
-    size_t               byteSize;
-    vk::BufferUsageFlags usage;
-    bool                 persistent;
+public:
+    RenderGraphPassExecutor() noexcept = default;
+    virtual ~RenderGraphPassExecutor() noexcept;
+    RenderGraphPassExecutor(RenderGraphPassExecutor const&)            = delete;
+    RenderGraphPassExecutor& operator=(RenderGraphPassExecutor const&) = delete;
 };
 
-class RenderGraphPass : public RHIResource<RHIResourceType::RenderPass> {
+class RenderGraphPassBase {
 public:
-    using StencilClearCallBack     = std::function<vk::ClearDepthStencilValue()>;
-    using RenderColorClearCallBack = std::function<vk::ClearColorValue()>;
-    using RenderExecCallBack       = std::function<void(RenderEncoder& encoder)>;
+    RenderGraphPassBase() = default;
+    virtual ~RenderGraphPassBase() {}
 
-    RenderGraphPass(RenderGraph& renderGraph, const std::string& debugName,
-                    RenderCommandQueueType type);
+    virtual void Execute() {}
 
-    RenderGraphPass& DeclareRenderTarget(const std::string&    resourceName,
-                                         const AttachmentInfo& attachmentInfo);
+    EPassType passType;
+};
 
-    RenderGraphPass& DeclareDepthStencil(const std::string&    resourceName,
-                                         const AttachmentInfo& attachmentInfo);
+template <typename Data> class RenderGraphPass : public RenderGraphPassBase {
+public:
+    void Execute() noexcept override {}
+    RenderGraphPass(EPassType type) { passType = type; }
+    virtual ~RenderGraphPass() {}
 
-    RenderGraphPass& SetRenderArea(const vk::Rect2D& rect);
-
-    void MarkWriteBackBuffer();
-
-    void SetRenderExecCallBack(const RenderExecCallBack& callback);
-    void SetStencilClearCallBack(const StencilClearCallBack& callback);
-    void SetRenderColorClearCallBack(const RenderColorClearCallBack& callback);
-
-    bool IsWriteToDepth();
-    bool IsWriteToBackBuffer();
-
-    bool ContainsResource(const std::string& resourceName);
+    Data const& GetData() const noexcept { return m_data; }
+    Data const* operator->() const { return &m_data; }
 
 private:
-    friend class RenderGraph;
-
-    void Bake();
-
-    bool m_writeToDepth      = false;
-    bool m_writeToBackBuffer = false;
-
-    struct DepthOuput {
-        std::string                 depthOutputName;
-        vk::RenderingAttachmentInfo attachmentInfo;
-    };
-
-    RenderGraph& m_renderGraph;
-    std::string  m_debugName;
-
-    RenderExecCallBack       m_renderExecCallback{nullptr};
-    StencilClearCallBack     m_stencilCallback{nullptr};
-    RenderColorClearCallBack m_renderColorClearCallBack{nullptr};
-
-    RenderCommandQueueType m_queueType;
-
-    vk::Rect2D m_renderArea;
-
-    std::unordered_map<std::string, AttachmentInfo> m_renderTargets;
-    std::optional<DepthOuput>                       m_depthOutput;
-
-    vk::RenderingInfo m_renderingInfo;  
+    Data m_data;
 };
 
+template <typename Data, typename ExecuteCallBack>
+class RenderGraphPassConcrete : public RenderGraphPass<Data> {
+public:
+    explicit RenderGraphPassConcrete(EPassType type, ExecuteCallBack&& callback)
+        : RenderGraphPass<Data>(type), m_execCallBack(std::move(callback)) {}
+
+    void Execute() noexcept override { m_execCallBack(); }
+
+private:
+    ExecuteCallBack m_execCallBack;
+};
 }; // namespace wind

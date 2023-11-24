@@ -28,9 +28,15 @@ struct AttachmentInfo {
 
 class RenderGraphTexture : public RenderGraphResource {
 public:
-    RenderGraphTexture() = default;
-    RenderGraphTexture(const GPUTexture::Desc& desc);
+    struct Desc {
+        u32                 width;
+        u32                 height;
+        vk::ImageUsageFlags usage;
+    };
 
+    RenderGraphTexture() = default;
+    RenderGraphTexture(const Desc& desc);
+    
 private:
     Ref<GPUTexture> texture;
 };

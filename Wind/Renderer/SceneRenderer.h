@@ -36,8 +36,11 @@ private:
     Scene*      m_renderScene;
     FrameParms* m_framedata;
 
-    vk::Viewport m_viewPort;
+    vk::Viewport m_viewPort{};
 
     std::array<std::vector<MeshDrawCommand>, MeshPassType::Count> m_cacheMeshDrawCommands;
+
+    u32 m_viewPortWidth  = 0;
+    u32 m_viewPortHeight = 0;
 };
 } // namespace wind
