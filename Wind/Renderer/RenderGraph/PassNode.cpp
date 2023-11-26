@@ -1,6 +1,7 @@
 #include "PassNode.h"
 
 #include "RenderGraph.h"
+#include "ResourceNode.h"
 
 namespace wind {
 

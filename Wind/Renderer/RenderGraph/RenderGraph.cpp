@@ -1,6 +1,7 @@
 #include "RenderGraph.h"
 
 #include "Core/Log.h"
+#include "ResourceNode.h"
 #include "Engine/RuntimeContext.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/SwapChain.h"
@@ -15,40 +16,14 @@ void RenderGraph::SetupSwapChain(const Swapchain& swapchain) { m_swapchain = &sw
 void RenderGraph::SetupFrameData(FrameParms& frameData) { m_currentFrameData = &frameData; }
 
 void RenderGraph::Exec() {
-    auto vkDevice      = RuntimeUtils::GetVulkanDevice();
-    auto renderEncoder = m_currentFrameData->renderEncoder;
-
-    auto swapchainImageIndex = m_currentFrameData->swapchainImageIndex;
-    renderEncoder->Begin();
-
-    // start barrier ot
-    renderEncoder->TransferImageLayout(
-        m_swapchain->GetImage(swapchainImageIndex), vk::AccessFlagBits::eNone,
-        vk::AccessFlagBits::eColorAttachmentWrite, vk::ImageLayout::eUndefined,
-        vk::ImageLayout::eColorAttachmentOptimal, vk::PipelineStageFlagBits::eTopOfPipe,
-        vk::PipelineStageFlagBits::eColorAttachmentOutput,
-        vk::ImageSubresourceRange{vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1});
-
-    if (m_swapchain) {
-        // end sync with backbuffer
-        renderEncoder->TransferImageLayout(
-            m_swapchain->GetImage(swapchainImageIndex), vk::AccessFlagBits::eColorAttachmentWrite,
-            vk::AccessFlagBits::eNone, vk::ImageLayout::eColorAttachmentOptimal,
-            vk::ImageLayout::ePresentSrcKHR, vk::PipelineStageFlagBits::eColorAttachmentOutput,
-            vk::PipelineStageFlagBits::eBottomOfPipe,
-            vk::ImageSubresourceRange{vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1});
-
-        m_swapchain->SubmitCommandBuffer(renderEncoder->Finish(), m_currentFrameData->flightFence,
-                                         m_currentFrameData->imageAvailableSemaphore,
-                                         m_currentFrameData->renderFinishedSemaphore,
-                                         swapchainImageIndex);
-    }
+    auto renderEncoder = m_currentFrameData->renderEncoder; 
+       
 }
 
 RenderGraph::Builder RenderGraph::AddPassInternal(const std::string&         name,
                                                   Scope<RenderGraphPassBase> pass) {
     Scope<PassNode> node = scope::Create<RenderPassNode>(*this, name, std::move(pass));
-    m_passNodes.push_back(std::move(node));
+    m_passNodes[name] = std::move(node);
     return Builder{*this, node.get()};
 }
 

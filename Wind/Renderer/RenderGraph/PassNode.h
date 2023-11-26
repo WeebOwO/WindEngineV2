@@ -7,7 +7,6 @@
 #include "RenderGraphTexture.h"
 
 namespace wind {
-class ResourceNode;
 class RenderGraph;
 
 class PassNode {
