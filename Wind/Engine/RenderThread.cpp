@@ -1,14 +1,13 @@
 #include "RenderThread.h"
-// engine header
-#include "Engine/RuntimeContext.h"
-// renderer part
+
+#include "RuntimeContext.h"
+
 #include "RenderBackend/Command.h"
-#include "Renderer/RenderGraph/RenderGraph.h"
-#include "Renderer/RenderGraph/RenderPass.h"
-#include "Renderer/SceneRenderer.h"
+
 #include "Renderer/View.h"
-// imgui
-#include "imgui.h"
+#include "Renderer/SceneRenderer.h"
+#include "Renderer/RenderGraph/ResourceNode.h"
+#include "Renderer/RenderGraph/RenderGraph.h"
 
 namespace wind {
 
@@ -39,13 +38,9 @@ void FrameParms::ResetCommanEncoders() {
 }
 
 void RenderThread::Init() {
-    m_sceneRenderer = scope::Create<SceneRenderer>();
-    m_sceneRenderer->Init();
-
     for (auto& data : m_frameParams) {
         data.Init();
     }
-
     m_renderGraph = scope::Create<RenderGraph>();
 }
 

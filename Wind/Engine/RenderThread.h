@@ -48,7 +48,6 @@ private:
 
     FrameParms           m_frameParams[MAX_FRAME_IN_FLIGHT];
     u32                  m_frameNumber = 0;
-    Scope<SceneRenderer> m_sceneRenderer;
     Scope<RenderGraph>   m_renderGraph;
 };
 } // namespace wind

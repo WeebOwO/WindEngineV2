@@ -1,21 +1,26 @@
 #include "SceneRenderer.h"
 
+#include "View.h"
+#include "imgui.h"
+
+#include "MeshPass.h"
+#include "RenderGraph/RenderGraphTexture.h"
+#include "RenderGraph/RenderGraphResource.h"
+#include "RenderGraph/RenderPassEnum.h"
+
 #include "Core/Log.h"
+
 #include "Engine/RuntimeContext.h"
+
 #include "RenderBackend/Command.h"
 #include "RenderBackend/ComputeShader.h"
 #include "RenderBackend/Descriptor.h"
-#include "RenderGraph/RenderPass.h"
-#include "Renderer/MeshPass.h"
-#include "Renderer/RenderGraph/RenderGraphResource.h"
-#include "Renderer/RenderGraph/RenderPass.h"
-#include "Renderer/RenderGraph/RenderPassEnum.h"
+
 #include "Resource/Loader.h"
 #include "Resource/Mesh.h"
 #include "Resource/VertexFactory.h"
+
 #include "Scene/Scene.h"
-#include "View.h"
-#include "imgui.h"
 
 namespace wind {
 
@@ -40,46 +45,19 @@ void SceneRenderer::SetViewPort(float offsetX, float offsetY, float width, float
         .setMaxDepth(1.0);
 }
 
-void SceneRenderer::Render(View& view, RenderGraph& renderGraph) {
+void SceneRenderer::Render(View& view, RenderGraph& rg) {
     m_renderScene = RuntimeUtils::GetActiveScene();
-
     InitView(view);
 
-    // // Create resource
-    // auto sceneColor = AttachmentInfo{.width  = m_viewPortWidth,
-    //                                  .height = m_viewPortHeight,
-    //                                  .format = vk::Format::eR16G16B16A16Sfloat}; // hdr color buffer
-    // auto sceneDepth = AttachmentInfo{.width  = m_viewPortWidth,
-    //                                  .height = m_viewPortHeight,
-    //                                  .format = vk::Format::eD32SfloatS8Uint};
+    struct ColorPassData {
+        RenderGraphID<RenderGraphTexture> sceneColor;
+    };
 
-    // auto lightPass = renderGraph.AddPass("LightPass", RenderCommandQueueType::Graphics);
-    // lightPass->MarkWriteBackBuffer();
-
-    // lightPass->SetRenderExecCallBack([&](RenderEncoder& encoder) {
-    //     for (auto& meshDrawCommand : m_cacheMeshDrawCommands[MeshPassType::BasePass]) {
-    //         auto pso = g_runtimeContext.psoCache->GetPso(meshDrawCommand.pipelineID);
-
-    //         encoder.SetViewport(m_viewPort);
-    //         encoder.SetScissor(0, 0, m_viewPort.width, m_viewPort.height);
-
-    //         auto vertexBuffer = meshDrawCommand.drawMesh.meshSource->vertexBuffer;
-    //         auto indexBuffer  = meshDrawCommand.drawMesh.meshSource->indexBuffer;
-
-    //         encoder.BindPSO(pso);
-    //         encoder.BindVertexBuffer(0, 1, vertexBuffer->GetNativeHandle(), 0);
-    //         encoder.BindIndexBuffer(indexBuffer->GetNativeHandle(), 0, vk::IndexType::eUint32);
-
-    //         encoder.DrawIndexed(3 * meshDrawCommand.drawMesh.meshSource->indices.size(), 1, 0, 0,
-    //                             0);
-
-    //         encoder.RenderUI();
-    //     }
-    // });
-
-    // // composite pass
-    // auto compositePass = renderGraph.AddPass("CompositePass", RenderCommandQueueType::Graphics);
-    
+    auto& colorPass = rg.AddPass<ColorPassData>("LightingPass", [&](RenderGraph::Builder& builder, ColorPassData& data) {
+        
+    }, 
+    [](){}, 
+    EPassType::Graphics);
 }
 
 void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass) {

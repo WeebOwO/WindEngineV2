@@ -4,6 +4,7 @@
 #include "Engine/RuntimeContext.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/SwapChain.h"
+#include "Renderer/RenderGraph/PassNode.h"
 #include "Renderer/SceneRenderer.h"
 
 namespace wind {
@@ -11,7 +12,6 @@ namespace wind {
 RenderGraph::RenderGraph() {}
 
 void RenderGraph::SetupSwapChain(const Swapchain& swapchain) { m_swapchain = &swapchain; }
-
 void RenderGraph::SetupFrameData(FrameParms& frameData) { m_currentFrameData = &frameData; }
 
 void RenderGraph::Exec() {
@@ -47,8 +47,9 @@ void RenderGraph::Exec() {
 
 RenderGraph::Builder RenderGraph::AddPassInternal(const std::string&         name,
                                                   Scope<RenderGraphPassBase> pass) {
-    m_renderPasses[name] = std::move(pass);
-    return Builder{this};
+    Scope<PassNode> node = scope::Create<RenderPassNode>(*this, name, std::move(pass));
+    m_passNodes.push_back(std::move(node));
+    return Builder{*this, node.get()};
 }
 
 void RenderGraph::Compile() { m_dirty = false; }

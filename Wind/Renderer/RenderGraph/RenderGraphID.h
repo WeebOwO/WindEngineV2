@@ -9,8 +9,8 @@ class RenderGraphHandle {
 public:
     using Index = uint16_t;
 
+    RenderGraphHandle() noexcept = default;
     RenderGraphHandle(const RenderGraphHandle& rhs) noexcept = default;
-
     RenderGraphHandle& operator=(const RenderGraphHandle& rhs) noexcept = default;
 
     bool IsInitialized() const noexcept { return m_index != UNINITIALIZED; }
@@ -26,20 +26,15 @@ public:
 
     operator bool() const noexcept { return IsInitialized(); }
 
-private:
-    template <typename T> friend class RenderGraphId;
-
-    friend class RenderGraph;
-    friend class Blackboard;
-
-    RenderGraphHandle() noexcept = default;
     explicit RenderGraphHandle(Index index) noexcept : m_index(index) {}
 
+private:
     static constexpr uint16_t UNINITIALIZED = std::numeric_limits<Index>::max();
     Index                     m_index;
 };
 
-template <typename Resource> class RenderGraphID : public RenderGraphHandle {
+template <typename Resource> 
+class RenderGraphID : public RenderGraphHandle {
 public:
     using RenderGraphHandle::RenderGraphHandle;
     RenderGraphID() noexcept = default;

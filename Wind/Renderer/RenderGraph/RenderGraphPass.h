@@ -3,6 +3,7 @@
 #include "std.h"
 
 #include "RenderGraphResource.h"
+
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Texture.h"
 
@@ -10,23 +11,12 @@ namespace wind {
 class RenderGraph;
 enum class EPassType { Graphics, Compute, AsyncCompute };
 
-class RenderGraphPassExecutor {
-protected:
-    virtual void Execute() noexcept = 0;
-
-public:
-    RenderGraphPassExecutor() noexcept = default;
-    virtual ~RenderGraphPassExecutor() noexcept;
-    RenderGraphPassExecutor(RenderGraphPassExecutor const&)            = delete;
-    RenderGraphPassExecutor& operator=(RenderGraphPassExecutor const&) = delete;
-};
-
-class RenderGraphPassBase : public RenderGraphPassExecutor {
+class RenderGraphPassBase {
 public:
     RenderGraphPassBase() = default;
     virtual ~RenderGraphPassBase() {}
 
-    virtual void Execute() noexcept override {}
+    virtual void Execute() noexcept {}
 
     EPassType passType;
 };
@@ -37,8 +27,8 @@ public:
     RenderGraphPass(EPassType type) { passType = type; }
     virtual ~RenderGraphPass() {}
 
-    Data const& GetData() const noexcept { return m_data; }
-    Data const* operator->() const { return &m_data; }
+    const Data& GetData() const noexcept { return m_data; }
+    const Data* operator->() const { return &m_data; }
 
 private:
     Data m_data;
