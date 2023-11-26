@@ -1,14 +1,18 @@
 #pragma once
 
-#include "Engine/RenderThread.h"
-#include "Resource/Texture.h"
 #include "std.h"
+
+#include "MeshPass.h"
+#include "RenderGraph/RenderGraph.h"
+
+#include "Engine/RenderThread.h"
+
+#include "Resource/Texture.h"
 
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Fwd.h"
-#include "RenderGraph/RenderGraph.h"
 #include "Renderbackend/SwapChain.h"
-#include "Renderer/MeshPass.h"
+
 
 namespace wind {
 class Scene;
@@ -38,7 +42,7 @@ private:
 
     vk::Viewport m_viewPort{};
 
-    std::array<std::vector<MeshDrawCommand>, MeshPassType::Count> m_cacheMeshDrawCommands;
+    PerpassData<std::vector<MeshDrawCommand>> m_cacheMeshDrawCommands;
 
     u32 m_viewPortWidth  = 0;
     u32 m_viewPortHeight = 0;

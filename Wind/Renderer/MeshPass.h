@@ -10,13 +10,13 @@ namespace wind {
 class Material;
 class StaticMesh;
 class MeshSource;
+class MeshPass;
 
 enum MeshPassType : u8 { BasePass = 0, Count };
 
 template <typename T> class PerpassData {
 public:
     T& operator[](MeshPassType pass) { return m_data[u32(pass)]; }
-
     void Clear(T&& val) {
         for (int i = 0; i < MeshPassType::Count; ++i) {
             m_data[i] = val;

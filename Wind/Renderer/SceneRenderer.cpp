@@ -4,8 +4,8 @@
 #include "imgui.h"
 
 #include "MeshPass.h"
-#include "RenderGraph/RenderGraphTexture.h"
 #include "RenderGraph/RenderGraphResource.h"
+#include "RenderGraph/RenderGraphTexture.h"
 #include "RenderGraph/RenderPassEnum.h"
 
 #include "Core/Log.h"
@@ -53,11 +53,17 @@ void SceneRenderer::Render(View& view, RenderGraph& rg) {
         RenderGraphID<RenderGraphTexture> sceneColor;
     };
 
-    auto& colorPass = rg.AddPass<ColorPassData>("LightingPass", [&](RenderGraph::Builder& builder, ColorPassData& data) {
-        
-    }, 
-    [](){}, 
-    EPassType::Graphics);
+    auto& colorPass = rg.AddPass<ColorPassData>(
+        "LightingPass",
+        [&](RenderGraph::Builder& builder, ColorPassData& data) {
+            data.sceneColor = builder.CreateTexture(
+                "SceneColor", {.width  = m_viewPortWidth,
+                               .height = m_viewPortHeight,
+                               .depth  = 1,
+                               .usage  = vk::ImageUsageFlagBits::eColorAttachment});
+            
+        },
+        []() {}, EPassType::Graphics);
 }
 
 void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass) {

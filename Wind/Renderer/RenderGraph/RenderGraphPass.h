@@ -21,7 +21,8 @@ public:
     EPassType passType;
 };
 
-template <typename Data> class RenderGraphPass : public RenderGraphPassBase {
+template <typename Data> 
+class RenderGraphPass : public RenderGraphPassBase {
 public:
     void Execute() noexcept override {}
     RenderGraphPass(EPassType type) { passType = type; }

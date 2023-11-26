@@ -46,8 +46,18 @@ public:
     auto& GetBlackBoard() noexcept { return m_blackBoard; }
 
 private:
+    friend class RenderPassNode;
+
     template<typename ResourceType>
     RenderGraphID<ResourceType> Create(const std::string& name, const typename ResourceType::Desc& desc) noexcept;
+
+    template<typename ResourceType>
+    ResourceType* Get(RenderGraphID<ResourceType> resourceHandle) {
+        if constexpr (std::is_same_v<ResourceType, RenderGraphTexture>) {
+            return m_textures[resourceHandle.m_index].get();
+        }
+        return nullptr;
+    }
 
     Builder AddPassInternal(const std::string& name, Scope<RenderGraphPassBase> pass);
     void    Compile();

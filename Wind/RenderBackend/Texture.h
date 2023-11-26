@@ -29,10 +29,15 @@ public:
 
     static Ref<GPUTexture> Create(const Desc& desc);
 
+    auto GetVkImage() { return m_allocatedImage.image; }
+    auto GetView() { return m_defaultView; }
+
 private:
     void SetDesc(const Desc& desc) { m_desc = desc; }
 
     AllocatedImage m_allocatedImage;
     Desc           m_desc;
+    vk::ImageView  m_defaultView;
 };
+
 } // namespace wind
