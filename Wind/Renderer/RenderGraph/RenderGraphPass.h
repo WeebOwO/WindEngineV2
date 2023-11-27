@@ -2,21 +2,19 @@
 
 #include "std.h"
 
-#include "RenderGraphResource.h"
-
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Texture.h"
 
 namespace wind {
-class RenderGraph;
 enum class EPassType { Graphics, Compute, AsyncCompute };
 
+class ResourceRegistry;
 class RenderGraphPassBase {
 public:
     RenderGraphPassBase() = default;
     virtual ~RenderGraphPassBase() {}
 
-    virtual void Execute() noexcept {}
+    virtual void Execute(ResourceRegistry&, CommandEncoder&) noexcept {}
 
     EPassType passType;
 };
@@ -24,14 +22,14 @@ public:
 template <typename Data> 
 class RenderGraphPass : public RenderGraphPassBase {
 public:
-    void Execute() noexcept override {}
+    void Execute(ResourceRegistry&, CommandEncoder&) noexcept override {}
     RenderGraphPass(EPassType type) { passType = type; }
     virtual ~RenderGraphPass() {}
 
     const Data& GetData() const noexcept { return m_data; }
     const Data* operator->() const { return &m_data; }
 
-private:
+protected:
     Data m_data;
 };
 
@@ -42,7 +40,9 @@ public:
                                      EPassType         type = EPassType::Graphics)
         : RenderGraphPass<Data>(type), m_execCallBack(std::move(callback)) {}
 
-    void Execute() noexcept override { m_execCallBack(); }
+    void Execute(ResourceRegistry& resourceRegistry, CommandEncoder& encoder) noexcept override { 
+        m_execCallBack(resourceRegistry, this->m_data, encoder); 
+    }
 
 private:
     ExecuteCallBack m_execCallBack;

@@ -8,15 +8,16 @@
 
 namespace wind {
 class RenderGraph;
+class ResourceRegistry;
 
 class PassNode {
 public:
     PassNode(RenderGraph& rg) : renderGraph(rg) {}
-    virtual void Execute() noexcept {}
+    virtual void Execute(ResourceRegistry& resourceRegistry, CommandEncoder& encoder) noexcept {}
 
 protected:
-    std::unordered_set<std::string> declareResources;
-    RenderGraph&                    renderGraph;
+    std::unordered_set<RenderGraphHandle::Index> declareResources;
+    RenderGraph&                                 renderGraph;
 };
 
 class RenderPassNode : public PassNode {
@@ -33,7 +34,7 @@ public:
         };
     };
 
-    struct Desc {
+    struct RenderDesc {
         Attachments           attchments;
         vk::Viewport          viewPort;
         u8                    sample;
@@ -43,16 +44,19 @@ public:
     };
 
     RenderPassNode(RenderGraph& rg, const std::string& name, Scope<RenderGraphPassBase> pass);
+    virtual void Execute(ResourceRegistry& resourceRegistry, CommandEncoder& encoder) noexcept {
+        m_passBase->Execute(resourceRegistry, encoder);
+    }
 
-    void DeclareRenderTarget(const Desc& desc);
+    void DeclareRenderTarget(const RenderDesc& desc);
+    auto GetRenderingInfo() const { return m_renderingInfo; }
 
 private:
     std::vector<vk::RenderingAttachmentInfo> m_colorAttachmentInfos;
     vk::RenderingAttachmentInfo              m_depthAttachmentInfo;
     vk::RenderingAttachmentInfo              m_stencilAttachmentInfo;
-
-    vk::RenderingInfo          m_renderingInfo;
-    std::string                m_debugName;
-    Scope<RenderGraphPassBase> m_passBase;
+    vk::RenderingInfo                        m_renderingInfo;
+    std::string                              m_debugName;
+    Scope<RenderGraphPassBase>               m_passBase;
 };
 } // namespace wind

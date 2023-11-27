@@ -35,7 +35,7 @@ public:
                           vk::DeviceSize offset);
     void BindIndexBuffer(const vk::Buffer& buffer, vk::DeviceSize offset, vk::IndexType indexType);
 
-    void DrawMesh(const MeshDrawCommand& meshDrawCommand);
+    void DrawMesh(const MeshDrawCommand& meshDrawCommand) {}
 
     void SetViewport(const vk::Viewport& viewport);
     void SetScissor(i32 offsetx, i32 offsety, u32 width, u32 height);

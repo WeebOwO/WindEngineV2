@@ -3,7 +3,8 @@
 #include "std.h"
 
 namespace wind {
-template <typename T> class RenderGraphId;
+template <typename T> 
+class RenderGraphId;
 
 class RenderGraphHandle {
 public:

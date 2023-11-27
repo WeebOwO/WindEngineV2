@@ -1,9 +1,11 @@
 #include "SceneRenderer.h"
 
-#include "View.h"
-#include "imgui.h"
+#include <imgui.h>
 
+#include "View.h"
 #include "MeshPass.h"
+
+#include "RenderGraph/ResourceRegistry.h"
 #include "RenderGraph/RenderGraphResource.h"
 #include "RenderGraph/RenderGraphTexture.h"
 #include "RenderGraph/RenderPassEnum.h"
@@ -63,7 +65,14 @@ void SceneRenderer::Render(View& view, RenderGraph& rg) {
                                .usage  = vk::ImageUsageFlagBits::eColorAttachment});
             
         },
-        []() {}, EPassType::Graphics);
+        [&](ResourceRegistry& resourceRegistry, ColorPassData& data, CommandEncoder& encoder) {
+            encoder.BeginRendering(resourceRegistry.GetRenderingInfo());
+            for(const auto meshDrawCommand : m_cacheMeshDrawCommands[BasePass]) {
+                encoder.DrawMesh(meshDrawCommand);
+            }   
+            encoder.EndRendering();
+        }, EPassType::Graphics);
+
 }
 
 void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass) {

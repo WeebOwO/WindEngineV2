@@ -2,6 +2,7 @@
 
 #include "RenderGraph.h"
 #include "ResourceNode.h"
+#include "ResourceRegistry.h"
 
 namespace wind {
 
@@ -9,7 +10,7 @@ RenderPassNode::RenderPassNode(RenderGraph& rg, const std::string& name,
                                Scope<RenderGraphPassBase> pass)
     : PassNode(rg), m_debugName(name), m_passBase(std::move(pass)) {}
 
-void RenderPassNode::DeclareRenderTarget(const Desc& desc) {
+void RenderPassNode::DeclareRenderTarget(const RenderDesc& desc) {
     bool writeDepth = false, writeStencil = false;
     for (auto attachment : desc.attchments.color) {
         if (attachment) {

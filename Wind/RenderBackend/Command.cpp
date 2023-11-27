@@ -1,6 +1,7 @@
 #include "Command.h"
 
 #include "Device.h"
+#include "Renderer/MeshPass.h"
 
 namespace wind {
 CommandEncoder::CommandEncoder(RenderCommandQueueType queueType) : m_queueType(queueType) {

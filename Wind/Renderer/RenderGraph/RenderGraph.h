@@ -2,11 +2,11 @@
 
 #include "std.h"
 
-#include "BlackBoard.h"
 #include "PassNode.h"
+#include "ResourceNode.h"
+#include "BlackBoard.h"
 #include "RenderGraphPass.h"
 #include "RenderGraphTexture.h"
-#include "ResourceNode.h"
 
 namespace wind {
 class RenderGraphPassBase;
@@ -24,7 +24,6 @@ public:
             return m_graph.Create<RenderGraphTexture>(name, desc);
         };
 
-        
     private:
         RenderGraph& m_graph;
         PassNode*    m_node;
@@ -45,6 +44,7 @@ public:
 
 private:
     friend class RenderPassNode;
+    friend class ResourceRegistry;
 
     template <typename ResourceType>
     RenderGraphID<ResourceType> Create(const std::string&                 name,

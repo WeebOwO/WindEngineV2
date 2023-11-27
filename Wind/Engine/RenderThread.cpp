@@ -13,6 +13,7 @@ namespace wind {
 
 void FrameParms::Init() {
     auto device    = RuntimeUtils::GetVulkanDevice();
+    
     computeEncoder = ref::Create<CommandEncoder>();
     renderEncoder  = ref::Create<CommandEncoder>();
 

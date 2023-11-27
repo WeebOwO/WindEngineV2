@@ -1,12 +1,12 @@
 #include "RenderGraph.h"
 
-#include "Core/Log.h"
+#include "ResourceRegistry.h"
 #include "ResourceNode.h"
+
+#include "Core/Log.h"
+
+#include "Engine/RenderThread.h"
 #include "Engine/RuntimeContext.h"
-#include "RenderBackend/Command.h"
-#include "RenderBackend/SwapChain.h"
-#include "Renderer/RenderGraph/PassNode.h"
-#include "Renderer/SceneRenderer.h"
 
 namespace wind {
 
@@ -17,7 +17,12 @@ void RenderGraph::SetupFrameData(FrameParms& frameData) { m_currentFrameData = &
 
 void RenderGraph::Exec() {
     auto renderEncoder = m_currentFrameData->renderEncoder; 
-       
+    
+    for(const auto& [name, node] : m_passNodes) {
+        ResourceRegistry registry(*this, node.get());
+        node->Execute(registry, *renderEncoder);
+    }
+    
 }
 
 RenderGraph::Builder RenderGraph::AddPassInternal(const std::string&         name,
