@@ -35,8 +35,8 @@ public:
 private:
     void SetDesc(const Desc& desc) { m_desc = desc; }
 
-    AllocatedImage m_allocatedImage;
     Desc           m_desc;
+    AllocatedImage m_allocatedImage;
     vk::ImageView  m_defaultView;
 };
 

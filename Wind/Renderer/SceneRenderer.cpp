@@ -72,7 +72,7 @@ void SceneRenderer::Render(View& view, RenderGraph& rg) {
             }   
             encoder.EndRendering();
         }, EPassType::Graphics);
-
+    
 }
 
 void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass) {
