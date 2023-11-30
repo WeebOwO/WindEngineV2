@@ -6,6 +6,7 @@
 namespace wind {
 class SceneRenderer;
 class RenderGraph;
+class Swapchain;
 
 class FrameParms {
 public:

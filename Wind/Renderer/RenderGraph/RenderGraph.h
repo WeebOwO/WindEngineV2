@@ -2,11 +2,12 @@
 
 #include "std.h"
 
-#include "PassNode.h"
-#include "ResourceNode.h"
 #include "BlackBoard.h"
+#include "PassNode.h"
 #include "RenderGraphPass.h"
 #include "RenderGraphTexture.h"
+#include "ResourceNode.h"
+
 
 namespace wind {
 class RenderGraphPassBase;
@@ -23,6 +24,11 @@ public:
                                                         const RenderGraphTexture::Desc desc) {
             return m_graph.Create<RenderGraphTexture>(name, desc);
         };
+
+        void DeclareRenderPass(const RenderPassNode::RenderDesc& renderDesc) {
+            // only call this function when you add renderpass
+            static_cast<RenderPassNode*>(m_node)->DeclareRenderTarget(renderDesc);
+        }
 
     private:
         RenderGraph& m_graph;
@@ -41,6 +47,7 @@ public:
     void Exec();
 
     auto& GetBlackBoard() noexcept { return m_blackBoard; }
+    bool  ContainPass(const std::string& passName) { return m_passNodes.contains(passName); }
 
 private:
     friend class RenderPassNode;
@@ -66,10 +73,10 @@ private:
 
     Blackboard m_blackBoard;
 
-    std::unordered_map<std::string, Scope<PassNode>> m_passNodes;
+    std::unordered_map<std::string, Scope<PassNode>>     m_passNodes;
     std::unordered_map<std::string, Scope<ResourceNode>> m_resourceNodes;
-    
-    std::vector<RenderGraphTexture>  m_textures;
+
+    std::vector<RenderGraphTexture> m_textures;
 
     FrameParms* m_currentFrameData{nullptr};
 };
@@ -77,6 +84,7 @@ private:
 template <typename Data, typename Setup, typename Execute>
 RenderGraphPass<Data>& RenderGraph::AddPass(const std::string& name, Setup setup, Execute&& execute,
                                             EPassType passType) {
+    if (m_passNodes.contains(name)) {}
     auto pass = scope::Create<RenderGraphPassConcrete<Data, Execute>>(
         std::forward<Execute>(execute), passType);
     Builder builder = AddPassInternal(name, std::move(pass));
@@ -89,10 +97,10 @@ RenderGraphID<ResourceType> RenderGraph::Create(const std::string&              
                                                 const typename ResourceType::Desc& desc) noexcept {
     if constexpr (std::is_same_v<ResourceType, RenderGraphTexture>) {
         RenderGraphHandle handle;
-        if(m_resourceNodes.contains(name)) {
+        if (m_resourceNodes.contains(name)) {
             handle = m_resourceNodes[name]->resourceHandle;
         } else {
-            handle = RenderGraphHandle(m_textures.size());
+            handle                = RenderGraphHandle(m_textures.size());
             m_resourceNodes[name] = scope::Create<ResourceNode>(*this, handle);
             m_textures.push_back(ResourceType(desc));
         }

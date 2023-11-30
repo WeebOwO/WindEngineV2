@@ -3,6 +3,7 @@
 #include "RuntimeContext.h"
 
 #include "RenderBackend/Command.h"
+#include "RenderBackend/SwapChain.h"
 
 #include "Renderer/View.h"
 #include "Renderer/SceneRenderer.h"

@@ -1,10 +1,9 @@
 #pragma once
 
-#include "Engine/Window.h"
 #include "VulkanHeader.h"
 
 namespace wind {
-
+class Window;
 class GPUDevice;
 
 // this part use c-interface vulkan

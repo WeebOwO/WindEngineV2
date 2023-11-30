@@ -55,7 +55,12 @@ void SceneRenderer::Render(View& view, RenderGraph& rg) {
         RenderGraphID<RenderGraphTexture> sceneColor;
     };
 
-    auto& colorPass = rg.AddPass<ColorPassData>(
+    vk::ClearValue clearValue {
+        .color = vk::ClearColorValue{.float32 = std::array<float, 4>{1.0f, 1.0f, 1.0f, 1.0f}}
+    };
+
+    if(!rg.ContainPass("LightingPass")) {
+        auto& colorPass = rg.AddPass<ColorPassData>(
         "LightingPass",
         [&](RenderGraph::Builder& builder, ColorPassData& data) {
             data.sceneColor = builder.CreateTexture(
@@ -63,7 +68,15 @@ void SceneRenderer::Render(View& view, RenderGraph& rg) {
                                .height = m_viewPortHeight,
                                .depth  = 1,
                                .usage  = vk::ImageUsageFlagBits::eColorAttachment});
-            
+
+            RenderPassNode::RenderDesc renderDesc {
+                .attchments = {.color = {data.sceneColor}, .depth = {}, .stencil = {}},
+                .viewPort = m_viewPort,
+                .sample = 1,
+                .clearValue = clearValue,
+            };
+
+            builder.DeclareRenderPass(renderDesc);
         },
         [&](ResourceRegistry& resourceRegistry, ColorPassData& data, CommandEncoder& encoder) {
             encoder.BeginRendering(resourceRegistry.GetRenderingInfo());
@@ -72,7 +85,9 @@ void SceneRenderer::Render(View& view, RenderGraph& rg) {
             }   
             encoder.EndRendering();
         }, EPassType::Graphics);
+    }
     
+    return;
 }
 
 void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass) {
