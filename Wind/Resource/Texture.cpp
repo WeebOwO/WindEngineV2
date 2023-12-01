@@ -5,7 +5,7 @@ void Texture2D::InitRHI() {
 
 }
 
-void Texture2D::RelaseRHI() {
+void Texture2D::ReleaseRHI() {
     
 }
 } // namespace wind

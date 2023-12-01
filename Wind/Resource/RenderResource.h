@@ -2,7 +2,7 @@
 
 namespace wind {
 struct RenderResource {
-    virtual void InitRHI()   = 0;
-    virtual void RelaseRHI() = 0;
+    virtual void InitRHI() {}
+    virtual void ReleaseRHI() {}
 };
 } // namespace wind

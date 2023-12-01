@@ -18,10 +18,6 @@ namespace wind {
 class Scene;
 class View;
 
-struct RenderConfig {
-    uint32_t MAX_FRAME_IN_FLIGHT = 2;
-};
-
 class SceneRenderer {
 public:
     SceneRenderer()  = default;

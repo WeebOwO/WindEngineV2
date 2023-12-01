@@ -13,7 +13,7 @@ public:
     NO_COPYABLE(Texture2D);
 
     void InitRHI() override;
-    void RelaseRHI() override;
+    void ReleaseRHI() override;
     
 private:
     

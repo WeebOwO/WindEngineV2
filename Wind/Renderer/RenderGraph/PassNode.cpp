@@ -16,7 +16,7 @@ void RenderPassNode::DeclareRenderTarget(const RenderDesc& desc) {
         if (attachment) {
             auto                        texture = renderGraph.Get(attachment);
             vk::RenderingAttachmentInfo attachmentInfo{.imageView   = texture->GetImageView(),
-                                                       .imageLayout = texture->GetCurrentLayout(),
+                                                       .imageLayout = texture->GetLayout(),
                                                        .loadOp      = desc.loadop,
                                                        .storeOp     = desc.storeop,
                                                        .clearValue  = desc.clearValue};
@@ -25,25 +25,23 @@ void RenderPassNode::DeclareRenderTarget(const RenderDesc& desc) {
     }
 
     if (desc.attchments.depth) {
-        auto texture = renderGraph.Get(desc.attchments.depth);
-        m_depthAttachmentInfo =
-            vk::RenderingAttachmentInfo{.imageView   = texture->GetImageView(),
-                                        .imageLayout = texture->GetCurrentLayout(),
-                                        .loadOp      = desc.loadop,
-                                        .storeOp     = desc.storeop,
-                                        .clearValue  = desc.clearValue};
-        writeDepth = true;
+        auto texture          = renderGraph.Get(desc.attchments.depth);
+        m_depthAttachmentInfo = vk::RenderingAttachmentInfo{.imageView   = texture->GetImageView(),
+                                                            .imageLayout = texture->GetLayout(),
+                                                            .loadOp      = desc.loadop,
+                                                            .storeOp     = desc.storeop,
+                                                            .clearValue  = desc.clearValue};
+        writeDepth            = true;
     }
 
     if (desc.attchments.stencil) {
-        auto texture = renderGraph.Get(desc.attchments.depth);
-        m_stencilAttachmentInfo =
-            vk::RenderingAttachmentInfo{.imageView   = texture->GetImageView(),
-                                        .imageLayout = texture->GetCurrentLayout(),
-                                        .loadOp      = desc.loadop,
-                                        .storeOp     = desc.storeop,
-                                        .clearValue  = desc.clearValue};
-        writeStencil = true;
+        auto texture            = renderGraph.Get(desc.attchments.depth);
+        m_stencilAttachmentInfo = vk::RenderingAttachmentInfo{.imageView = texture->GetImageView(),
+                                                              .imageLayout = texture->GetLayout(),
+                                                              .loadOp      = desc.loadop,
+                                                              .storeOp     = desc.storeop,
+                                                              .clearValue  = desc.clearValue};
+        writeStencil            = true;
     }
 
     m_renderingInfo =

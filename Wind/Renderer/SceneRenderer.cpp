@@ -64,10 +64,7 @@ void SceneRenderer::Render(View& view, RenderGraph& rg) {
         "LightingPass",
         [&](RenderGraph::Builder& builder, ColorPassData& data) {
             data.sceneColor = builder.CreateTexture(
-                "SceneColor", {.width  = m_viewPortWidth,
-                               .height = m_viewPortHeight,
-                               .depth  = 1,
-                               .usage  = vk::ImageUsageFlagBits::eColorAttachment});
+                "SceneColor", utils::GetRenderTargetDesc(m_viewPortWidth, m_viewPortHeight, vk::Format::eR16G16B16A16Sfloat));
 
             RenderPassNode::RenderDesc renderDesc {
                 .attchments = {.color = {data.sceneColor}, .depth = {}, .stencil = {}},

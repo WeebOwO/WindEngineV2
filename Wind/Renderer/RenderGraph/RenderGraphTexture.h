@@ -2,8 +2,8 @@
 
 #include "std.h"
 
-#include "RenderBackend/Texture.h"
 #include "RenderGraphResource.h"
+#include "RenderBackend/Texture.h"
 
 namespace wind {
 class RenderGraphTexture : public RenderGraphResource {
@@ -11,9 +11,10 @@ public:
     struct Desc {
         u32                 width;
         u32                 height;
-        u32                 depth;
+        u32                 depth;   
         vk::Format          format;
         vk::ImageUsageFlags usage = vk::ImageUsageFlagBits::eColorAttachment;
+        bool                useMipmap = false;
     };
 
     struct SubResourceDesc {
@@ -21,22 +22,32 @@ public:
         u8 layer = 0;
     };
 
-    void Create();
-    void Destory();
+    auto GetDesc() { return m_desc; }
 
-    auto GetDesc() { return m_descriptor; }
-    auto GetNativeHandle() {}
     RenderGraphTexture() = default;
-    RenderGraphTexture(const Desc& desc) : m_descriptor(desc) {}
+    RenderGraphTexture(const Desc& desc);
 
-    auto GetCurrentLayout() const { return m_currentLayout; }
-    auto GetImageView() const { return m_texture->GetView(); }
+    vk::Image     GetImage() const;
+    vk::ImageView GetImageView() const;
+
+    auto GetUsage() const { return m_usage; }
+    auto GetLayout() const { return m_layout; }
+
+    void InitRHI() override;
+    void ReleaseRHI() override;
+
+    void SetTexture(Ref<GPUTexture> texture);
 
 private:
     friend class RenderPassNode;
 
-    vk::ImageLayout m_currentLayout;
-    Desc            m_descriptor;
-    Ref<GPUTexture> m_texture;
+    Desc                m_desc;
+    vk::ImageUsageFlags m_usage;
+    vk::ImageLayout     m_layout;
+    Ref<GPUTexture>     m_texture;
 };
 } // namespace wind
+
+namespace wind::utils {
+    RenderGraphTexture::Desc GetRenderTargetDesc(u32 width, u32 height, vk::Format format, bool useMipmap = false);
+}

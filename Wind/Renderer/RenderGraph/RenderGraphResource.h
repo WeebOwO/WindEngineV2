@@ -4,13 +4,14 @@
 
 #include "RenderGraphID.h"
 
+#include "Resource/RenderResource.h"
 #include "RenderBackend/VulkanHeader.h"
 
 namespace wind {
 class PassNode;
 class RenderGraph;
 
-struct RenderGraphResource {
+struct RenderGraphResource : public RenderResource {
     
 };
 } // namespace wind

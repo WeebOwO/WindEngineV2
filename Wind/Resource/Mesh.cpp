@@ -37,7 +37,7 @@ void StaticMesh::InitRHI() {
     copyEncoder.Submit();
 }
 
-void StaticMesh::RelaseRHI() {
+void StaticMesh::ReleaseRHI() {
     meshSource.vertexBuffer.reset();
     meshSource.indexBuffer.reset();
 }

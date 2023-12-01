@@ -8,7 +8,6 @@
 #include "RenderGraphTexture.h"
 #include "ResourceNode.h"
 
-
 namespace wind {
 class RenderGraphPassBase;
 class Swapchain;
@@ -89,6 +88,7 @@ RenderGraphPass<Data>& RenderGraph::AddPass(const std::string& name, Setup setup
         std::forward<Execute>(execute), passType);
     Builder builder = AddPassInternal(name, std::move(pass));
     setup(builder, const_cast<Data&>(pass->GetData()));
+    m_dirty = true;
     return *pass;
 }
 

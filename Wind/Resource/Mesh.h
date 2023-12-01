@@ -23,7 +23,7 @@ struct MeshSource {
 class StaticMesh : public RenderResource {
 public:
     void InitRHI() override;
-    void RelaseRHI() override;
+    void ReleaseRHI() override;
 
     MeshSource meshSource;
     Material*  material;

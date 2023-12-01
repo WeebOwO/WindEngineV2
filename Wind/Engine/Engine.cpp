@@ -136,7 +136,7 @@ void Engine::RenderTick(float delta) {
         ImGui::RenderPlatformWindowsDefault();
     }
 
-    m_renderThread.NextFrame();
+    m_renderThread.NextFrame(); // will do all the render job and increase frame counter
 }
 
 void Engine::LogicTick(float delta) {

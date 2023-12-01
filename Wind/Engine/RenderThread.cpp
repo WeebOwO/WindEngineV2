@@ -70,6 +70,6 @@ RenderGraph& RenderThread::BeginFrame(const Swapchain& swapchain) {
 
 void RenderThread::NextFrame() {
     m_renderGraph->Exec();
-    m_frameNumber = (m_frameNumber + 1) % MAX_FRAME_IN_FLIGHT;
+    m_frameNumber = (m_frameNumber + 1) % RenderConfig::MAX_FRAME_IN_FLIGHT;
 }
 } // namespace wind

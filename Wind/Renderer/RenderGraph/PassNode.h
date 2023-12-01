@@ -6,6 +6,8 @@
 #include "RenderGraphPass.h"
 #include "RenderGraphTexture.h"
 
+#include "Engine/RenderConfig.h"
+
 namespace wind {
 class RenderGraph;
 class ResourceRegistry;
@@ -23,7 +25,7 @@ protected:
 class RenderPassNode : public PassNode {
 public:
     struct Attachments {
-        static constexpr size_t MAX_ATTACHMENT_COUNT = 10;
+        static constexpr size_t MAX_ATTACHMENT_COUNT = RenderConfig::MRT_MAX_COUNT;
         union {
             RenderGraphID<RenderGraphTexture> array[MAX_ATTACHMENT_COUNT];
             struct {

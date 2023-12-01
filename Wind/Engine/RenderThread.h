@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Engine/RenderConfig.h"
 #include "RenderBackend/Command.h"
 #include "RenderBackend/Descriptor.h"
 
@@ -45,9 +46,7 @@ public:
     auto& GetCurrentFrameData() { return m_frameParams[m_frameNumber]; }
 
 private:
-    static constexpr u32 MAX_FRAME_IN_FLIGHT = 2;
-
-    FrameParms           m_frameParams[MAX_FRAME_IN_FLIGHT];
+    FrameParms           m_frameParams[RenderConfig::MAX_FRAME_IN_FLIGHT];
     u32                  m_frameNumber = 0;
     Scope<RenderGraph>   m_renderGraph;
 };
