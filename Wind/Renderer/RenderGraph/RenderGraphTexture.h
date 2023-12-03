@@ -2,8 +2,8 @@
 
 #include "std.h"
 
-#include "RenderGraphResource.h"
 #include "RenderBackend/Texture.h"
+#include "RenderGraphResource.h"
 
 namespace wind {
 class RenderGraphTexture : public RenderGraphResource {
@@ -11,9 +11,10 @@ public:
     struct Desc {
         u32                 width;
         u32                 height;
-        u32                 depth;   
+        u32                 depth;
         vk::Format          format;
-        vk::ImageUsageFlags usage = vk::ImageUsageFlagBits::eColorAttachment;
+        vk::ImageLayout     layout    = vk::ImageLayout::eUndefined;
+        vk::ImageUsageFlags usage     = vk::ImageUsageFlagBits::eColorAttachment;
         bool                useMipmap = false;
     };
 
@@ -30,8 +31,8 @@ public:
     vk::Image     GetImage() const;
     vk::ImageView GetImageView() const;
 
-    auto GetUsage() const { return m_usage; }
-    auto GetLayout() const { return m_layout; }
+    auto GetUsage() const { return m_desc.usage; }
+    auto GetLayout() const { return m_desc.layout; }
 
     void InitRHI() override;
     void ReleaseRHI() override;
@@ -40,14 +41,12 @@ public:
 
 private:
     friend class RenderPassNode;
-
-    Desc                m_desc;
-    vk::ImageUsageFlags m_usage;
-    vk::ImageLayout     m_layout;
-    Ref<GPUTexture>     m_texture;
+    Desc            m_desc;
+    Ref<GPUTexture> m_texture;
 };
 } // namespace wind
 
 namespace wind::utils {
-    RenderGraphTexture::Desc GetRenderTargetDesc(u32 width, u32 height, vk::Format format, bool useMipmap = false);
+RenderGraphTexture::Desc GetRenderTargetDesc(u32 width, u32 height, vk::Format format,
+                                             bool useMipmap = false);
 }

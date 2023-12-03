@@ -15,24 +15,20 @@ PipelineBuilder& PipelineBuilder::SetInputAssemblyState(vk::PrimitiveTopology to
 }
 
 PipelineBuilder& PipelineBuilder::SetVertexType(EVertexType vertexType) {
-    std::vector<vk::VertexInputBindingDescription>   inputBindingDescriptions;
-    std::vector<vk::VertexInputAttributeDescription> inputAttributeDescriptions;
 
     switch (vertexType) {
     case EVertexType::NoVertex: {
-        inputBindingDescriptions   = NoVertexFactory::GetInputBindingDescription();
-        inputAttributeDescriptions = NoVertexFactory::GetVertexInputAttributeDescriptions();
         break;
     };
     case EVertexType::StaticMesh: {
-        inputBindingDescriptions   = StaticMeshVertexFactory::GetInputBindingDescription();
-        inputAttributeDescriptions = StaticMeshVertexFactory::GetVertexInputAttributeDescriptions();
+        m_inputBindingDescriptions = StaticMeshVertexFactory::GetInputBindingDescription();
+        m_inputAttributeDescriptions =
+            StaticMeshVertexFactory::GetVertexInputAttributeDescriptions();
+        m_inputStateCreateInfo.setVertexBindingDescriptions(m_inputBindingDescriptions)
+            .setVertexAttributeDescriptions(m_inputAttributeDescriptions);
         break;
     };
     }
-
-    m_inputStateCreateInfo.setVertexBindingDescriptions(inputBindingDescriptions)
-        .setVertexAttributeDescriptions(inputAttributeDescriptions);
     return *this;
 }
 
@@ -100,8 +96,7 @@ vk::Pipeline PipelineBuilder::Build() {
 
     // viewportinfo
     vk::PipelineViewportStateCreateInfo viewPortStateCreateInfo;
-    viewPortStateCreateInfo.setViewportCount(1)
-                           .setScissorCount(1);
+    viewPortStateCreateInfo.setViewportCount(1).setScissorCount(1);
 
     // using dynamic rendering to get shit renderpass
     vk::GraphicsPipelineCreateInfo pipelineCreateInfo{

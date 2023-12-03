@@ -22,13 +22,14 @@ public:
     PipelineBuilder& SetVertexType(EVertexType vertexType); // will change this in future
     PipelineBuilder& SetRasterizationState(vk::PolygonMode polygonMode, vk::CullModeFlags cullMode,
                                            vk::FrontFace frontFace);
-    PipelineBuilder& SetRenderState(const Material::Desc& blendMode, u32 mrtCount = 1); // this part care about blend and 
-  
+    PipelineBuilder& SetRenderState(const Material::Desc& blendMode,
+                                    u32 mrtCount = 1); // this part care about blend and
+
     vk::Pipeline Build();
 
 private:
     void SetShaderState(const RasterShader& shader);
-    
+
     vk::PipelineInputAssemblyStateCreateInfo m_inputAssemblyStateInfo{};
     vk::PipelineVertexInputStateCreateInfo   m_inputStateCreateInfo{};
     vk::PipelineRasterizationStateCreateInfo m_rasterizationStateInfo{};
@@ -38,5 +39,8 @@ private:
 
     std::vector<vk::PipelineColorBlendAttachmentState> m_attachmentState;
     std::array<vk::PipelineShaderStageCreateInfo, 2>   m_shaderStages;
+
+    std::vector<vk::VertexInputBindingDescription>   m_inputBindingDescriptions;
+    std::vector<vk::VertexInputAttributeDescription> m_inputAttributeDescriptions;
 };
 } // namespace wind

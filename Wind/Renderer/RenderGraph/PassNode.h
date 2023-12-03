@@ -38,7 +38,7 @@ public:
 
     struct RenderDesc {
         Attachments           attchments;
-        vk::Viewport          viewPort;
+        vk::Rect2D            renderArea;
         u8                    sample;
         vk::ClearValue        clearValue;
         vk::AttachmentLoadOp  loadop  = vk::AttachmentLoadOp::eLoad;
@@ -57,7 +57,7 @@ private:
     std::vector<vk::RenderingAttachmentInfo> m_colorAttachmentInfos;
     vk::RenderingAttachmentInfo              m_depthAttachmentInfo;
     vk::RenderingAttachmentInfo              m_stencilAttachmentInfo;
-    vk::RenderingInfo                        m_renderingInfo;
+    vk::RenderingInfo                        m_renderingInfo {};
     std::string                              m_debugName;
     Scope<RenderGraphPassBase>               m_passBase;
 };

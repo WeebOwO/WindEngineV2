@@ -12,6 +12,7 @@ RenderPassNode::RenderPassNode(RenderGraph& rg, const std::string& name,
 
 void RenderPassNode::DeclareRenderTarget(const RenderDesc& desc) {
     bool writeDepth = false, writeStencil = false;
+
     for (auto attachment : desc.attchments.color) {
         if (attachment) {
             auto                        texture = renderGraph.Get(attachment);
@@ -24,6 +25,11 @@ void RenderPassNode::DeclareRenderTarget(const RenderDesc& desc) {
         }
     }
 
+    if(!m_colorAttachmentInfos.empty()) {
+        m_renderingInfo.setColorAttachments(m_colorAttachmentInfos)
+                       .setColorAttachmentCount(m_colorAttachmentInfos.size());
+    }
+
     if (desc.attchments.depth) {
         auto texture          = renderGraph.Get(desc.attchments.depth);
         m_depthAttachmentInfo = vk::RenderingAttachmentInfo{.imageView   = texture->GetImageView(),
@@ -31,7 +37,7 @@ void RenderPassNode::DeclareRenderTarget(const RenderDesc& desc) {
                                                             .loadOp      = desc.loadop,
                                                             .storeOp     = desc.storeop,
                                                             .clearValue  = desc.clearValue};
-        writeDepth            = true;
+        m_renderingInfo.setPDepthAttachment(&m_depthAttachmentInfo);
     }
 
     if (desc.attchments.stencil) {
@@ -41,17 +47,10 @@ void RenderPassNode::DeclareRenderTarget(const RenderDesc& desc) {
                                                               .loadOp      = desc.loadop,
                                                               .storeOp     = desc.storeop,
                                                               .clearValue  = desc.clearValue};
-        writeStencil            = true;
+        m_renderingInfo.setPStencilAttachment(&m_stencilAttachmentInfo);
     }
 
-    m_renderingInfo =
-        vk::RenderingInfo{.renderArea           = {.offset = {0, 0},
-                                                   .extent = {.width  = (u32)desc.viewPort.width,
-                                                              .height = (u32)desc.viewPort.height}},
-                          .layerCount           = 1,
-                          .colorAttachmentCount = (u32)m_colorAttachmentInfos.size(),
-                          .pColorAttachments    = m_colorAttachmentInfos.data(),
-                          .pDepthAttachment     = &m_depthAttachmentInfo,
-                          .pStencilAttachment   = &m_stencilAttachmentInfo};
+    m_renderingInfo.setLayerCount(1)
+                   .setRenderArea(desc.renderArea);
 }
 } // namespace wind

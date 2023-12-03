@@ -59,6 +59,11 @@ void SceneRenderer::Render(View& view, RenderGraph& rg) {
         .color = vk::ClearColorValue{.float32 = std::array<float, 4>{1.0f, 1.0f, 1.0f, 1.0f}}
     };
 
+    vk::Rect2D renderArea = {
+        .offset = {.x = 0, .y = 0},
+        .extent = {.width = m_viewPortWidth, .height = m_viewPortHeight}
+    };
+
     if(!rg.ContainPass("LightingPass")) {
         auto& colorPass = rg.AddPass<ColorPassData>(
         "LightingPass",
@@ -68,7 +73,7 @@ void SceneRenderer::Render(View& view, RenderGraph& rg) {
 
             RenderPassNode::RenderDesc renderDesc {
                 .attchments = {.color = {data.sceneColor}, .depth = {}, .stencil = {}},
-                .viewPort = m_viewPort,
+                .renderArea = renderArea,
                 .sample = 1,
                 .clearValue = clearValue,
             };
@@ -93,6 +98,7 @@ void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass) {
                                             ? RenderGraphPassType::MeshPassMRT
                                             : RenderGraphPassType::MeshPass;
     m_cacheMeshDrawCommands[meshPass.type].clear();
+
     for (auto meshProxy : meshPass.staticMeshes) {
         MeshDrawCommand meshDrawCommand;
         meshDrawCommand.drawMesh.firstVertex = 0;
