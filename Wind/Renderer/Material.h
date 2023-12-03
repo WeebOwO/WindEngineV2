@@ -31,7 +31,10 @@ public:
     auto GetBlendMode() const { return m_blendMode; }
     auto GetShader() const { return m_rasterShader; }
 
+    auto GetMaterialDesc() const noexcept { return m_desc; }
+
 private:
+    Desc                           m_desc;
     std::string                    m_debugName;
     RasterShader*                  m_rasterShader;
     BlendMode                      m_blendMode;
@@ -49,4 +52,6 @@ private:
 };
 } // namespace wind
 
-namespace wind::utils {}
+namespace wind::utils {
+    
+}

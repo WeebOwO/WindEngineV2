@@ -18,6 +18,7 @@ public:
     virtual void BindCommandBuffer(const vk::CommandBuffer& cmdBuffer) const;
 
     auto GetShaderName() const { return m_debugName; }
+    auto GetPipelineLayout() const { return m_layout; }
 
 protected:
     auto SetShaderName(const std::string& name) { m_debugName = name; }

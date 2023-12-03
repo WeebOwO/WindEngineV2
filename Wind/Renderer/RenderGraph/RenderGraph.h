@@ -66,6 +66,8 @@ private:
     Builder AddPassInternal(const std::string& name, Scope<RenderGraphPassBase> pass);
     void    Compile();
 
+    vk::RenderingInfo GetPresentRenderingInfo() const noexcept;
+
     const Swapchain* m_swapchain;
 
     bool m_dirty = false;
@@ -83,11 +85,11 @@ private:
 template <typename Data, typename Setup, typename Execute>
 RenderGraphPass<Data>& RenderGraph::AddPass(const std::string& name, Setup setup, Execute&& execute,
                                             EPassType passType) {
-    if (m_passNodes.contains(name)) {}
     auto pass = scope::Create<RenderGraphPassConcrete<Data, Execute>>(
         std::forward<Execute>(execute), passType);
+    auto rawPtr = pass.get(); 
     Builder builder = AddPassInternal(name, std::move(pass));
-    setup(builder, const_cast<Data&>(pass->GetData()));
+    setup(builder, const_cast<Data&>(rawPtr->GetData()));
     m_dirty = true;
     return *pass;
 }

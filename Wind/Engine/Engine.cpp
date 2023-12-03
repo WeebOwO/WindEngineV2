@@ -2,23 +2,25 @@
 
 #include <tracy/Tracy.hpp>
 
+#include "Window.h"
+// other
 #include "Core/Log.h"
 #include "ECS/Component.h"
 #include "Ecs/Entity.h"
 #include "Engine/Engine.h"
 #include "Engine/RuntimeContext.h"
-// renderer part
-#include "Renderer/Material.h"
-#include "Renderer/SceneRenderer.h"
-#include "Renderer/View.h"
 #include "Resource/Mesh.h"
 #include "Scene/Scene.h"
-#include "Window.h"
+// renderer part
+#include "Renderer/View.h"
+#include "Renderer/Material.h"
+#include "Renderer/SceneRenderer.h"
+#include "Renderer/RenderGraph/RenderGraphPass.h"
+#include "Renderer/RenderGraph/ResourceRegistry.h"
 // imgui part
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_vulkan.h"
-#include "std.h"
 
 namespace wind {
 Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {
@@ -127,7 +129,7 @@ void Engine::RenderTick(float delta) {
                                  viewportSize.y);
 
     m_sceneRenderer->Render(view, renderGraph);
-
+    
     // imgui end part
     ImGuiIO& io = ImGui::GetIO();
     (void)io;
@@ -135,6 +137,23 @@ void Engine::RenderTick(float delta) {
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
     }
+
+    if(!renderGraph.ContainPass("PresentPass")) {
+        auto& blackBoard = renderGraph.GetBlackBoard();
+        struct PresentPassData {
+            RenderGraphID<RenderGraphTexture> sceneColor;
+        };
+
+        renderGraph.AddPass<PresentPassData>("PresentPass", [&](RenderGraph::Builder& builder, PresentPassData& data){
+            // present pass don't need to declare render pass
+            
+        }, [&](ResourceRegistry& resourceRegistry, PresentPassData& data, CommandEncoder& encoder) {
+            encoder.BeginRendering(resourceRegistry.GetPresentRenderingInfo());
+            
+            encoder.RenderUI(); // render ui in the final pass
+            encoder.EndRendering();
+        }, EPassType::Graphics);
+    };
 
     m_renderThread.NextFrame(); // will do all the render job and increase frame counter
 }

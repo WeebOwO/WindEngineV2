@@ -61,7 +61,7 @@ void ImGUIContext::Init(const GPUDevice& device, const Window& window) {
     initInfo.Allocator             = nullptr;
     initInfo.MSAASamples           = VK_SAMPLE_COUNT_1_BIT;
     initInfo.ColorAttachmentFormat = VkFormat(window.GetSwapChain()->GetFormat());
-    initInfo.CheckVkResultFn       = CheckVkResult;
+    initInfo.CheckVkResultFn       = utils::CheckVkResult;
     initInfo.UseDynamicRendering   = true;
 
     ImGui_ImplVulkan_Init(&initInfo, nullptr);

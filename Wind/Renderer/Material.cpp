@@ -8,6 +8,10 @@ Material::Material(const std::string& debugName, ShadingModel shadingModel, Blen
     : m_debugName(debugName), m_shadingModel(shadingModel), m_blendMode(blendMode),
       m_rasterShader(rasterShader) {
     // we must init shader map and then init all material
+    m_desc.rasterShader = rasterShader;
+    m_desc.debugName = debugName;
+    m_desc.ShadingModel = shadingModel;
+    m_desc.blendMode = blendMode;
 }
 
 Ref<Material> Material::Create(const Desc& desc) {

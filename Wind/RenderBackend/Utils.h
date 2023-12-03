@@ -3,7 +3,7 @@
 #include "Core/Log.h"
 #include "VulkanHeader.h"
 
-namespace wind {
+namespace wind::utils {
 inline void CheckVkResult(VkResult result) {
     if (result != VK_SUCCESS) {
         WIND_CORE_ERROR("VkResult is '{0}'");
@@ -13,4 +13,4 @@ inline void CheckVkResult(VkResult result) {
         }
     }
 }
-} // namespace wind
+} // namespace wind::utils

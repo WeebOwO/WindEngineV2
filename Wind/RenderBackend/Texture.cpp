@@ -31,6 +31,7 @@ static vk::ImageViewType GetImageViewType(TextureViewType viewtype) {
     case TextureViewType::CubeMapArray:
         return vk::ImageViewType::eCubeArray;
     }
+    return {};
 }
 
 static vk::ImageSubresourceRange GetDefaultImageSubresourceRange(const GPUTexture::Desc& desc) {
