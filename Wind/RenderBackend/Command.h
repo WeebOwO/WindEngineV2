@@ -7,7 +7,6 @@
 namespace wind {
 class ComputeShader;
 class RasterShader;
-class MeshDrawCommand;
 
 enum class RenderCommandQueueType : uint8_t { Copy = 0, Graphics, Compute, AsyncCompute, General };
 
@@ -34,8 +33,6 @@ public:
     void BindVertexBuffer(u32 firstBinding, u32 bindingCount, const vk::Buffer& buffer,
                           vk::DeviceSize offset);
     void BindIndexBuffer(const vk::Buffer& buffer, vk::DeviceSize offset, vk::IndexType indexType);
-
-    void DrawMesh(const MeshDrawCommand& meshDrawCommand) {}
 
     void SetViewport(const vk::Viewport& viewport);
     void SetScissor(i32 offsetx, i32 offsety, u32 width, u32 height);

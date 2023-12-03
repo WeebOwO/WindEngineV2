@@ -2,21 +2,20 @@
 
 #include <imgui.h>
 
-#include "View.h"
 #include "MeshPass.h"
+#include "View.h"
 
-#include "RenderGraph/ResourceRegistry.h"
+
+#include "RenderGraph/RenderGraphPass.h"
 #include "RenderGraph/RenderGraphResource.h"
 #include "RenderGraph/RenderGraphTexture.h"
 #include "RenderGraph/RenderPassEnum.h"
+#include "RenderGraph/ResourceRegistry.h"
+
 
 #include "Core/Log.h"
 
 #include "Engine/RuntimeContext.h"
-
-#include "RenderBackend/Command.h"
-#include "RenderBackend/ComputeShader.h"
-#include "RenderBackend/Descriptor.h"
 
 #include "Resource/Loader.h"
 #include "Resource/Mesh.h"
@@ -47,6 +46,25 @@ void SceneRenderer::SetViewPort(float offsetX, float offsetY, float width, float
         .setMaxDepth(1.0);
 }
 
+void SceneRenderer::DrawMesh(CommandEncoder& encoder) {
+    for (const auto& meshDrawCommand : m_cacheMeshDrawCommands[BasePass]) {
+        auto pso = g_runtimeContext.psoCache->GetPso(meshDrawCommand.pipelineID);
+
+        encoder.SetViewport(m_viewPort);
+        encoder.SetScissor(0, 0, m_viewPort.width, m_viewPort.height);
+
+        auto vertexBuffer = meshDrawCommand.drawMesh.meshSource->vertexBuffer;
+        auto indexBuffer  = meshDrawCommand.drawMesh.meshSource->indexBuffer;
+
+        encoder.BindPSO(pso);
+        encoder.BindVertexBuffer(0, 1, vertexBuffer->GetNativeHandle(), 0);
+        encoder.BindIndexBuffer(indexBuffer->GetNativeHandle(), 0, vk::IndexType::eUint32);
+
+        encoder.DrawIndexed(3 * meshDrawCommand.drawMesh.meshSource->indices.size(), 1, 0, 0,
+                            0);
+    }
+}
+
 void SceneRenderer::Render(View& view, RenderGraph& rg) {
     m_renderScene = RuntimeUtils::GetActiveScene();
     InitView(view);
@@ -55,40 +73,37 @@ void SceneRenderer::Render(View& view, RenderGraph& rg) {
         RenderGraphID<RenderGraphTexture> sceneColor;
     };
 
-    vk::ClearValue clearValue {
-        .color = vk::ClearColorValue{.float32 = std::array<float, 4>{1.0f, 1.0f, 1.0f, 1.0f}}
-    };
+    vk::ClearValue clearValue{
+        .color = vk::ClearColorValue{.float32 = std::array<float, 4>{1.0f, 1.0f, 1.0f, 1.0f}}};
 
-    vk::Rect2D renderArea = {
-        .offset = {.x = 0, .y = 0},
-        .extent = {.width = m_viewPortWidth, .height = m_viewPortHeight}
-    };
+    vk::Rect2D renderArea = {.offset = {.x = 0, .y = 0},
+                             .extent = {.width = m_viewPortWidth, .height = m_viewPortHeight}};
 
-    if(!rg.ContainPass("LightingPass")) {
+    if (!rg.ContainPass("LightingPass")) {
         auto& colorPass = rg.AddPass<ColorPassData>(
-        "LightingPass",
-        [&](RenderGraph::Builder& builder, ColorPassData& data) {
-            data.sceneColor = builder.CreateTexture(
-                "SceneColor", utils::GetRenderTargetDesc(m_viewPortWidth, m_viewPortHeight, vk::Format::eR16G16B16A16Sfloat));
+            "LightingPass",
+            [&](RenderGraph::Builder& builder, ColorPassData& data) {
+                data.sceneColor = builder.CreateTexture(
+                    "SceneColor", utils::GetRenderTargetDesc(m_viewPortWidth, m_viewPortHeight,
+                                                             vk::Format::eR16G16B16A16Sfloat));
 
-            RenderPassNode::RenderDesc renderDesc {
-                .attchments = {.color = {data.sceneColor}, .depth = {}, .stencil = {}},
-                .renderArea = renderArea,
-                .sample = 1,
-                .clearValue = clearValue,
-            };
+                RenderPassNode::RenderDesc renderDesc{
+                    .attchments = {.color = {data.sceneColor}, .depth = {}, .stencil = {}},
+                    .renderArea = renderArea,
+                    .sample     = 1,
+                    .clearValue = clearValue,
+                };
 
-            builder.DeclareRenderPass(renderDesc);
-        },
-        [&](ResourceRegistry& resourceRegistry, ColorPassData& data, CommandEncoder& encoder) {
-            encoder.BeginRendering(resourceRegistry.GetRenderingInfo());
-            for(const auto meshDrawCommand : m_cacheMeshDrawCommands[BasePass]) {
-                encoder.DrawMesh(meshDrawCommand);
-            }   
-            encoder.EndRendering();
-        }, EPassType::Graphics);
+                builder.DeclareRenderPass(renderDesc);
+            },
+            [&](ResourceRegistry& resourceRegistry, ColorPassData& data, CommandEncoder& encoder) {
+                encoder.BeginRendering(resourceRegistry.GetRenderingInfo());
+                DrawMesh(encoder);
+                encoder.EndRendering();
+            },
+            EPassType::Graphics);
     }
-    
+
     return;
 }
 
