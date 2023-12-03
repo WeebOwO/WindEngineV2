@@ -1,7 +1,6 @@
 #include "Texture.h"
 
 #include "Device.h"
-#include "Engine/RuntimeContext.h"
 
 namespace wind {
 static vk::ImageType GetImageType(TextureViewType viewType) {

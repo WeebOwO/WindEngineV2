@@ -3,7 +3,6 @@
 #include "std.h"
 
 #include "RenderBackend/Command.h"
-#include "RenderBackend/Texture.h"
 
 namespace wind {
 enum class EPassType { Graphics, Compute, AsyncCompute };

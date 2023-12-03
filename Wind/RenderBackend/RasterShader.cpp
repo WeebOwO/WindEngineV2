@@ -1,7 +1,7 @@
 #include "RasterShader.h"
 
-#include "Engine/RuntimeContext.h"
 #include "RenderBackend/Device.h"
+
 #include "Resource/Loader.h"
 
 namespace wind {

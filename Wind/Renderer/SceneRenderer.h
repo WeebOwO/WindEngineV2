@@ -9,10 +9,8 @@
 
 #include "Resource/Texture.h"
 
-#include "RenderBackend/Command.h"
 #include "RenderBackend/Fwd.h"
-#include "Renderbackend/SwapChain.h"
-
+#include "RenderBackend/Command.h"
 
 namespace wind {
 class Scene;

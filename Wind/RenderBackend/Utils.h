@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Core/Log.h"
 #include "VulkanHeader.h"
+
+#include "Core/Log.h"
 
 namespace wind::utils {
 inline void CheckVkResult(VkResult result) {

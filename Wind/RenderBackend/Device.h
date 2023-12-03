@@ -1,12 +1,9 @@
 #pragma once
 
-#include "RenderBackend/Texture.h"
 #include "std.h"
 
 #include "Allocator.h"
-#include "Core/UUID.h"
 #include "Descriptor.h"
-#include "Texture.h"
 #include "VulkanHeader.h"
 
 namespace wind {

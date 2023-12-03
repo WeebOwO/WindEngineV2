@@ -1,13 +1,12 @@
 #pragma once
 
-#include "ECS/Component.h"
-#include "entt/entt.hpp"
-
-#include "Scene/Scene.h"
 #include <type_traits>
+#include <entt/entt.hpp>
+
+#include "ECS/Component.h"
+#include "Scene/Scene.h"
 
 namespace wind {
-class Scene;
 
 class GameObject {
 public:

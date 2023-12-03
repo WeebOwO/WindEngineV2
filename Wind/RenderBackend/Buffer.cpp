@@ -1,7 +1,6 @@
 #include "Buffer.h"
 
 #include "Device.h"
-#include "Engine/RuntimeContext.h"
 
 namespace wind {
 GPUBuffer::GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,

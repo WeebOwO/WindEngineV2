@@ -15,7 +15,6 @@ PipelineBuilder& PipelineBuilder::SetInputAssemblyState(vk::PrimitiveTopology to
 }
 
 PipelineBuilder& PipelineBuilder::SetVertexType(EVertexType vertexType) {
-
     switch (vertexType) {
     case EVertexType::NoVertex: {
         break;

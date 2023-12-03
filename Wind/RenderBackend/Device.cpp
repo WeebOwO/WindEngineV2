@@ -2,8 +2,9 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Core/Log.h"
 #include "Shader.h"
+
+#include "Core/Log.h"
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
