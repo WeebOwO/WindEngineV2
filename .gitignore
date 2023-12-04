@@ -1,4 +1,5 @@
 .vscode/
+Shaders/CompiledShader
 .xmake/
 vsxmake2022/
 build/
