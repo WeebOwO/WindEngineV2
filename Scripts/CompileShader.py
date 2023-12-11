@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-def is_shader(x):
+def is_shader(x): 
     return x.endswith("vert") or x.endswith("frag") or x.endswith("comp")
 
 def compile():

@@ -153,12 +153,13 @@ void Engine::RenderTick(float delta) {
             [&](ResourceRegistry& resourceRegistry, PresentPassData& data,
                 CommandEncoder& encoder) {
                 encoder.BeginRendering(resourceRegistry.GetPresentRenderingInfo());
+
                 encoder.RenderUI(); // render ui in the final pass
                 encoder.EndRendering();
             },
             EPassType::Graphics);
     };
-
+    
     m_renderThread.NextFrame(); // will do all the render job and increase frame counter
 }
 

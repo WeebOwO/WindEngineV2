@@ -1,10 +1,13 @@
 #pragma once
 
+#include "std.h"
+
 #include "VulkanHeader.h"
 
 #include "Core/Log.h"
 
 namespace wind::utils {
+// inline just avoid compiler warning
 inline void CheckVkResult(VkResult result) {
     if (result != VK_SUCCESS) {
         WIND_CORE_ERROR("VkResult is '{0}'");
@@ -15,3 +18,8 @@ inline void CheckVkResult(VkResult result) {
     }
 }
 } // namespace wind::utils
+
+namespace wind::utils {
+    vk::Sampler CreateSampler(const vk::SamplerCreateInfo& createInfo);
+    vk::Sampler CreateDefaultSampler();
+}

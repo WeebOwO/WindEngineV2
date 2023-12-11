@@ -15,7 +15,7 @@ enum class TextureViewType {
     CubeMapArray
 };
 
-struct GPUTexture final : public RHIResource<RHIResourceType::Texture> {
+struct GPUTexture : public RHIResource<RHIResourceType::Texture> {
 public:
     struct Desc {
         u32                     width;
@@ -26,8 +26,8 @@ public:
         TextureViewType         viewType;
         vk::Format              format;
         vk::ImageUsageFlags     usage;
-        vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;
-        vk::ImageLayout         layout      = vk::ImageLayout::eUndefined;
+        vk::SampleCountFlagBits sampleCount   = vk::SampleCountFlagBits::e1;
+        vk::ImageLayout         layout        = vk::ImageLayout::eUndefined;
     };
 
     GPUTexture() = default;
@@ -49,7 +49,6 @@ private:
     vk::ImageView              m_defaultView;
     std::vector<vk::ImageView> m_cubeMapViews; // only useful when we create cubemap
 };
-
 } // namespace wind
 
 namespace wind::utils {

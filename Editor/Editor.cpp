@@ -22,8 +22,13 @@ public:
         wind::Engine engine(std::move(window));
 
         engine.SetImguiCallBack([](wind::Engine& engine) {
+            // show demo window
             ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
             ImGui::ShowDemoWindow();
+            // show some text
+            ImGui::Begin("Vulkan Text");
+            ImGui::Text("Hello world");
+            ImGui::End();
         });
 
         engine.Run();

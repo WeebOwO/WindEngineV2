@@ -41,6 +41,14 @@ static vk::ImageSubresourceRange GetDefaultImageSubresourceRange(const GPUTextur
                                      .layerCount     = desc.layerCount};
 }
 
+static bool IsIntegerBasedFormat(vk::Format format) {
+    switch(format) {
+        case vk::Format::eR8Uint:
+        case vk::Format::eR8G8B8A8Uint:
+    }
+    return false;
+};
+
 void GPUTexture::CreateImageView(const vk::ImageSubresourceRange& range) {
     vk::ImageViewCreateInfo viewCreateInfo{.image            = m_allocatedImage.image,
                                            .viewType         = GetImageViewType(m_desc.viewType),
