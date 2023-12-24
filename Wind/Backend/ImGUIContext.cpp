@@ -8,9 +8,9 @@
 
 #include "Engine/Window.h"
 
-#include "RenderBackend/Utils.h"
-#include "RenderBackend/Command.h"
-#include "RenderBackend/SwapChain.h"
+#include "Backend/Utils.h"
+#include "Backend/Command.h"
+#include "Backend/SwapChain.h"
 
 namespace wind {
 

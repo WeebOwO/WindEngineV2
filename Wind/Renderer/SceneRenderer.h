@@ -9,8 +9,8 @@
 
 #include "Resource/Texture.h"
 
-#include "RenderBackend/Fwd.h"
-#include "RenderBackend/Command.h"
+#include "Backend/Fwd.h"
+#include "Backend/Command.h"
 
 namespace wind {
 class Scene;

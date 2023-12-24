@@ -8,8 +8,8 @@
 #include "Engine/RenderThread.h"
 #include "Engine/RuntimeContext.h"
 
-#include "RenderBackend/Command.h"
-#include "RenderBackend/SwapChain.h"
+#include "Backend/Command.h"
+#include "Backend/SwapChain.h"
 
 namespace wind {
 

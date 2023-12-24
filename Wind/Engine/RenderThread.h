@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Engine/RenderConfig.h"
-#include "RenderBackend/Command.h"
-#include "RenderBackend/Descriptor.h"
+#include "Backend/Command.h"
+#include "Backend/Descriptor.h"
 
 namespace wind {
 class SceneRenderer;

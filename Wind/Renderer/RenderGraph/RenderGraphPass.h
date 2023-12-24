@@ -2,7 +2,7 @@
 
 #include "std.h"
 
-#include "RenderBackend/Command.h"
+#include "Backend/Command.h"
 
 namespace wind {
 enum class EPassType { Graphics, Compute, AsyncCompute };

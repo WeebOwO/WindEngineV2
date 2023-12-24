@@ -1,7 +1,7 @@
 #include "Mesh.h"
 
-#include "RenderBackend/Buffer.h"
-#include "RenderBackend/Command.h"
+#include "Backend/Buffer.h"
+#include "Backend/Command.h"
 
 namespace wind {
 void StaticMesh::InitRHI() {

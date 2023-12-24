@@ -42,10 +42,6 @@ static vk::ImageSubresourceRange GetDefaultImageSubresourceRange(const GPUTextur
 }
 
 static bool IsIntegerBasedFormat(vk::Format format) {
-    switch(format) {
-        case vk::Format::eR8Uint:
-        case vk::Format::eR8G8B8A8Uint:
-    }
     return false;
 };
 

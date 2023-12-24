@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Core.h"
-#include "RenderBackend/Texture.h"
+#include "Backend/Texture.h"
 
 namespace wind {
 struct Texture : public RenderResource {

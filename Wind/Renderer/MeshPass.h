@@ -4,7 +4,7 @@
 
 #include "Core/UUID.h"
 #include "Resource/VertexFactory.h"
-#include "RenderBackend/Buffer.h"
+#include "Backend/Buffer.h"
 
 namespace wind {
 class Material;
