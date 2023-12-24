@@ -26,8 +26,8 @@ public:
         TextureViewType         viewType;
         vk::Format              format;
         vk::ImageUsageFlags     usage;
-        vk::SampleCountFlagBits sampleCount   = vk::SampleCountFlagBits::e1;
-        vk::ImageLayout         layout        = vk::ImageLayout::eUndefined;
+        vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;
+        vk::ImageLayout         layout      = vk::ImageLayout::eUndefined;
     };
 
     GPUTexture() = default;
@@ -39,6 +39,8 @@ public:
     auto GetVkImage() const { return m_allocatedImage.image; }
     auto GetView() const { return m_defaultView; }
     auto GetDesc() const { return m_desc; }
+
+    operator vk::Image() { return m_allocatedImage.image; }
 
 private:
     void CreateImageView(const vk::ImageSubresourceRange& range);
@@ -52,6 +54,8 @@ private:
 } // namespace wind
 
 namespace wind::utils {
-vk::ImageAspectFlags FormatToImageAspect(vk::Format format);
+// human driver part, we deduce the result from image usage and format
+vk::ImageAspectFlags ImageFormatToImageAspect(vk::Format format);
+vk::ImageLayout      ImageUsageToImageLayout(vk::ImageUsageFlagBits usage);
 u32                  CalculateImageMipLevelCount(const GPUTexture::Desc& desc);
 } // namespace wind::utils

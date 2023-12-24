@@ -24,7 +24,8 @@ struct ResourceHandle {
     u32                              handle;
 };
 
-template <RHIResourceType ResourceType> struct RHIResource {
+template <RHIResourceType ResourceType> 
+struct RHIResource {
     RHIResource() : device(*g_runtimeContext.device) {}
 
     GPUDevice&                   device;

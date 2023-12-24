@@ -14,7 +14,7 @@ public:
 
     void Resize(u32 width, u32 height);
     u32  ImageCount() const { return m_swapchainImages.size(); }
-    auto GetFrameBuffer(u32 index) const { return m_framebuffers[index]; }
+   
     auto GetImageView(u32 index) const { return m_swapchainViews[index]; }
     auto GetImage(u32 index) const { return m_swapchainImages[index]; }
     auto GetFormat() const { return m_surfaceFormat.format; }
@@ -31,7 +31,6 @@ public:
         return static_cast<float>(m_windowExtent.width) / static_cast<float>(m_windowExtent.height);
     }
 
-    auto GetRenderPass() const { return m_renderPass; }
     void SetFrameNumber(u32 currentFrame) { m_frameNumber = currentFrame; }
     void SetClearColor(float r, float g, float b, float a);
 
@@ -57,10 +56,6 @@ private:
 
     vk::SwapchainKHR m_swapchain;
     vk::SurfaceKHR   m_surface;
-
-    vk::RenderPass m_renderPass;
-
-    std::vector<vk::Framebuffer> m_framebuffers;
 
     vk::Extent2D m_windowExtent;
 

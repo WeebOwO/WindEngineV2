@@ -34,16 +34,14 @@ static vk::ImageViewType GetImageViewType(TextureViewType viewtype) {
 }
 
 static vk::ImageSubresourceRange GetDefaultImageSubresourceRange(const GPUTexture::Desc& desc) {
-    return vk::ImageSubresourceRange{.aspectMask     = utils::FormatToImageAspect(desc.format),
+    return vk::ImageSubresourceRange{.aspectMask     = utils::ImageFormatToImageAspect(desc.format),
                                      .baseMipLevel   = 0,
                                      .levelCount     = desc.mipCount,
                                      .baseArrayLayer = 0,
                                      .layerCount     = desc.layerCount};
 }
 
-static bool IsIntegerBasedFormat(vk::Format format) {
-    return false;
-};
+static bool IsIntegerBasedFormat(vk::Format format) { return false; };
 
 void GPUTexture::CreateImageView(const vk::ImageSubresourceRange& range) {
     vk::ImageViewCreateInfo viewCreateInfo{.image            = m_allocatedImage.image,
@@ -88,7 +86,7 @@ u32 CalculateImageMipLevelCount(const GPUTexture::Desc& desc) {
     return (uint32_t)std::floor(std::log2(std::max(desc.width, desc.height))) + 1;
 }
 
-vk::ImageAspectFlags FormatToImageAspect(vk::Format format) {
+vk::ImageAspectFlags ImageFormatToImageAspect(vk::Format format) {
     switch (format) {
     case vk::Format::eD16Unorm:
         return vk::ImageAspectFlagBits::eDepth;
@@ -106,4 +104,26 @@ vk::ImageAspectFlags FormatToImageAspect(vk::Format format) {
         return vk::ImageAspectFlagBits::eColor;
     }
 }
+
+vk::ImageLayout ImageUsageToImageLayout(vk::ImageUsageFlagBits usage) {
+    using namespace vk;
+    
+    switch (usage) {
+        case ImageUsageFlagBits::eTransferSrc:
+            return ImageLayout::eTransferSrcOptimal;
+        case ImageUsageFlagBits::eTransferDst:
+            return ImageLayout::eTransferDstOptimal;
+        case ImageUsageFlagBits::eSampled:
+            return ImageLayout::eShaderReadOnlyOptimal;
+        case ImageUsageFlagBits::eColorAttachment:
+            return ImageLayout::eColorAttachmentOptimal;
+        case ImageUsageFlagBits::eDepthStencilAttachment:
+            return ImageLayout::eDepthStencilAttachmentOptimal;
+        case ImageUsageFlagBits::eStorage:
+            return ImageLayout::eGeneral;
+    }
+
+    return ImageLayout::eUndefined;
+}
+
 } // namespace wind::utils

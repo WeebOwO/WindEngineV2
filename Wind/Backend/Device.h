@@ -14,8 +14,12 @@ class CommandEncoder;
 struct QueueIndices {
     std::optional<uint32_t> graphicsQueueIndex;
     std::optional<uint32_t> computeQueueIndex;
+    std::optional<uint32_t> asyncComputeQueueIndex;
 
-    bool IsComplete() { return graphicsQueueIndex.has_value() && computeQueueIndex.has_value(); }
+    bool IsComplete() {
+        return graphicsQueueIndex.has_value() && computeQueueIndex.has_value() &&
+               asyncComputeQueueIndex.has_value();
+    }
 };
 
 class GPUDevice {
@@ -23,8 +27,11 @@ public:
     GPUDevice();
     ~GPUDevice();
 
+    operator vk::Device() { return *m_device; }
+
     vk::Queue GetGraphicsQueue() const noexcept { return m_graphicsQueue; }
     vk::Queue GetComputeQueue() const noexcept { return m_computeQueue; }
+    vk::Queue GetAsyncComputeQueue() const noexcept { return m_asyncComputeQueue; };
 
     auto GetQueueIndices() const noexcept { return m_queueIndices; }
 
@@ -47,7 +54,7 @@ public:
 
     vk::DescriptorSet AllocateDescriptor(const vk::DescriptorSetLayout&) const;
 
-    // block style submit 
+    // block style submit
     vk::CommandBuffer GetBackUpCommandBuffer();
     void              SubmitBackUpCommandBuffer(const vk::CommandBuffer& buffer);
 
@@ -63,8 +70,10 @@ private:
 
     u32          m_alignSize;
     QueueIndices m_queueIndices;
-    vk::Queue    m_graphicsQueue;
-    vk::Queue    m_computeQueue;
+
+    vk::Queue m_graphicsQueue;
+    vk::Queue m_computeQueue;
+    vk::Queue m_asyncComputeQueue;
 
     vk::UniqueInstance       m_vkInstance;
     vk::PhysicalDevice       m_physicalDevice;

@@ -73,11 +73,14 @@ void CommandEncoder::TransferImageLayout(const vk::Image& image, vk::AccessFlags
                                    &imageBarrier);
 }
 
+void CommandEncoder::TransferImageLayout(const vk::Image& image, vk::ImageLayout oldLayout, vk::ImageLayout newLayout) {
+    
+}
+
 void CommandEncoder::RenderUI() {
     ImGui::Render();
     ImDrawData* main_draw_data = ImGui::GetDrawData();
     ImGui_ImplVulkan_RenderDrawData(main_draw_data, m_nativeHandle);
 }
-
 
 } // namespace wind

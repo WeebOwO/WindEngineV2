@@ -119,7 +119,12 @@ void GPUDevice::QueryQueueFamilyIndices() {
         }
 
         if (queueFamily.queueCount > 0 && queueFamily.queueFlags & vk::QueueFlagBits::eCompute) {
-            m_queueIndices.computeQueueIndex = i;
+            if (m_queueIndices.graphicsQueueIndex.has_value() &&
+                i != m_queueIndices.graphicsQueueIndex) {
+                m_queueIndices.asyncComputeQueueIndex = i;
+            } else {
+                m_queueIndices.computeQueueIndex = i;
+            }
         }
 
         if (m_queueIndices.IsComplete()) break;
@@ -157,8 +162,9 @@ void GPUDevice::CreateDevice() {
     m_device = m_physicalDevice.createDeviceUnique(deviceCreateInfo);
     VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_device);
     // Get queue
-    m_graphicsQueue = m_device->getQueue(m_queueIndices.graphicsQueueIndex.value(), 0);
-    m_computeQueue  = m_device->getQueue(m_queueIndices.computeQueueIndex.value(), 0);
+    m_graphicsQueue     = m_device->getQueue(m_queueIndices.graphicsQueueIndex.value(), 0);
+    m_computeQueue      = m_device->getQueue(m_queueIndices.computeQueueIndex.value(), 0);
+    m_asyncComputeQueue = m_device->getQueue(m_queueIndices.asyncComputeQueueIndex.value(), 0);
 }
 
 void GPUDevice::InitAllocator() { m_allocator = scope::Create<VkAllocator>(*this); }

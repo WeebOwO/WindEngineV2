@@ -134,23 +134,6 @@ void Swapchain::CreateRenderPass() {
                                                   .dependencyCount = 1,
                                                   .pDependencies   = &denpendency};
 
-    m_renderPass = vkDevice.createRenderPass(renderPassCreateInfo);
-
-    // create framebuffer
-    m_framebuffers.resize(m_swapchainImages.size());
-
-    for (u32 i = 0; i < m_framebuffers.size(); ++i) {
-        std::vector<vk::ImageView> attachments = {m_swapchainViews[i]};
-        vk::FramebufferCreateInfo  frameBufferCreateInfo{.renderPass      = m_renderPass,
-                                                         .attachmentCount = (u32)attachments.size(),
-                                                         .pAttachments    = attachments.data(),
-                                                         .width           = m_windowExtent.width,
-                                                         .height          = m_windowExtent.height,
-                                                         .layers          = 1};
-
-        m_framebuffers[i] = vkDevice.createFramebuffer(frameBufferCreateInfo);
-    }
-
     m_renderingInfos.resize(m_swapchainViews.size());
     m_attachmentInfos.resize(m_swapchainViews.size());
     // create dynamic rendering part
@@ -225,12 +208,7 @@ void Swapchain::CleanUpSwapChain() {
     for (auto& view : m_swapchainViews) {
         vkdevice.destroyImageView(view);
     }
-
-    for (auto& framebuffer : m_framebuffers) {
-        vkdevice.destroyFramebuffer(framebuffer);
-    }
-
-    vkdevice.destroyRenderPass(m_renderPass);
+    
     vkdevice.destroySwapchainKHR(m_swapchain);
 }
 

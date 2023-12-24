@@ -42,8 +42,10 @@ public:
                              vk::AccessFlags dstMask, vk::ImageLayout oldlayout,
                              vk::ImageLayout newLayout, vk::PipelineStageFlags srcFlags,
                              vk::PipelineStageFlags           dstFlags,
-                             const vk::ImageSubresourceRange& subRange);
+                             const vk::ImageSubresourceRange& subRange); // this is verbose version
 
+    void TransferImageLayout(const vk::Image& image, vk::ImageLayout oldLayout, vk::ImageLayout newLayout); // deduce version
+ 
     // dynamic rendering
     void BeginRendering(const vk::RenderingInfo& renderingInfo);
     void EndRendering();
