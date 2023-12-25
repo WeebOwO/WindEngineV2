@@ -21,36 +21,15 @@ void RenderGraph::SetupFrameData(FrameParms& frameData) { m_currentFrameData = &
 void RenderGraph::Exec() {
     auto renderEncoder = m_currentFrameData->renderEncoder;
     renderEncoder->Begin();
-
-    renderEncoder->TransferImageLayout(
-        m_swapchain->GetImage(m_currentFrameData->swapchainImageIndex), vk::AccessFlagBits::eNone,
-        vk::AccessFlagBits::eColorAttachmentWrite, vk::ImageLayout::eUndefined,
-        vk::ImageLayout::eColorAttachmentOptimal, vk::PipelineStageFlagBits::eTopOfPipe,
-        vk::PipelineStageFlagBits::eColorAttachmentOutput,
-        vk::ImageSubresourceRange{.aspectMask     = vk::ImageAspectFlagBits::eColor,
-                                  .baseMipLevel   = 0,
-                                  .levelCount     = 1,
-                                  .baseArrayLayer = 0,
-                                  .layerCount     = 1});
+    SwapchainStartTrans();
 
     for (const auto& [name, node] : m_passNodes) {
         ResourceRegistry registry(*this, node.get());
         node->Execute(registry, *renderEncoder);
     }
-
+    
     if (m_swapchain) {
-        renderEncoder->TransferImageLayout(
-            m_swapchain->GetImage(m_currentFrameData->swapchainImageIndex),
-            vk::AccessFlagBits::eColorAttachmentWrite, vk::AccessFlagBits::eNone,
-            vk::ImageLayout::eColorAttachmentOptimal, vk::ImageLayout::ePresentSrcKHR,
-            vk::PipelineStageFlagBits::eColorAttachmentOutput,
-            vk::PipelineStageFlagBits::eBottomOfPipe,
-            vk::ImageSubresourceRange{.aspectMask     = vk::ImageAspectFlagBits::eColor,
-                                      .baseMipLevel   = 0,
-                                      .levelCount     = 1,
-                                      .baseArrayLayer = 0,
-                                      .layerCount     = 1});
-
+        SwapchainEndTrans();
         m_swapchain->SubmitCommandBuffer(renderEncoder->Finish(), m_currentFrameData->flightFence,
                                          m_currentFrameData->imageAvailableSemaphore,
                                          m_currentFrameData->renderFinishedSemaphore,
@@ -72,4 +51,31 @@ vk::RenderingInfo RenderGraph::GetPresentRenderingInfo() const noexcept {
     auto index = m_currentFrameData->swapchainImageIndex;
     return m_swapchain->GetRenderingInfo(index);
 }
+
+void RenderGraph::SwapchainStartTrans() {
+    m_currentFrameData->renderEncoder->TransferImageLayout(
+        m_swapchain->GetImage(m_currentFrameData->swapchainImageIndex), vk::AccessFlagBits::eNone,
+        vk::AccessFlagBits::eColorAttachmentWrite, vk::ImageLayout::eUndefined,
+        vk::ImageLayout::eColorAttachmentOptimal, vk::PipelineStageFlagBits::eTopOfPipe,
+        vk::PipelineStageFlagBits::eColorAttachmentOutput,
+        vk::ImageSubresourceRange{.aspectMask     = vk::ImageAspectFlagBits::eColor,
+                                  .baseMipLevel   = 0,
+                                  .levelCount     = 1,
+                                  .baseArrayLayer = 0,
+                                  .layerCount     = 1});
+}
+
+void RenderGraph::SwapchainEndTrans() {
+    m_currentFrameData->renderEncoder->TransferImageLayout(
+        m_swapchain->GetImage(m_currentFrameData->swapchainImageIndex),
+        vk::AccessFlagBits::eColorAttachmentWrite, vk::AccessFlagBits::eNone,
+        vk::ImageLayout::eColorAttachmentOptimal, vk::ImageLayout::ePresentSrcKHR,
+        vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eBottomOfPipe,
+        vk::ImageSubresourceRange{.aspectMask     = vk::ImageAspectFlagBits::eColor,
+                                  .baseMipLevel   = 0,
+                                  .levelCount     = 1,
+                                  .baseArrayLayer = 0,
+                                  .layerCount     = 1});
+}
+
 } // namespace wind

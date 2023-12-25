@@ -33,7 +33,7 @@ public:
     GPUTexture() = default;
     GPUTexture(const Desc& desc);
     ~GPUTexture();
-
+    
     static Ref<GPUTexture> Create(const Desc& desc);
 
     vk::Image     GetVkImage() const { return m_allocatedImage.image; }
@@ -58,9 +58,10 @@ private:
 
 namespace wind::utils {
 // human driver part, we deduce the result from image usage and format
-vk::ImageAspectFlags ImageFormatToImageAspect(vk::Format format);
-vk::ImageLayout      ImageUsageToImageLayout(vk::ImageUsageFlagBits usage);
-vk::AccessFlags      ImageUsageToAccessFlags(vk::ImageUsageFlagBits usage);
+vk::ImageAspectFlags   ImageFormatToImageAspect(vk::Format format);
+vk::ImageLayout        ImageUsageToImageLayout(vk::ImageUsageFlagBits usage);
+vk::AccessFlags        ImageUsageToAccessFlags(vk::ImageUsageFlagBits usage);
+vk::PipelineStageFlags ImageUsageToPipelineStage(vk::ImageUsageFlagBits usage);
 
 uint32_t CalculateImageMipLevelCount(const GPUTexture::Desc& desc);
 } // namespace wind::utils

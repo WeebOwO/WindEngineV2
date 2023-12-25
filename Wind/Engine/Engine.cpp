@@ -144,7 +144,7 @@ void Engine::RenderTick(float delta) {
         struct PresentPassData {
             RenderGraphID<RenderGraphTexture> sceneColor;
         };
-
+        
         renderGraph.AddPass<PresentPassData>(
             "PresentPass",
             [&](RenderGraph::Builder& builder, PresentPassData& data) {

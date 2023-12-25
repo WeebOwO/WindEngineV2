@@ -153,5 +153,4 @@ vk::AccessFlags ImageUsageToAccessFlags(vk::ImageUsageFlagBits usage) {
     }
     return {};
 }
-
 } // namespace wind::utils

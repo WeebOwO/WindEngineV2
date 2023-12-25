@@ -62,11 +62,15 @@ private:
         }
         return nullptr;
     }
-
+    
     Builder AddPassInternal(const std::string& name, Scope<RenderGraphPassBase> pass);
     void    Compile();
 
+    // present pass ralated
     vk::RenderingInfo GetPresentRenderingInfo() const noexcept;
+
+    void SwapchainStartTrans();
+    void SwapchainEndTrans();
 
     const Swapchain* m_swapchain;
 
@@ -78,7 +82,7 @@ private:
     std::unordered_map<std::string, Scope<ResourceNode>> m_resourceNodes;
 
     std::vector<RenderGraphTexture> m_textures;
-
+    
     FrameParms* m_currentFrameData{nullptr};
 };
 

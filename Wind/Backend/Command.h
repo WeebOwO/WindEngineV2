@@ -7,6 +7,7 @@
 namespace wind {
 class ComputeShader;
 class RasterShader;
+class GPUTexture;
 
 enum class RenderCommandQueueType : uint8_t { Copy = 0, Graphics, Compute, AsyncCompute, General };
 
@@ -26,9 +27,10 @@ public:
     void EndRenderPass();
     void BindPSO(const vk::Pipeline& pipeline);
     void BindVertexBuffer();
-    void Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
-    void DrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, uint32_t vertexOffset,
-                     uint32_t firstInstance);
+    void Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex,
+              uint32_t firstInstance);
+    void DrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex,
+                     uint32_t vertexOffset, uint32_t firstInstance);
 
     void BindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, const vk::Buffer& buffer,
                           vk::DeviceSize offset);
@@ -44,8 +46,6 @@ public:
                              vk::PipelineStageFlags           dstFlags,
                              const vk::ImageSubresourceRange& subRange); // this is verbose version
 
-    void TransferImageLayout(const vk::Image& image, vk::ImageLayout oldLayout, vk::ImageLayout newLayout); // deduce version
- 
     // dynamic rendering
     void BeginRendering(const vk::RenderingInfo& renderingInfo);
     void EndRendering();
@@ -53,7 +53,7 @@ public:
     // uipart
     void RenderUI();
 
-    // compute 
+    // compute
 protected:
     RenderCommandQueueType m_queueType;
 

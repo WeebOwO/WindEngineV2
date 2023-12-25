@@ -1,9 +1,11 @@
+#include "Backend/Texture.h"
 #include "Command.h"
 
-#include "Renderer/MeshPass.h"
 // imgui incldue part
 #include "imgui.h"
 #include "imgui_impl_vulkan.h"
+
+#include "Texture.h"
 
 namespace wind {
 void CommandEncoder::BeginRenderPass(const vk::RenderPassBeginInfo& renderPassBeginInfo) {
@@ -22,7 +24,8 @@ void CommandEncoder::BindPSO(const vk::Pipeline& pipeline) {
 
 void CommandEncoder::EndRendering() { m_nativeHandle.endRendering(); }
 
-void CommandEncoder::Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance) {
+void CommandEncoder::Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex,
+                          uint32_t firstInstance) {
     m_nativeHandle.draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
@@ -31,8 +34,8 @@ void CommandEncoder::DrawIndexed(uint32_t indexCount, uint32_t instanceCount, ui
     m_nativeHandle.drawIndexed(indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 }
 
-void CommandEncoder::BindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, const vk::Buffer& buffer,
-                                      vk::DeviceSize offset) {
+void CommandEncoder::BindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount,
+                                      const vk::Buffer& buffer, vk::DeviceSize offset) {
     m_nativeHandle.bindVertexBuffers(firstBinding, bindingCount, &buffer, &offset);
 }
 
@@ -71,10 +74,6 @@ void CommandEncoder::TransferImageLayout(const vk::Image& image, vk::AccessFlags
 
     m_nativeHandle.pipelineBarrier(srcFlags, dstFlags, {}, 0, nullptr, 0, nullptr, 1,
                                    &imageBarrier);
-}
-
-void CommandEncoder::TransferImageLayout(const vk::Image& image, vk::ImageLayout oldLayout, vk::ImageLayout newLayout) {
-    
 }
 
 void CommandEncoder::RenderUI() {
