@@ -9,7 +9,7 @@
 namespace wind {
 class GPUBuffer : public RHIResource<RHIResourceType::Buffer> {
 public:
-    GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,
+    GPUBuffer(uint32_t byteSize, vk::BufferUsageFlags usageFlags,
               const VmaAllocationCreateInfo& AllocationCreateInfo) noexcept;
     ~GPUBuffer();
 
@@ -24,17 +24,17 @@ protected:
     auto GetAllocatedBuffer() { return m_buffer; }
 
 private:
-    u32             m_byteSize;
+    uint32_t             m_byteSize;
     AllocatedBuffer m_buffer;
 };
 
 class UploadBuffer : public GPUBuffer {
 public:
-    UploadBuffer(u32                  byteSize,
+    UploadBuffer(uint32_t                  byteSize,
                  vk::BufferUsageFlags usageFlags = vk::BufferUsageFlagBits::eTransferSrc);
     ~UploadBuffer();
 
-    void  WriteData(void* data, u32 size, u32 offset = 0);
+    void  WriteData(void* data, uint32_t size, uint32_t offset = 0);
     void* MapMemory();
 
 private:
@@ -44,12 +44,12 @@ private:
 
 class DeviceBuffer : public GPUBuffer {
 public:
-    DeviceBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags);
+    DeviceBuffer(uint32_t byteSize, vk::BufferUsageFlags usageFlags);
 };
 
 class ReadBackBuffer : public GPUBuffer {
 public:
-    ReadBackBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags);
+    ReadBackBuffer(uint32_t byteSize, vk::BufferUsageFlags usageFlags);
     ~ReadBackBuffer();
 
     void* MapMemory();
@@ -62,21 +62,21 @@ private:
 
 class PushBuffer : public GPUBuffer {
 public:
-    PushBuffer(u32 buffersize, vk::BufferUsageFlags usage, VmaMemoryUsage vmaMemoryUsage);
+    PushBuffer(uint32_t buffersize, vk::BufferUsageFlags usage, VmaMemoryUsage vmaMemoryUsage);
 
-    template <typename T> u32 Push(T& data);
+    template <typename T> uint32_t Push(T& data);
 
-    u32  Push(void* data, u32 size);
+    uint32_t  Push(void* data, uint32_t size);
     void Reset();
 
 private:
-    u32 m_align;
-    u32 m_currentOffset;
+    uint32_t m_align;
+    uint32_t m_currentOffset;
 
-    u8* m_mapMemory{nullptr};
+    uint8_t* m_mapMemory{nullptr};
 };
 } // namespace wind
 
 namespace wind::utils {
-u32 PadUniformBufferSize(u32 originSize);
+uint32_t PadUniformBufferSize(uint32_t originSize);
 }

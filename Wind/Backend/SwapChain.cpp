@@ -43,7 +43,7 @@ Swapchain::~Swapchain() {
     vkInstance.destroySurfaceKHR(m_surface);
 }
 
-void Swapchain::CreateSwapChainInteral(u32 width, u32 height) {
+void Swapchain::CreateSwapChainInteral(uint32_t width, uint32_t height) {
     auto physicalDevice = m_device.GetVkPhysicalDevice();
     auto vkDevice       = m_device.GetVkDeviceHandle();
 
@@ -77,7 +77,7 @@ void Swapchain::CreateSwapChainInteral(u32 width, u32 height) {
     WIND_CORE_INFO("SwapChain image count is {}", m_swapchainImages.size());
     m_swapchainViews.resize(m_swapchainImages.size());
 
-    for (u32 i = 0; i < m_swapchainImages.size(); ++i) {
+    for (uint32_t i = 0; i < m_swapchainImages.size(); ++i) {
         vk::ImageSubresourceRange range{.aspectMask     = vk::ImageAspectFlagBits::eColor,
                                         .baseMipLevel   = 0,
                                         .levelCount     = 1,
@@ -137,7 +137,7 @@ void Swapchain::CreateRenderPass() {
     m_renderingInfos.resize(m_swapchainViews.size());
     m_attachmentInfos.resize(m_swapchainViews.size());
     // create dynamic rendering part
-    for (u32 i = 0; i < m_swapchainViews.size(); ++i) {
+    for (uint32_t i = 0; i < m_swapchainViews.size(); ++i) {
         // setup clear color
         m_attachmentInfos[i] = vk::RenderingAttachmentInfo{
             .sType       = vk::StructureType::eRenderingAttachmentInfo,
@@ -159,7 +159,7 @@ void Swapchain::CreateRenderPass() {
     }
 }
 
-std::optional<u32> Swapchain::AcquireNextImage(const vk::Fence&     waitFence,
+std::optional<uint32_t> Swapchain::AcquireNextImage(const vk::Fence&     waitFence,
                                                const vk::Semaphore& imageAvailableSemaphore) const {
     auto vkDevice = m_device.GetVkDeviceHandle();
     auto _        = vkDevice.waitForFences(waitFence, true, std::numeric_limits<uint64_t>::max());
@@ -179,7 +179,7 @@ void Swapchain::SubmitCommandBuffer(const vk::CommandBuffer& cmdBuffer,
                                     const vk::Fence&         signalFence,
                                     const vk::Semaphore&     imageAvailableSemaphore,
                                     const vk::Semaphore&     imageFinishSemaphre,
-                                    u32                      imageIndex) const {
+                                    uint32_t                      imageIndex) const {
     std::vector<vk::PipelineStageFlags> waitStage{
         vk::PipelineStageFlagBits::eColorAttachmentOutput};
 

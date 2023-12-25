@@ -10,8 +10,8 @@ class RasterShader;
 
 class Material {
 public:
-    enum class ShadingModel : u8 { UnLit = 0, Lit };
-    enum class BlendMode : u8 { Opaque, Tanslucency, Additive };
+    enum class ShadingModel : uint8_t { UnLit = 0, Lit };
+    enum class BlendMode : uint8_t { Opaque, Tanslucency, Additive };
 
     Material(const std::string& debugName, ShadingModel shadingModel, BlendMode blendMode,
              RasterShader* rasterShader);

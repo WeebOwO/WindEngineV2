@@ -3,7 +3,7 @@
 #include "Device.h"
 
 namespace wind {
-GPUBuffer::GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,
+GPUBuffer::GPUBuffer(uint32_t byteSize, vk::BufferUsageFlags usageFlags,
                      const VmaAllocationCreateInfo& AllocationCreateInfo) noexcept
     : m_byteSize(byteSize) {
 
@@ -14,7 +14,7 @@ GPUBuffer::GPUBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags,
 
 GPUBuffer::~GPUBuffer() { device.DestroyBuffer(m_buffer); }
 
-UploadBuffer::UploadBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags)
+UploadBuffer::UploadBuffer(uint32_t byteSize, vk::BufferUsageFlags usageFlags)
     : GPUBuffer(byteSize, usageFlags,
                 VmaAllocationCreateInfo{
                     .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT |
@@ -44,17 +44,17 @@ void UploadBuffer::UnmapMemory() {
     vmaUnmapMemory(nativeHandle, GetAllocatedBuffer().allocation);
 }
 
-void UploadBuffer::WriteData(void* data, u32 size, u32 offset) {
+void UploadBuffer::WriteData(void* data, uint32_t size, uint32_t offset) {
     assert(size + offset <= GetByteSize());
     if (m_mapMemory == nullptr) MapMemory();
 
-    u8* memory = (u8*)m_mapMemory;
+    uint8_t* memory = (uint8_t*)m_mapMemory;
     memory += offset;
 
     memcpy(memory, data, size);
 }
 
-DeviceBuffer::DeviceBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags)
+DeviceBuffer::DeviceBuffer(uint32_t byteSize, vk::BufferUsageFlags usageFlags)
     : GPUBuffer(byteSize, usageFlags,
                 VmaAllocationCreateInfo{
                     .flags    = VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT,
@@ -62,7 +62,7 @@ DeviceBuffer::DeviceBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags)
                     .priority = 1.0f,
                 }) {}
 
-ReadBackBuffer::ReadBackBuffer(u32 byteSize, vk::BufferUsageFlags usageFlags)
+ReadBackBuffer::ReadBackBuffer(uint32_t byteSize, vk::BufferUsageFlags usageFlags)
     : GPUBuffer(byteSize, usageFlags,
                 VmaAllocationCreateInfo{
                     .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT |
@@ -91,17 +91,17 @@ ReadBackBuffer::~ReadBackBuffer() {
     if (m_mapMemory != nullptr) { UnmapMemory(); }
 }
 
-PushBuffer::PushBuffer(u32 buffersize, vk::BufferUsageFlags usage, VmaMemoryUsage vmaMemoryUsage)
+PushBuffer::PushBuffer(uint32_t buffersize, vk::BufferUsageFlags usage, VmaMemoryUsage vmaMemoryUsage)
     : GPUBuffer(buffersize, usage, VmaAllocationCreateInfo{.usage = vmaMemoryUsage}) {}
 
 void PushBuffer::Reset() { m_currentOffset = 0; }
 } // namespace wind
 
 namespace wind::utils {
-u32 PadUniformBufferSize(u32 originSize) {
+uint32_t PadUniformBufferSize(uint32_t originSize) {
     auto limits          = g_runtimeContext.device->GetLimits();
-    u32  minUboAlignment = limits.minUniformBufferOffsetAlignment;
-    u32  alignedSize     = originSize;
+    uint32_t  minUboAlignment = limits.minUniformBufferOffsetAlignment;
+    uint32_t  alignedSize     = originSize;
     if (minUboAlignment > 0) {
         alignedSize = (alignedSize + minUboAlignment - 1) & ~(minUboAlignment - 1);
     }

@@ -22,20 +22,20 @@ public:
 
 protected:
     auto SetShaderName(const std::string& name) { m_debugName = name; }
-    void CollectMetaData(const std::vector<u32>& spirvCode, vk::ShaderStageFlags flag);
+    void CollectMetaData(const std::vector<uint32_t>& spirvCode, vk::ShaderStageFlags flag);
     void GeneratePipelineLayout();
 
     struct ShaderBinding {
-        u32                  set;
-        u32                  binding;
-        u32                  count;
+        uint32_t                  set;
+        uint32_t                  binding;
+        uint32_t                  count;
         vk::DescriptorType   descriptorType;
         vk::ShaderStageFlags shaderStageFlag;
     };
 
     struct PushConstantBinding {
-        u32                  size;
-        u32                  offset;
+        uint32_t                  size;
+        uint32_t                  offset;
         vk::ShaderStageFlags shadeshaderStageFlag;
     };
 

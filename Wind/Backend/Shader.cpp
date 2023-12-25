@@ -7,7 +7,7 @@
 #include "Core/Log.h"
 
 namespace wind {
-void Shader::CollectMetaData(const std::vector<u32>& spirvCode, vk::ShaderStageFlags flag) {
+void Shader::CollectMetaData(const std::vector<uint32_t>& spirvCode, vk::ShaderStageFlags flag) {
     spirv_cross::CompilerGLSL    compiler(spirvCode);
     spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 
@@ -65,12 +65,12 @@ void Shader::GeneratePipelineLayout() {
     std::vector<vk::DescriptorSetLayoutCreateInfo> descriptorSetLayoutCreateInfos;
     std::vector<vk::DescriptorSetLayoutBinding>    layoutBindings;
 
-    std::map<u32, std::vector<vk::DescriptorSetLayoutBinding>> m_setGroups;
+    std::map<uint32_t, std::vector<vk::DescriptorSetLayoutBinding>> m_setGroups;
 
     for (const auto& [resourceName, metaData] : m_bindings) {
         vk::DescriptorSetLayoutBinding binding;
         vk::ShaderStageFlags           stageFlags = metaData.shaderStageFlag;
-        u32                            set        = metaData.set;
+        uint32_t                            set        = metaData.set;
 
         binding.setBinding(metaData.binding)
             .setDescriptorCount(metaData.count)
@@ -98,9 +98,9 @@ void Shader::GeneratePipelineLayout() {
     }
 
     vk::PipelineLayoutCreateInfo layoutCreateInfo{
-        .setLayoutCount         = (u32)m_descriptorSetLayouts.size(),
+        .setLayoutCount         = (uint32_t)m_descriptorSetLayouts.size(),
         .pSetLayouts            = m_descriptorSetLayouts.data(),
-        .pushConstantRangeCount = (u32)m_pushRanges.size(),
+        .pushConstantRangeCount = (uint32_t)m_pushRanges.size(),
         .pPushConstantRanges    = m_pushRanges.data()};
 
     m_layout = vkDevice.createPipelineLayout(layoutCreateInfo);

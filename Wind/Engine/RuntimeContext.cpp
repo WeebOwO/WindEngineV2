@@ -29,18 +29,18 @@ void ShaderMap::CacheComputeShader(Ref<ComputeShader> shader) {
     m_computeShaderCache[shader->GetShaderName()] = shader;
 }
 
-u64 PsoCache::CachePso(const Material& material, VertexFactoryType vertextype,
+uint64_t PsoCache::CachePso(const Material& material, VertexFactoryType vertextype,
                        RenderGraphPassType graphPassType) {
 
     auto shadingModel = material.GetShadingModel();
     auto blendMode    = material.GetBlendMode();
 
-    u64 shadingModelID = (u64)shadingModel;
-    u64 blendModeID    = (u64)blendMode;
-    u64 vertextypeID   = (u64)vertextype;
-    u64 passTypeID     = (u64)graphPassType;
+    uint64_t shadingModelID = (uint64_t)shadingModel;
+    uint64_t blendModeID    = (uint64_t)blendMode;
+    uint64_t vertextypeID   = (uint64_t)vertextype;
+    uint64_t passTypeID     = (uint64_t)graphPassType;
 
-    u64 stateID = shadingModelID | (blendModeID << 8) | (vertextypeID << 16) | (passTypeID << 24);
+    uint64_t stateID = shadingModelID | (blendModeID << 8) | (vertextypeID << 16) | (passTypeID << 24);
 
     if (m_pipelineCacheMaterial.contains(stateID)) {
         // if we already have the pso object
@@ -60,7 +60,7 @@ u64 PsoCache::CachePso(const Material& material, VertexFactoryType vertextype,
     return stateID;
 }
 
-vk::Pipeline PsoCache::GetPso(u64 pipelineStateID) {
+vk::Pipeline PsoCache::GetPso(uint64_t pipelineStateID) {
     if (!m_pipelineCacheMaterial.contains(pipelineStateID)) {
         WIND_CORE_ERROR("{} not existed", pipelineStateID);
     }

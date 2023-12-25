@@ -7,7 +7,7 @@ CommandEncoder::CommandEncoder(RenderCommandQueueType queueType) : m_queueType(q
     auto queueIndices = device.GetQueueIndices();
     auto vkDevice     = device.GetVkDeviceHandle();
 
-    u32 queueIndex = queueType == RenderCommandQueueType::Compute
+    uint32_t queueIndex = queueType == RenderCommandQueueType::Compute
                          ? queueIndices.computeQueueIndex.value()
                          : queueIndices.graphicsQueueIndex.value();
 

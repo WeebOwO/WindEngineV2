@@ -68,7 +68,7 @@ private:
 
     std::vector<const char*> GetRequiredExtensions();
 
-    u32          m_alignSize;
+    uint32_t          m_alignSize;
     QueueIndices m_queueIndices;
 
     vk::Queue m_graphicsQueue;

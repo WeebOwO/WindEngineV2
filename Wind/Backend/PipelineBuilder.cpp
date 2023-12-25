@@ -59,7 +59,7 @@ void PipelineBuilder::SetShaderState(const RasterShader& shader) {
     m_layout = shader.GetPipelineLayout();
 }
 
-PipelineBuilder& PipelineBuilder::SetRenderState(const Material::Desc& desc, u32 mrtCount) {
+PipelineBuilder& PipelineBuilder::SetRenderState(const Material::Desc& desc, uint32_t mrtCount) {
     bool blendEnable      = desc.blendMode != Material::BlendMode::Opaque;
     bool depthWriteEnable = desc.blendMode == Material::BlendMode::Opaque;
 

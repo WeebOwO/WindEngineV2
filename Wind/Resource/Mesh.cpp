@@ -5,8 +5,8 @@
 
 namespace wind {
 void StaticMesh::InitRHI() {
-    u32 vertexBufferByteSize = sizeof(StaticMeshVertexFactory::Vertex) * meshSource.vertices.size();
-    u32 indexBufferByteSize  = sizeof(StaticMeshVertexFactory::Index) * meshSource.indices.size();
+    uint32_t vertexBufferByteSize = sizeof(StaticMeshVertexFactory::Vertex) * meshSource.vertices.size();
+    uint32_t indexBufferByteSize  = sizeof(StaticMeshVertexFactory::Index) * meshSource.indices.size();
 
     UploadBuffer vertexUploadBuffer(vertexBufferByteSize);
     UploadBuffer indexUploadBuffer(indexBufferByteSize);

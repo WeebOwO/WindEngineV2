@@ -17,7 +17,7 @@ struct MeshSource {
     Ref<DeviceBuffer> vertexBuffer;
     Ref<DeviceBuffer> indexBuffer;
 
-    i32 materialIndex{-1};
+    int materialIndex{-1};
 };
 
 class StaticMesh : public RenderResource {

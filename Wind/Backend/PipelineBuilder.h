@@ -24,7 +24,7 @@ public:
     PipelineBuilder& SetRasterizationState(vk::PolygonMode polygonMode, vk::CullModeFlags cullMode,
                                            vk::FrontFace frontFace);
     PipelineBuilder& SetRenderState(const Material::Desc& blendMode,
-                                    u32 mrtCount = 1); // this part care about blend and
+                                    uint32_t mrtCount = 1); // this part care about blend and
 
     vk::Pipeline Build();
 

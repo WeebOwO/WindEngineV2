@@ -6,14 +6,14 @@ namespace wind {
 class UUID {
 public:
     UUID();
-    UUID(u64 uuid);
+    UUID(uint64_t uuid);
     UUID(const UUID& other);
 
-    operator u64() { return m_UUID; }
-    operator const u64() const { return m_UUID; }
+    operator uint64_t() { return m_UUID; }
+    operator const uint64_t() const { return m_UUID; }
 
 private:
-    u64 m_UUID;
+    uint64_t m_UUID;
 };
 } // namespace wind
 

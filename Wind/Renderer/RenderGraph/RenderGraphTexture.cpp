@@ -26,7 +26,7 @@ void RenderGraphTexture::ReleaseRHI() { m_texture.reset(); }
 } // namespace wind
 
 namespace wind::utils {
-RenderGraphTexture::Desc GetRenderTargetDesc(u32 width, u32 height, vk::Format format,
+RenderGraphTexture::Desc GetRenderTargetDesc(uint32_t width, uint32_t height, vk::Format format,
                                              bool useMipmap) {
     return RenderGraphTexture::Desc{.width     = width,
                                     .height    = height,

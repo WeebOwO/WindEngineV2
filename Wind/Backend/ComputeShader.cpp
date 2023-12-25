@@ -5,7 +5,7 @@
 #include "Core/Log.h"
 
 namespace wind {
-ComputeShader::ComputeShader(const std::string& debugName, const std::vector<u32>& spirvCode) {
+ComputeShader::ComputeShader(const std::string& debugName, const std::vector<uint32_t>& spirvCode) {
     SetShaderName(debugName);
     auto vkDevice = device.GetVkDeviceHandle();
 
@@ -13,13 +13,13 @@ ComputeShader::ComputeShader(const std::string& debugName, const std::vector<u32
     bool                        cacheValid = spirvCode.size() != 0;
     vk::PipelineCacheCreateInfo cacheCreateInfo{
         .flags           = {},
-        .initialDataSize = cacheValid ? sizeof(u32) * spirvCode.size() : 0,
+        .initialDataSize = cacheValid ? sizeof(uint32_t) * spirvCode.size() : 0,
         .pInitialData    = cacheValid ? spirvCode.data() : nullptr,
     };
 
     m_cache = vkDevice.createPipelineCache(cacheCreateInfo);
 
-    vk::ShaderModuleCreateInfo shaderCreateInfo{.codeSize = sizeof(u32) * spirvCode.size(),
+    vk::ShaderModuleCreateInfo shaderCreateInfo{.codeSize = sizeof(uint32_t) * spirvCode.size(),
                                                 .pCode    = spirvCode.data()};
     m_computeModule = vkDevice.createShaderModule(shaderCreateInfo);
 

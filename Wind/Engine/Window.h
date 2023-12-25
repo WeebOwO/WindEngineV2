@@ -9,8 +9,8 @@ class Swapchain;
 class Window {
 public:
     struct WindowDesc {
-        u32         width;
-        u32         height;
+        uint32_t         width;
+        uint32_t         height;
         std::string windowTitle;
         bool        vsync = true;
     };

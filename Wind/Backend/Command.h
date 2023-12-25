@@ -26,16 +26,16 @@ public:
     void EndRenderPass();
     void BindPSO(const vk::Pipeline& pipeline);
     void BindVertexBuffer();
-    void Draw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance);
-    void DrawIndexed(u32 indexCount, u32 instanceCount, u32 firstIndex, u32 vertexOffset,
-                     u32 firstInstance);
+    void Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
+    void DrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, uint32_t vertexOffset,
+                     uint32_t firstInstance);
 
-    void BindVertexBuffer(u32 firstBinding, u32 bindingCount, const vk::Buffer& buffer,
+    void BindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, const vk::Buffer& buffer,
                           vk::DeviceSize offset);
     void BindIndexBuffer(const vk::Buffer& buffer, vk::DeviceSize offset, vk::IndexType indexType);
 
     void SetViewport(const vk::Viewport& viewport);
-    void SetScissor(i32 offsetx, i32 offsety, u32 width, u32 height);
+    void SetScissor(int offsetx, int offsety, uint32_t width, uint32_t height);
 
     // layout transfer
     void TransferImageLayout(const vk::Image& image, vk::AccessFlags srcMask,

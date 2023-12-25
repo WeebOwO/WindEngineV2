@@ -9,9 +9,9 @@ namespace wind {
 class RenderGraphTexture : public RenderGraphResource {
 public:
     struct Desc {
-        u32                 width;
-        u32                 height;
-        u32                 depth;
+        uint32_t                 width;
+        uint32_t                 height;
+        uint32_t                 depth;
         vk::Format          format;
         vk::ImageLayout     layout    = vk::ImageLayout::eUndefined;
         vk::ImageUsageFlags usage     = vk::ImageUsageFlagBits::eColorAttachment;
@@ -19,8 +19,8 @@ public:
     };
 
     struct SubResourceDesc {
-        u8 level = 0;
-        u8 layer = 0;
+        uint8_t level = 0;
+        uint8_t layer = 0;
     };
 
     auto GetDesc() { return m_desc; }
@@ -47,6 +47,6 @@ private:
 } // namespace wind
 
 namespace wind::utils {
-RenderGraphTexture::Desc GetRenderTargetDesc(u32 width, u32 height, vk::Format format,
+RenderGraphTexture::Desc GetRenderTargetDesc(uint32_t width, uint32_t height, vk::Format format,
                                              bool useMipmap = false);
 }

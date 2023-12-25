@@ -82,7 +82,7 @@ GPUTexture::~GPUTexture() {
 } // namespace wind
 
 namespace wind::utils {
-u32 CalculateImageMipLevelCount(const GPUTexture::Desc& desc) {
+uint32_t CalculateImageMipLevelCount(const GPUTexture::Desc& desc) {
     return (uint32_t)std::floor(std::log2(std::max(desc.width, desc.height))) + 1;
 }
 

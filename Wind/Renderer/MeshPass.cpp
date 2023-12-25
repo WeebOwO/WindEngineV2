@@ -4,7 +4,7 @@
 
 namespace wind {
 MeshPassType Step(MeshPassType type) {
-    u32 origin = u32(type);
+    uint32_t origin = uint32_t(type);
     return MeshPassType(origin + 1);
 }
 

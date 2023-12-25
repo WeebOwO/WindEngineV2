@@ -54,9 +54,9 @@ class PsoCache {
 public:
     PsoCache();
 
-    u64          CachePso(const Material& material, VertexFactoryType vertextype,
+    uint64_t          CachePso(const Material& material, VertexFactoryType vertextype,
                           RenderGraphPassType graphPassType);
-    vk::Pipeline GetPso(u64 pipelineStateID);
+    vk::Pipeline GetPso(uint64_t pipelineStateID);
     vk::Pipeline GetPso(const std::string& name);
     
     void Destroy();
@@ -66,7 +66,7 @@ private:
     void CreatePredefinePSO();
 
     vk::Device                                    m_device;
-    std::unordered_map<u64, vk::Pipeline>         m_pipelineCacheMaterial;
+    std::unordered_map<uint64_t, vk::Pipeline>         m_pipelineCacheMaterial;
     std::unordered_map<std::string, vk::Pipeline> m_pipelineCachePredefine;
 };
 

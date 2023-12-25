@@ -7,7 +7,7 @@
 namespace wind {
 class GPUDevice;
 
-enum class RHIResourceType : u8 {
+enum class RHIResourceType : uint8_t {
     Buffer,
     Texture,
     Shader,
@@ -21,7 +21,7 @@ enum class RHIResourceType : u8 {
 template <RHIResourceType ResourceType> 
 struct ResourceHandle {
     static constexpr RHIResourceType handleType = ResourceType;
-    u32                              handle;
+    uint32_t                              handle;
 };
 
 template <RHIResourceType ResourceType> 

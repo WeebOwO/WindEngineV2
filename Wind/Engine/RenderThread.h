@@ -18,7 +18,7 @@ public:
     vk::Semaphore renderFinishedSemaphore;
     vk::Fence     flightFence;
 
-    u32 swapchainImageIndex;
+    uint32_t swapchainImageIndex;
 
     Ref<DescriptorAllocator> dynamicDescriptorAllocator; // have a list of descriptor pool
 
@@ -47,7 +47,7 @@ public:
 
 private:
     FrameParms           m_frameParams[RenderConfig::MAX_FRAME_IN_FLIGHT];
-    u32                  m_frameNumber = 0;
+    uint32_t                  m_frameNumber = 0;
     Scope<RenderGraph>   m_renderGraph;
 };
 } // namespace wind

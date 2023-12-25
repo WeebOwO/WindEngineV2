@@ -7,7 +7,7 @@
 #include "Backend/VulkanHeader.h"
 
 namespace wind {
-enum class VertexFactoryType : u8 { NoVertex = 0, StaicMesh, Count };
+enum class VertexFactoryType : uint8_t { NoVertex = 0, StaicMesh, Count };
 
 struct VertexFactory {};
 
@@ -18,7 +18,7 @@ public:
     };
 
     struct Index {
-        u32 v1, v2, v3;
+        uint32_t v1, v2, v3;
     };
 
     static std::vector<vk::VertexInputBindingDescription>   GetInputBindingDescription();

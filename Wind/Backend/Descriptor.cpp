@@ -96,7 +96,7 @@ vk::DescriptorPool CreatePool(vk::Device device, const DescriptorAllocator::Pool
     return device.createDescriptorPool(createInfo);
 }
 
-DescriptorAllocator::DescriptorAllocator(const vk::Device& device, u32 descriptorBaseNum)
+DescriptorAllocator::DescriptorAllocator(const vk::Device& device, uint32_t descriptorBaseNum)
     : m_device(device), m_descriptorBaseNum(descriptorBaseNum) {}
 
 DescriptorAllocator::~DescriptorAllocator() {

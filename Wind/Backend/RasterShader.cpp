@@ -18,14 +18,14 @@ Ref<RasterShader> RasterShader::Create(const std::string& debugName,
 
     auto device = g_runtimeContext.device->GetVkDeviceHandle();
 
-    auto vertexSpirv = io::LoadBinary<u32>(vertexFilePath);
-    auto fragSpirv   = io::LoadBinary<u32>(fragfilePath);
+    auto vertexSpirv = io::LoadBinary<uint32_t>(vertexFilePath);
+    auto fragSpirv   = io::LoadBinary<uint32_t>(fragfilePath);
 
     vk::ShaderModuleCreateInfo vertexshaderModuleCreateInfo{
-        .codeSize = vertexSpirv.size() * sizeof(u32), .pCode = vertexSpirv.data()};
+        .codeSize = vertexSpirv.size() * sizeof(uint32_t), .pCode = vertexSpirv.data()};
 
     vk::ShaderModuleCreateInfo fragshaderModuleCreateInfo{
-        .codeSize = fragSpirv.size() * sizeof(u32), .pCode = fragSpirv.data()};
+        .codeSize = fragSpirv.size() * sizeof(uint32_t), .pCode = fragSpirv.data()};
 
     auto vertexModule = device.createShaderModule(vertexshaderModuleCreateInfo);
     auto fragModule   = device.createShaderModule(fragshaderModuleCreateInfo);

@@ -12,5 +12,5 @@
 
 template <typename T> 
 struct Handle {
-    u32 handle;
+    uint32_t handle;
 };

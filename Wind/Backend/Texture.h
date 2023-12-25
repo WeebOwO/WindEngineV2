@@ -18,11 +18,11 @@ enum class TextureViewType {
 struct GPUTexture : public RHIResource<RHIResourceType::Texture> {
 public:
     struct Desc {
-        u32                     width;
-        u32                     height;
-        u32                     depth;
-        u32                     mipCount;
-        u32                     layerCount;
+        uint32_t                     width;
+        uint32_t                     height;
+        uint32_t                     depth;
+        uint32_t                     mipCount;
+        uint32_t                     layerCount;
         TextureViewType         viewType;
         vk::Format              format;
         vk::ImageUsageFlags     usage;
@@ -57,5 +57,5 @@ namespace wind::utils {
 // human driver part, we deduce the result from image usage and format
 vk::ImageAspectFlags ImageFormatToImageAspect(vk::Format format);
 vk::ImageLayout      ImageUsageToImageLayout(vk::ImageUsageFlagBits usage);
-u32                  CalculateImageMipLevelCount(const GPUTexture::Desc& desc);
+uint32_t                  CalculateImageMipLevelCount(const GPUTexture::Desc& desc);
 } // namespace wind::utils

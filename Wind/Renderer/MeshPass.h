@@ -12,11 +12,11 @@ class StaticMesh;
 class MeshSource;
 class MeshPass;
 
-enum MeshPassType : u8 { BasePass = 0, Count };
+enum MeshPassType : uint8_t { BasePass = 0, Count };
 
 template <typename T> class PerpassData {
 public:
-    T& operator[](MeshPassType pass) { return m_data[u32(pass)]; }
+    T& operator[](MeshPassType pass) { return m_data[uint32_t(pass)]; }
     void Clear(T&& val) {
         for (int i = 0; i < MeshPassType::Count; ++i) {
             m_data[i] = val;
@@ -37,7 +37,7 @@ struct DrawMesh {
 };
 
 struct MeshDrawCommand {
-    u64               pipelineID;
+    uint64_t               pipelineID;
     DrawMesh          drawMesh;
     Material*         materialProxy;
     VertexFactoryType type;

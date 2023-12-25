@@ -39,7 +39,7 @@ private:
 
     PerpassData<std::vector<MeshDrawCommand>> m_cacheMeshDrawCommands;
 
-    u32 m_viewPortWidth  = 0;
-    u32 m_viewPortHeight = 0;
+    uint32_t m_viewPortWidth  = 0;
+    uint32_t m_viewPortHeight = 0;
 };
 } // namespace wind

@@ -39,7 +39,7 @@ public:
     struct RenderDesc {
         Attachments           attchments;
         vk::Rect2D            renderArea;
-        u8                    sample;
+        uint8_t                    sample;
         vk::ClearValue        clearValue;
         vk::AttachmentLoadOp  loadop  = vk::AttachmentLoadOp::eLoad;
         vk::AttachmentStoreOp storeop = vk::AttachmentStoreOp::eStore;

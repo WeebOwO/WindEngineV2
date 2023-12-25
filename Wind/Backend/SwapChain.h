@@ -12,39 +12,39 @@ public:
     Swapchain(const GPUDevice& device, const Window& window);
     ~Swapchain();
 
-    void Resize(u32 width, u32 height);
-    u32  ImageCount() const { return m_swapchainImages.size(); }
+    void Resize(uint32_t width, uint32_t height);
+    uint32_t  ImageCount() const { return m_swapchainImages.size(); }
    
-    auto GetImageView(u32 index) const { return m_swapchainViews[index]; }
-    auto GetImage(u32 index) const { return m_swapchainImages[index]; }
+    auto GetImageView(uint32_t index) const { return m_swapchainViews[index]; }
+    auto GetImage(uint32_t index) const { return m_swapchainImages[index]; }
     auto GetFormat() const { return m_surfaceFormat.format; }
     auto GetClearValue() const { return &m_clearValue; }
-    auto GetRenderingInfo(u32 index) const { return m_renderingInfos[index]; }
+    auto GetRenderingInfo(uint32_t index) const { return m_renderingInfos[index]; }
 
-    std::pair<u32, u32> GetWindowExtent() const {
+    std::pair<uint32_t, uint32_t> GetWindowExtent() const {
         return {m_windowExtent.width, m_windowExtent.height};
     }
-    u32 GetWidth() const { return m_windowExtent.width; }
-    u32 GetHeight() const { return m_windowExtent.height; }
+    uint32_t GetWidth() const { return m_windowExtent.width; }
+    uint32_t GetHeight() const { return m_windowExtent.height; }
 
     float GetAspectRatio() const {
         return static_cast<float>(m_windowExtent.width) / static_cast<float>(m_windowExtent.height);
     }
 
-    void SetFrameNumber(u32 currentFrame) { m_frameNumber = currentFrame; }
+    void SetFrameNumber(uint32_t currentFrame) { m_frameNumber = currentFrame; }
     void SetClearColor(float r, float g, float b, float a);
 
-    std::optional<u32> AcquireNextImage(const vk::Fence&     waitFence,
+    std::optional<uint32_t> AcquireNextImage(const vk::Fence&     waitFence,
                                         const vk::Semaphore& imageAvailableSemaphore) const;
 
     void SubmitCommandBuffer(const vk::CommandBuffer& cmdBuffer, const vk::Fence& signalFence,
                              const vk::Semaphore& imageAvailableSemaphore,
-                             const vk::Semaphore& imageFinishSemaphre, u32 imageIndex) const;
+                             const vk::Semaphore& imageFinishSemaphre, uint32_t imageIndex) const;
 
 private:
     void QuerySurfaceProperty();
     void GetSwapChainImage();
-    void CreateSwapChainInteral(u32 width, u32 height);
+    void CreateSwapChainInteral(uint32_t width, uint32_t height);
     void CleanUpSwapChain();
     void CreateRenderPass();
 
@@ -69,7 +69,7 @@ private:
     // test dynamic rendering
     std::vector<vk::RenderingAttachmentInfo> m_attachmentInfos;
     std::vector<vk::RenderingInfo>           m_renderingInfos;
-    u32                                      m_frameNumber;
+    uint32_t                                      m_frameNumber;
 };
 
 }; // namespace wind

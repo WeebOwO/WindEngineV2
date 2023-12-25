@@ -3,5 +3,5 @@
 #include "std.h"
 
 namespace wind {
-enum class RenderGraphPassType : u8 { MeshPass = 0, MeshPassMRT, PostProcess };
+enum class RenderGraphPassType : uint8_t { MeshPass = 0, MeshPassMRT, PostProcess };
 }

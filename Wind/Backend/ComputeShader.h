@@ -8,7 +8,7 @@ namespace wind {
 
 class ComputeShader : public Shader {
 public:
-    ComputeShader(const std::string& debugName, const std::vector<u32>& spirvCode);
+    ComputeShader(const std::string& debugName, const std::vector<uint32_t>& spirvCode);
     ComputeShader(const std::filesystem::path& filepath);
     ~ComputeShader();
 

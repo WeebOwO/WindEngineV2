@@ -63,9 +63,9 @@ void GPUDevice::CreateInstance() {
     vk::InstanceCreateInfo instanceCreateInfo{
         .flags                   = {},
         .pApplicationInfo        = &applicationInfo,
-        .enabledLayerCount       = (u32)layers.size(),
+        .enabledLayerCount       = (uint32_t)layers.size(),
         .ppEnabledLayerNames     = layers.data(),
-        .enabledExtensionCount   = (u32)extensions.size(),
+        .enabledExtensionCount   = (uint32_t)extensions.size(),
         .ppEnabledExtensionNames = extensions.data(),
     };
 
@@ -151,9 +151,9 @@ void GPUDevice::CreateDevice() {
     }
 
     vk::DeviceCreateInfo deviceCreateInfo{
-        .queueCreateInfoCount    = (u32)queueCreateInfos.size(),
+        .queueCreateInfoCount    = (uint32_t)queueCreateInfos.size(),
         .pQueueCreateInfos       = queueCreateInfos.data(),
-        .enabledExtensionCount   = (u32)m_enableExtensions.size(),
+        .enabledExtensionCount   = (uint32_t)m_enableExtensions.size(),
         .ppEnabledExtensionNames = m_enableExtensions.data(),
     };
 

@@ -31,8 +31,8 @@ void SceneRenderer::InitView(View& view) {
 }
 
 void SceneRenderer::SetViewPort(float offsetX, float offsetY, float width, float height) {
-    m_viewPortWidth  = u32(width);
-    m_viewPortHeight = u32(height);
+    m_viewPortWidth  = uint32_t(width);
+    m_viewPortHeight = uint32_t(height);
 
     m_viewPort.setWidth(width)
         .setHeight(height)
