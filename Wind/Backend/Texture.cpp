@@ -33,14 +33,6 @@ static vk::ImageViewType GetImageViewType(TextureViewType viewtype) {
     return {};
 }
 
-static vk::ImageSubresourceRange GetDefaultImageSubresourceRange(const GPUTexture::Desc& desc) {
-    return vk::ImageSubresourceRange{.aspectMask     = utils::ImageFormatToImageAspect(desc.format),
-                                     .baseMipLevel   = 0,
-                                     .levelCount     = desc.mipCount,
-                                     .baseArrayLayer = 0,
-                                     .layerCount     = desc.layerCount};
-}
-
 static bool IsIntegerBasedFormat(vk::Format format) { return false; };
 
 void GPUTexture::CreateImageView(const vk::ImageSubresourceRange& range) {
@@ -50,6 +42,19 @@ void GPUTexture::CreateImageView(const vk::ImageSubresourceRange& range) {
                                            .subresourceRange = range};
 
     m_defaultView = device.GetVkDeviceHandle().createImageView(viewCreateInfo);
+}
+
+// Get ImageSubresourceRange interface
+vk::ImageSubresourceRange GPUTexture::GetDefaultImageSubresourceRange() const {
+    return GetImageSubresourceRange(0, 0);
+}
+
+vk::ImageSubresourceRange GPUTexture::GetImageSubresourceRange(uint32_t mip, uint32_t level) const {
+    return vk::ImageSubresourceRange{.aspectMask   = utils::ImageFormatToImageAspect(m_desc.format),
+                                     .baseMipLevel = mip,
+                                     .levelCount   = m_desc.mipCount,
+                                     .baseArrayLayer = level,
+                                     .layerCount     = m_desc.layerCount};
 }
 
 GPUTexture::GPUTexture(const Desc& desc) : m_desc(desc) {
@@ -68,7 +73,7 @@ GPUTexture::GPUTexture(const Desc& desc) : m_desc(desc) {
                                            .priority = 1.0f};
 
     m_allocatedImage = device.AllocateImage(imageCreateInfo, allocationInfo);
-    CreateImageView(GetDefaultImageSubresourceRange(desc));
+    CreateImageView(GetDefaultImageSubresourceRange());
 }
 
 Ref<GPUTexture> GPUTexture::Create(const Desc& desc) { return ref::Create<GPUTexture>(desc); }
@@ -107,23 +112,46 @@ vk::ImageAspectFlags ImageFormatToImageAspect(vk::Format format) {
 
 vk::ImageLayout ImageUsageToImageLayout(vk::ImageUsageFlagBits usage) {
     using namespace vk;
-    
+
     switch (usage) {
-        case ImageUsageFlagBits::eTransferSrc:
-            return ImageLayout::eTransferSrcOptimal;
-        case ImageUsageFlagBits::eTransferDst:
-            return ImageLayout::eTransferDstOptimal;
-        case ImageUsageFlagBits::eSampled:
-            return ImageLayout::eShaderReadOnlyOptimal;
-        case ImageUsageFlagBits::eColorAttachment:
-            return ImageLayout::eColorAttachmentOptimal;
-        case ImageUsageFlagBits::eDepthStencilAttachment:
-            return ImageLayout::eDepthStencilAttachmentOptimal;
-        case ImageUsageFlagBits::eStorage:
-            return ImageLayout::eGeneral;
+    case ImageUsageFlagBits::eTransferSrc:
+        return ImageLayout::eTransferSrcOptimal;
+    case ImageUsageFlagBits::eTransferDst:
+        return ImageLayout::eTransferDstOptimal;
+    case ImageUsageFlagBits::eSampled:
+        return ImageLayout::eShaderReadOnlyOptimal;
+    case ImageUsageFlagBits::eColorAttachment:
+        return ImageLayout::eColorAttachmentOptimal;
+    case ImageUsageFlagBits::eDepthStencilAttachment:
+        return ImageLayout::eDepthStencilAttachmentOptimal;
+    case ImageUsageFlagBits::eStorage:
+        return ImageLayout::eGeneral;
     }
 
     return ImageLayout::eUndefined;
+}
+
+vk::AccessFlags ImageUsageToAccessFlags(vk::ImageUsageFlagBits usage) {
+    using namespace vk;
+    switch(usage) {
+        case ImageUsageFlagBits::eTransferSrc:
+            return AccessFlagBits::eTransferRead;
+        case ImageUsageFlagBits::eTransferDst:
+            return AccessFlagBits::eTransferWrite; 
+        case ImageUsageFlagBits::eSampled:
+            return AccessFlagBits::eShaderRead;
+        case ImageUsageFlagBits::eStorage:
+            return AccessFlagBits::eShaderRead | AccessFlagBits::eShaderWrite; 
+        case ImageUsageFlagBits::eColorAttachment:
+            return AccessFlagBits::eColorAttachmentWrite; 
+        case ImageUsageFlagBits::eDepthStencilAttachment:
+            return AccessFlagBits::eDepthStencilAttachmentWrite;
+        case ImageUsageFlagBits::eInputAttachment:
+            return vk::AccessFlagBits::eInputAttachmentRead;
+        case ImageUsageFlagBits::eFragmentShadingRateAttachmentKHR:
+            return vk::AccessFlagBits::eFragmentShadingRateAttachmentReadKHR;
+    }
+    return {};
 }
 
 } // namespace wind::utils

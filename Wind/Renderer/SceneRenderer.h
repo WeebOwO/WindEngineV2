@@ -7,9 +7,6 @@
 
 #include "Engine/RenderThread.h"
 
-#include "Resource/Texture.h"
-
-#include "Backend/Fwd.h"
 #include "Backend/Command.h"
 
 namespace wind {

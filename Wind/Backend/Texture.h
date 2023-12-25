@@ -18,11 +18,11 @@ enum class TextureViewType {
 struct GPUTexture : public RHIResource<RHIResourceType::Texture> {
 public:
     struct Desc {
-        uint32_t                     width;
-        uint32_t                     height;
-        uint32_t                     depth;
-        uint32_t                     mipCount;
-        uint32_t                     layerCount;
+        uint32_t                width;
+        uint32_t                height;
+        uint32_t                depth;
+        uint32_t                mipCount;
+        uint32_t                layerCount;
         TextureViewType         viewType;
         vk::Format              format;
         vk::ImageUsageFlags     usage;
@@ -36,9 +36,12 @@ public:
 
     static Ref<GPUTexture> Create(const Desc& desc);
 
-    auto GetVkImage() const { return m_allocatedImage.image; }
-    auto GetView() const { return m_defaultView; }
-    auto GetDesc() const { return m_desc; }
+    vk::Image     GetVkImage() const { return m_allocatedImage.image; }
+    vk::ImageView GetView() const { return m_defaultView; }
+    Desc          GetDesc() const { return m_desc; }
+
+    vk::ImageSubresourceRange GetDefaultImageSubresourceRange() const;
+    vk::ImageSubresourceRange GetImageSubresourceRange(uint32_t mip, uint32_t level) const;
 
     operator vk::Image() { return m_allocatedImage.image; }
 
@@ -57,5 +60,7 @@ namespace wind::utils {
 // human driver part, we deduce the result from image usage and format
 vk::ImageAspectFlags ImageFormatToImageAspect(vk::Format format);
 vk::ImageLayout      ImageUsageToImageLayout(vk::ImageUsageFlagBits usage);
-uint32_t                  CalculateImageMipLevelCount(const GPUTexture::Desc& desc);
+vk::AccessFlags      ImageUsageToAccessFlags(vk::ImageUsageFlagBits usage);
+
+uint32_t CalculateImageMipLevelCount(const GPUTexture::Desc& desc);
 } // namespace wind::utils
