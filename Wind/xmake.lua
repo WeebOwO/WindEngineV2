@@ -1,4 +1,4 @@
-add_requires("vulkansdk", "vulkan-memory-allocator", "spdlog", "glfw", "glm", "entt", "boost", "tracy", "spirv-cross", "shaderc")
+add_requires("vulkansdk", "vulkan-memory-allocator", "spdlog", "glfw", "glm", "entt", "tracy", "spirv-cross", "shaderc")
 
 option("tracy")
     set_default(true)

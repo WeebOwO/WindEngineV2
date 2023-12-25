@@ -137,7 +137,8 @@ void GPUDevice::CreateDevice() {
     std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
 
     std::unordered_set<uint32_t> uniqueQueueIndices{m_queueIndices.graphicsQueueIndex.value(),
-                                                    m_queueIndices.computeQueueIndex.value()};
+                                                    m_queueIndices.computeQueueIndex.value(), 
+                                                    m_queueIndices.asyncComputeQueueIndex.value()};
 
     vk::PhysicalDeviceDynamicRenderingFeaturesKHR dynamic_rendering = {};
     dynamic_rendering.dynamicRendering                              = true;
