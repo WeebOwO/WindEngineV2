@@ -57,7 +57,7 @@ namespace wind
         mesh->meshSource.indices  = {{0, 1, 2}};
 
         // todo: this is stupid, need improve in future
-        auto materialManager = RuntimeUtils::GetRenderer()->GetMaterialManager();
+        auto materialManager = g_runtimeContext.renderer->GetMaterialManager();
         mesh->material       = materialManager->GetMaterial("default_lit").get();
         mesh->InitRHI();
 
@@ -123,7 +123,7 @@ namespace wind
         ImGui::NewFrame();
 
         // execute main render job
-        auto& renderGraph = RuntimeUtils::GetRenderer()->BeginFrame(*m_window->GetSwapChain());
+        auto& renderGraph = g_runtimeContext.renderer->BeginFrame(*m_window->GetSwapChain());
         // set viewport
         View           view;
         ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -171,7 +171,7 @@ namespace wind
                 EPassType::Graphics);
         };
 
-        RuntimeUtils::GetRenderer()->NextFrame(); // will do all the render job and increase frame counter
+        g_runtimeContext.renderer->NextFrame(); // will do all the render job and increase frame counter
     }
 
     void Engine::LogicTick(float delta)

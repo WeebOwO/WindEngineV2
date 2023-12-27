@@ -12,9 +12,8 @@
 
 namespace wind
 {
-    void FrameParms::Init()
+    void FrameParms::Init(vk::Device device)
     {
-        auto device = RuntimeUtils::GetVulkanDevice();
 
         computeEncoder = ref::Create<CommandEncoder>();
         renderEncoder  = ref::Create<CommandEncoder>();
@@ -28,9 +27,8 @@ namespace wind
         dynamicDescriptorAllocator = ref::Create<DescriptorAllocator>(device);
     }
 
-    void FrameParms::Destroy()
+    void FrameParms::Destroy(vk::Device device)
     {
-        auto device = RuntimeUtils::GetVulkanDevice();
         device.destroyFence(flightFence);
         device.destroySemaphore(imageAvailableSemaphore);
         device.destroySemaphore(renderFinishedSemaphore);
@@ -46,8 +44,9 @@ namespace wind
     {
         for (auto& data : m_frameParams)
         {
-            data.Init();
+            data.Init(m_device);
         }
+
         m_renderGraph = scope::Create<RenderGraph>();
 
         // init the shader map
@@ -67,7 +66,7 @@ namespace wind
     {
         for (auto& data : m_frameParams)
         {
-            data.Destroy();
+            data.Destroy(m_device);
         }
         m_psoCache->Destroy();
     }

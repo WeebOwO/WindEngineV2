@@ -48,15 +48,4 @@ namespace wind
     std::filesystem::path GetPath(std::filesystem::path path);
 
     extern RuntimeContext g_runtimeContext; // last entry to access the global info, try not use this
-
-    // utils func
-    class RuntimeUtils
-    {
-    public:
-        static Renderer*  GetRenderer();
-        static void       GPUWaitIdle();
-        static vk::Device GetVulkanDevice();
-        static Scene*     GetActiveScene();
-    };
-
 } // namespace wind

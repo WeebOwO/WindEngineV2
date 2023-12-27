@@ -20,8 +20,6 @@ namespace wind
 {
     RuntimeContext g_runtimeContext;
 
-    
-
     void RuntimeContext::Init()
     {
         // Core engine part
@@ -53,27 +51,4 @@ namespace wind
     }
 
     std::filesystem::path GetPath(std::filesystem::path path) { return std::filesystem::path(); }
-
-    void RuntimeUtils::GPUWaitIdle()
-    {
-        assert(g_runtimeContext.device != nullptr);
-        g_runtimeContext.device->GetVkDeviceHandle().waitIdle();
-    }
-
-    vk::Device RuntimeUtils::GetVulkanDevice()
-    {
-        assert(g_runtimeContext.device != nullptr);
-        return g_runtimeContext.device->GetVkDeviceHandle();
-    }
-
-    Scene* RuntimeUtils::GetActiveScene()
-    {
-        assert(g_runtimeContext.activeScene != nullptr);
-        return g_runtimeContext.activeScene;
-    }
-
-    Renderer*  RuntimeUtils::GetRenderer() {
-        assert(g_runtimeContext.renderer != nullptr);
-        return g_runtimeContext.renderer.get();
-    }
 } // namespace wind

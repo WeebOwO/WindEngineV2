@@ -34,8 +34,8 @@ namespace wind
 
     private:
         friend class Renderer;
-        void Init();
-        void Destroy();
+        void Init(vk::Device device);
+        void Destroy(vk::Device device);
 
         void ResetCommanEncoders();
     };

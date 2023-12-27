@@ -45,7 +45,7 @@ namespace wind
 
     void SceneRenderer::DrawMesh(CommandEncoder& encoder)
     {
-        auto                renderer = RuntimeUtils::GetRenderer();
+        auto                renderer = g_runtimeContext.renderer.get();
         for (const auto& meshDrawCommand : m_cacheMeshDrawCommands[BasePass])
         {
             auto pso = renderer->GetPso(meshDrawCommand.pipelineID);
@@ -66,7 +66,7 @@ namespace wind
 
     void SceneRenderer::Render(View& view, RenderGraph& rg)
     {
-        m_renderScene = RuntimeUtils::GetActiveScene();
+        m_renderScene = g_runtimeContext.activeScene;
         InitView(view);
 
         struct ColorPassData
@@ -111,7 +111,7 @@ namespace wind
 
     void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass)
     {
-        auto                renderer = RuntimeUtils::GetRenderer();
+        auto                renderer = g_runtimeContext.renderer.get();
         RenderGraphPassType graphPassType =
             meshPass.type == MeshPassType::BasePass ? RenderGraphPassType::MeshPassMRT : RenderGraphPassType::MeshPass;
         m_cacheMeshDrawCommands[meshPass.type].clear();
