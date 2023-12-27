@@ -5,11 +5,12 @@
 
 #include "Core/Log.h"
 
-#include "Engine/RenderThread.h"
 #include "Engine/RuntimeContext.h"
 
 #include "Backend/Command.h"
 #include "Backend/SwapChain.h"
+
+#include "Renderer/Renderer.h"
 
 namespace wind {
 

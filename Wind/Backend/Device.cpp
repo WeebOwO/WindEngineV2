@@ -54,6 +54,8 @@ namespace wind
         return extensions;
     }
 
+    void GPUDevice::WaitIdle() { m_device->waitIdle(); }
+
     void GPUDevice::CreateInstance()
     {
         PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr =

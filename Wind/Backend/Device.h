@@ -31,6 +31,7 @@ namespace wind
         GPUDevice();
         ~GPUDevice();
 
+        void WaitIdle();
         operator vk::Device() { return *m_device; }
 
         vk::Queue GetGraphicsQueue() const noexcept { return m_graphicsQueue; }

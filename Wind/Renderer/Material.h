@@ -2,7 +2,7 @@
 
 #include "std.h"
 
-#include "Backend/VulkanHeader.h"
+#include "ShaderMap.h"
 
 namespace wind
 {
@@ -41,9 +41,9 @@ namespace wind
 
         static Ref<Material> Create(const Desc& desc);
 
-        auto GetShadingModel() const { return m_shadingModel; }
-        auto GetBlendMode() const { return m_blendMode; }
-        auto GetShader() const { return m_rasterShader; }
+        auto GetShadingModel() const noexcept { return m_shadingModel; }
+        auto GetBlendMode() const noexcept { return m_blendMode; }
+        auto GetShader() const noexcept { return m_rasterShader; }
 
         auto GetMaterialDesc() const noexcept { return m_desc; }
 
@@ -59,7 +59,7 @@ namespace wind
     class MaterialManager
     {
     public:
-        void          InitDefaultMaterial();
+        void          InitDefaultMaterial(ShaderMap& shaderMap);
         Ref<Material> GetMaterial(const std::string& name);
 
     private:

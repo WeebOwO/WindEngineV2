@@ -1,19 +1,17 @@
-#include "RenderThread.h"
+#include "Renderer.h"
 
-#include "RuntimeContext.h"
+#include "Material.h"
+#include "PsoCache.h"
 
 #include "Backend/Command.h"
 #include "Backend/SwapChain.h"
+#include "Backend/RasterShader.h"
 
-#include "Renderer/RenderGraph/RenderGraph.h"
-#include "Renderer/RenderGraph/ResourceNode.h"
-#include "Renderer/SceneRenderer.h"
 #include "Renderer/View.h"
-
+#include "RenderGraph/ResourceNode.h"
 
 namespace wind
 {
-
     void FrameParms::Init()
     {
         auto device = RuntimeUtils::GetVulkanDevice();
@@ -44,26 +42,37 @@ namespace wind
         renderEncoder->Reset();
     }
 
-    void RenderThread::Init()
+    void Renderer::Init()
     {
         for (auto& data : m_frameParams)
         {
             data.Init();
         }
         m_renderGraph = scope::Create<RenderGraph>();
+
+        // init the shader map
+        m_shaderMap = scope::Create<ShaderMap>();
+        m_shaderMap->CacheRasterShader(RasterShader::Create("BasePassShader", "Triangle.vert.spv", "Triangle.frag.spv"));
+        m_shaderMap->CacheRasterShader(
+            RasterShader::Create("CompositeShader", "FullScreen.vert.spv", "Composite.frag.spv"));
+
+        // init material manager
+        m_materialManager = scope::Create<MaterialManager>();
+        m_materialManager->InitDefaultMaterial(*m_shaderMap);
+
+        m_psoCache = scope::Create<PsoCache>(m_device, *m_shaderMap);
     }
 
-    void RenderThread::Quit()
+    void Renderer::Quit()
     {
-        auto device = RuntimeUtils::GetVulkanDevice();
-        device.waitIdle();
         for (auto& data : m_frameParams)
         {
             data.Destroy();
         }
+        m_psoCache->Destroy();
     }
 
-    RenderGraph& RenderThread::BeginFrame(const Swapchain& swapchain)
+    RenderGraph& Renderer::BeginFrame(const Swapchain& swapchain)
     {
         auto& frameData = GetCurrentFrameData();
 
@@ -77,7 +86,7 @@ namespace wind
         return *m_renderGraph;
     }
 
-    void RenderThread::NextFrame()
+    void Renderer::NextFrame()
     {
         m_renderGraph->Exec();
         m_frameNumber = (m_frameNumber + 1) % RenderConfig::MAX_FRAME_IN_FLIGHT;

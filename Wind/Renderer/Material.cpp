@@ -23,22 +23,21 @@ namespace wind
         return ref::Create<Material>(desc.debugName, desc.ShadingModel, desc.blendMode, desc.rasterShader);
     }
 
-    void MaterialManager::InitDefaultMaterial()
+    void MaterialManager::InitDefaultMaterial(ShaderMap& shaderMap)
     {
         // default lit
-        auto shaderMap = g_runtimeContext.shaderMap.get();
-
+       
         Material::Desc desc {.debugName    = "default_lit",
                              .ShadingModel = Material::ShadingModel::Lit,
                              .blendMode    = Material::BlendMode::Opaque,
-                             .rasterShader = shaderMap->GetRasterShader("BasePassShader").get()};
+                             .rasterShader = shaderMap.GetRasterShader("BasePassShader").get()};
 
         m_materialCaches[desc.debugName] = Material::Create(desc);
 
         desc = {.debugName    = "default_unlit",
                 .ShadingModel = Material::ShadingModel::UnLit,
                 .blendMode    = Material::BlendMode::Opaque,
-                .rasterShader = shaderMap->GetRasterShader("BasePassShader").get()};
+                .rasterShader = shaderMap.GetRasterShader("BasePassShader").get()};
 
         m_materialCaches[desc.debugName] = Material::Create(desc);
     }

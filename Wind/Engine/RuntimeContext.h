@@ -8,6 +8,7 @@
 #include "Resource/Mesh.h"
 
 #include "Renderer/RenderGraph/RenderPassEnum.h"
+#include "Renderer/ShaderMap.h"
 
 namespace vk
 {
@@ -23,57 +24,12 @@ namespace wind
     class MaterialManager;
     class Scene;
     class Engine;
-
-    class ShaderMap
-    {
-    public:
-        ShaderMap();
-
-        void CacheRasterShader(Ref<RasterShader> shader);
-        void CacheComputeShader(Ref<ComputeShader> shader);
-
-        Ref<RasterShader> GetRasterShader(const std::string& shaderName) noexcept
-        {
-            assert(m_rasterShaderCache.contains(shaderName));
-            return m_rasterShaderCache[shaderName];
-        }
-
-        Ref<ComputeShader> GetComputeShader(const std::string& shaderName) noexcept
-        {
-            assert(m_computeShaderCache.contains(shaderName));
-            return m_computeShaderCache[shaderName];
-        }
-
-    private:
-        vk::Device                                          m_device;
-        std::unordered_map<std::string, Ref<RasterShader>>  m_rasterShaderCache;
-        std::unordered_map<std::string, Ref<ComputeShader>> m_computeShaderCache;
-    };
+    class Renderer;
 
     struct PathManager
     {
         std::filesystem::path projectPath;
         std::filesystem::path shaderPath;
-    };
-
-    class PsoCache
-    {
-    public:
-        PsoCache();
-
-        uint64_t CachePso(const Material& material, VertexFactoryType vertextype, RenderGraphPassType graphPassType);
-        vk::Pipeline GetPso(uint64_t pipelineStateID);
-        vk::Pipeline GetPso(const std::string& name);
-
-        void Destroy();
-
-    private:
-        friend class RuntimeContext;
-        void CreatePredefinePSO();
-
-        vk::Device                                    m_device;
-        std::unordered_map<uint64_t, vk::Pipeline>    m_pipelineCacheMaterial;
-        std::unordered_map<std::string, vk::Pipeline> m_pipelineCachePredefine;
     };
 
     struct RuntimeContext
@@ -82,24 +38,22 @@ namespace wind
         void PostInit(const Window& window);
         void Quit();
 
-        Scope<ShaderMap>       shaderMap;
-        Scope<GPUDevice>       device;
-        Scope<MaterialManager> materialManager;
-        Scope<PsoCache>        psoCache;
-        Scope<ImGUIContext>    guiContext;
-        Scene*                 activeScene;
-
-        PathManager pathManager;
+        Scope<GPUDevice>    device;
+        Scope<ImGUIContext> guiContext;
+        Scope<Renderer>     renderer;
+        Scene*              activeScene;
+        PathManager         pathManager;
     };
 
     std::filesystem::path GetPath(std::filesystem::path path);
 
-    extern RuntimeContext g_runtimeContext;
+    extern RuntimeContext g_runtimeContext; // last entry to access the global info, try not use this
 
     // utils func
     class RuntimeUtils
     {
     public:
+        static Renderer*  GetRenderer();
         static void       GPUWaitIdle();
         static vk::Device GetVulkanDevice();
         static Scene*     GetActiveScene();

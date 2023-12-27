@@ -2,19 +2,16 @@
 
 #include "std.h"
 
-#include "Engine/RenderThread.h"
-
 namespace wind
 {
     class SceneRenderer;
     class Window;
     class Scene;
 
-    using ImGuiCallBack = std::function<void(Engine&)>;
-
     class Engine
     {
     public:
+        using ImGuiCallBack = std::function<void(Engine&)>;
         Engine(Scope<Window> window); // here use unique ptr to transfer ownership from editor to engine
         ~Engine();
 
@@ -36,7 +33,6 @@ namespace wind
         std::vector<Scope<Scene>>             m_scenes;
         uint32_t                              m_activeSceneIndex;
         std::chrono::steady_clock::time_point m_lastTickTimePoint {std::chrono::steady_clock::now()};
-        RenderThread                          m_renderThread;
         Scope<SceneRenderer>                  m_sceneRenderer;
         ImGuiCallBack                         m_imguiCallback;
     };

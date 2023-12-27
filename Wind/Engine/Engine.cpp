@@ -12,6 +12,7 @@
 #include "Resource/Mesh.h"
 #include "Scene/Scene.h"
 // renderer part
+#include "Renderer/Renderer.h"
 #include "Renderer/Material.h"
 #include "Renderer/RenderGraph/RenderGraphPass.h"
 #include "Renderer/RenderGraph/ResourceRegistry.h"
@@ -55,7 +56,8 @@ namespace wind
         mesh->meshSource.vertices = {v1, v2, v3};
         mesh->meshSource.indices  = {{0, 1, 2}};
 
-        auto materialManager = g_runtimeContext.materialManager.get();
+        // todo: this is stupid, need improve in future
+        auto materialManager = RuntimeUtils::GetRenderer()->GetMaterialManager();
         mesh->material       = materialManager->GetMaterial("default_lit").get();
         mesh->InitRHI();
 
@@ -81,7 +83,6 @@ namespace wind
     void Engine::Init()
     {
         g_runtimeContext.Init();
-        m_renderThread.Init();
         WIND_CORE_INFO("Init the engine core!");
     }
 
@@ -108,13 +109,13 @@ namespace wind
 
     void Engine::Quit()
     {
-        m_renderThread.Quit();
         g_runtimeContext.Quit();
         WIND_CORE_INFO("Shutdown engine");
     }
 
     void Engine::RenderTick(float delta)
     {
+        
         ZoneScopedN("RenderTick");
         // imgui start part
         ImGui_ImplVulkan_NewFrame();
@@ -122,7 +123,7 @@ namespace wind
         ImGui::NewFrame();
 
         // execute main render job
-        auto& renderGraph = m_renderThread.BeginFrame(*m_window->GetSwapChain());
+        auto& renderGraph = RuntimeUtils::GetRenderer()->BeginFrame(*m_window->GetSwapChain());
         // set viewport
         View           view;
         ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -170,7 +171,7 @@ namespace wind
                 EPassType::Graphics);
         };
 
-        m_renderThread.NextFrame(); // will do all the render job and increase frame counter
+        RuntimeUtils::GetRenderer()->NextFrame(); // will do all the render job and increase frame counter
     }
 
     void Engine::LogicTick(float delta)

@@ -3,6 +3,7 @@
 #include <Imgui/imgui.h>
 
 #include "MeshPass.h"
+#include "Renderer.h"
 #include "View.h"
 
 
@@ -44,9 +45,10 @@ namespace wind
 
     void SceneRenderer::DrawMesh(CommandEncoder& encoder)
     {
+        auto                renderer = RuntimeUtils::GetRenderer();
         for (const auto& meshDrawCommand : m_cacheMeshDrawCommands[BasePass])
         {
-            auto pso = g_runtimeContext.psoCache->GetPso(meshDrawCommand.pipelineID);
+            auto pso = renderer->GetPso(meshDrawCommand.pipelineID);
 
             encoder.SetViewport(m_viewPort);
             encoder.SetScissor(0, 0, m_viewPort.width, m_viewPort.height);
@@ -109,7 +111,7 @@ namespace wind
 
     void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass)
     {
-        auto                psocache = g_runtimeContext.psoCache.get();
+        auto                renderer = RuntimeUtils::GetRenderer();
         RenderGraphPassType graphPassType =
             meshPass.type == MeshPassType::BasePass ? RenderGraphPassType::MeshPassMRT : RenderGraphPassType::MeshPass;
         m_cacheMeshDrawCommands[meshPass.type].clear();
@@ -124,7 +126,7 @@ namespace wind
             meshDrawCommand.materialProxy        = meshProxy->material;
 
             meshDrawCommand.pipelineID =
-                psocache->CachePso(*meshProxy->material, VertexFactoryType::StaicMesh, graphPassType);
+                renderer->CachePso(*meshProxy->material, VertexFactoryType::StaicMesh, graphPassType);
 
             m_cacheMeshDrawCommands[meshPass.type].push_back(meshDrawCommand);
         }

@@ -5,8 +5,6 @@
 #include "MeshPass.h"
 #include "RenderGraph/RenderGraph.h"
 
-#include "Engine/RenderThread.h"
-
 #include "Backend/Command.h"
 
 namespace wind
