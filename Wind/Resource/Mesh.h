@@ -3,29 +3,33 @@
 #include "std.h"
 
 #include "Asset/Asset.h"
-#include "VertexFactory.h"
 #include "RenderResource.h"
+#include "VertexFactory.h"
 
-namespace wind {
-class DeviceBuffer;
-class Material;
 
-struct MeshSource {
-    std::vector<StaticMeshVertexFactory::Vertex> vertices;
-    std::vector<StaticMeshVertexFactory::Index>  indices;
+namespace wind
+{
+    class DeviceBuffer;
+    class Material;
 
-    Ref<DeviceBuffer> vertexBuffer;
-    Ref<DeviceBuffer> indexBuffer;
+    struct MeshSource
+    {
+        std::vector<StaticMeshVertexFactory::Vertex> vertices;
+        std::vector<StaticMeshVertexFactory::Index>  indices;
 
-    int materialIndex{-1};
-};
+        Ref<DeviceBuffer> vertexBuffer;
+        Ref<DeviceBuffer> indexBuffer;
 
-class StaticMesh : public RenderResource {
-public:
-    void InitRHI() override;
-    void ReleaseRHI() override;
+        int materialIndex {-1};
+    };
 
-    MeshSource meshSource;
-    Material*  material;
-};
+    class StaticMesh : public RenderResource
+    {
+    public:
+        void InitRHI() override;
+        void ReleaseRHI() override;
+
+        MeshSource meshSource;
+        Material*  material;
+    };
 } // namespace wind

@@ -3,42 +3,43 @@
 #include "Backend/Buffer.h"
 #include "Backend/Command.h"
 
-namespace wind {
-void StaticMesh::InitRHI() {
-    uint32_t vertexBufferByteSize = sizeof(StaticMeshVertexFactory::Vertex) * meshSource.vertices.size();
-    uint32_t indexBufferByteSize  = sizeof(StaticMeshVertexFactory::Index) * meshSource.indices.size();
+namespace wind
+{
+    void StaticMesh::InitRHI()
+    {
+        uint32_t vertexBufferByteSize = sizeof(StaticMeshVertexFactory::Vertex) * meshSource.vertices.size();
+        uint32_t indexBufferByteSize  = sizeof(StaticMeshVertexFactory::Index) * meshSource.indices.size();
 
-    UploadBuffer vertexUploadBuffer(vertexBufferByteSize);
-    UploadBuffer indexUploadBuffer(indexBufferByteSize);
-    
-    meshSource.vertexBuffer =
-        ref::Create<DeviceBuffer>(vertexBufferByteSize, vk::BufferUsageFlagBits::eVertexBuffer |
-                                                            vk::BufferUsageFlagBits::eTransferDst);
-    meshSource.indexBuffer =
-        ref::Create<DeviceBuffer>(indexBufferByteSize, vk::BufferUsageFlagBits::eIndexBuffer |
-                                                           vk::BufferUsageFlagBits::eTransferDst);
+        UploadBuffer vertexUploadBuffer(vertexBufferByteSize);
+        UploadBuffer indexUploadBuffer(indexBufferByteSize);
 
-    vertexUploadBuffer.WriteData(meshSource.vertices.data(), vertexBufferByteSize, 0);
-    indexUploadBuffer.WriteData(meshSource.indices.data(), indexBufferByteSize, 0);
+        meshSource.vertexBuffer = ref::Create<DeviceBuffer>(
+            vertexBufferByteSize, vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst);
+        meshSource.indexBuffer = ref::Create<DeviceBuffer>(
+            indexBufferByteSize, vk::BufferUsageFlagBits::eIndexBuffer | vk::BufferUsageFlagBits::eTransferDst);
 
-    ImmCommandEncoder copyEncoder;
+        vertexUploadBuffer.WriteData(meshSource.vertices.data(), vertexBufferByteSize, 0);
+        indexUploadBuffer.WriteData(meshSource.indices.data(), indexBufferByteSize, 0);
 
-    copyEncoder.PushTask([&](const vk::CommandBuffer& command) {
-        vk::BufferCopy bufferCopy{.srcOffset = 0, .dstOffset = 0, .size = vertexBufferByteSize};
+        ImmCommandEncoder copyEncoder;
 
-        command.copyBuffer(vertexUploadBuffer.GetNativeHandle(),
-                           meshSource.vertexBuffer->GetNativeHandle(), bufferCopy);
+        copyEncoder.PushTask([&](const vk::CommandBuffer& command) {
+            vk::BufferCopy bufferCopy {.srcOffset = 0, .dstOffset = 0, .size = vertexBufferByteSize};
 
-        bufferCopy.setSize(indexBufferByteSize);
-        command.copyBuffer(indexUploadBuffer.GetNativeHandle(),
-                           meshSource.indexBuffer->GetNativeHandle(), bufferCopy);
-    });
+            command.copyBuffer(
+                vertexUploadBuffer.GetNativeHandle(), meshSource.vertexBuffer->GetNativeHandle(), bufferCopy);
 
-    copyEncoder.Submit();
-}
+            bufferCopy.setSize(indexBufferByteSize);
+            command.copyBuffer(
+                indexUploadBuffer.GetNativeHandle(), meshSource.indexBuffer->GetNativeHandle(), bufferCopy);
+        });
 
-void StaticMesh::ReleaseRHI() {
-    meshSource.vertexBuffer.reset();
-    meshSource.indexBuffer.reset();
-}
+        copyEncoder.Submit();
+    }
+
+    void StaticMesh::ReleaseRHI()
+    {
+        meshSource.vertexBuffer.reset();
+        meshSource.indexBuffer.reset();
+    }
 } // namespace wind

@@ -2,14 +2,16 @@
 
 #include "std.h"
 
-namespace wind {
+namespace wind
+{
 
-class Application {
-public:
-    virtual void Init() {}
-    virtual void Quit() {}
-    virtual void Run()  = 0;
-};
+    class Application
+    {
+    public:
+        virtual void Init() {}
+        virtual void Quit() {}
+        virtual void Run() = 0;
+    };
 
-Scope<Application> CreateClientApplication();
+    Scope<Application> CreateClientApplication();
 } // namespace wind

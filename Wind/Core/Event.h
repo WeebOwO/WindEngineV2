@@ -4,47 +4,50 @@
 
 #include "Core.h"
 
-namespace wind {
+namespace wind
+{
 
-enum class EventType {
-    None = 0,
-    WindowClose,
-    WindowMinimize,
-    WindowResize,
-    WindowFocus,
-    WindowLostFocus,
-    WindowMoved,
-    WindowTitleBarHitTest,
-    AppTick,
-    AppUpdate,
-    AppRender,
-    KeyPressed,
-    KeyReleased,
-    KeyTyped,
-    MouseButtonPressed,
-    MouseButtonReleased,
-    MouseButtonDown,
-    MouseMoved,
-    MouseScrolled,
-    ScenePreStart,
-    ScenePostStart,
-    ScenePreStop,
-    ScenePostStop,
-    EditorExitPlayMode,
-    SelectionChanged,
-    AnimationGraphCompiled
-};
+    enum class EventType
+    {
+        None = 0,
+        WindowClose,
+        WindowMinimize,
+        WindowResize,
+        WindowFocus,
+        WindowLostFocus,
+        WindowMoved,
+        WindowTitleBarHitTest,
+        AppTick,
+        AppUpdate,
+        AppRender,
+        KeyPressed,
+        KeyReleased,
+        KeyTyped,
+        MouseButtonPressed,
+        MouseButtonReleased,
+        MouseButtonDown,
+        MouseMoved,
+        MouseScrolled,
+        ScenePreStart,
+        ScenePostStart,
+        ScenePreStop,
+        ScenePostStop,
+        EditorExitPlayMode,
+        SelectionChanged,
+        AnimationGraphCompiled
+    };
 
-enum EventCategory {
-    None                     = 0,
-    EventCategoryApplication = BIT(0),
-    EventCategoryInput       = BIT(1),
-    EventCategoryKeyboard    = BIT(2),
-    EventCategoryMouse       = BIT(3),
-    EventCategoryMouseButton = BIT(4),
-    EventCategoryScene       = BIT(5),
-    EventCategoryEditor      = BIT(6)
-};
+    enum EventCategory
+    {
+        None                     = 0,
+        EventCategoryApplication = BIT(0),
+        EventCategoryInput       = BIT(1),
+        EventCategoryKeyboard    = BIT(2),
+        EventCategoryMouse       = BIT(3),
+        EventCategoryMouseButton = BIT(4),
+        EventCategoryScene       = BIT(5),
+        EventCategoryEditor      = BIT(6)
+    };
 
 #define EVENT_CLASS_TYPE(type) \
     static EventType    GetStaticType() { return EventType::type; } \
@@ -54,35 +57,41 @@ enum EventCategory {
 #define EVENT_CLASS_CATEGORY(category) \
     virtual int GetCategoryFlags() const override { return category; }
 
-class Event {
-public:
-    virtual ~Event() {}
-    virtual EventType   GetEventType() const     = 0;
-    virtual const char* GetName() const          = 0;
-    virtual int         GetCategoryFlags() const = 0;
-    virtual std::string ToString() const { return GetName(); }
-    bool IsInCategory(EventCategory category) { return GetCategoryFlags() & category; }
+    class Event
+    {
+    public:
+        virtual ~Event() {}
+        virtual EventType   GetEventType() const     = 0;
+        virtual const char* GetName() const          = 0;
+        virtual int         GetCategoryFlags() const = 0;
+        virtual std::string ToString() const { return GetName(); }
+        bool                IsInCategory(EventCategory category) { return GetCategoryFlags() & category; }
 
-    bool handled = false;
-};
+        bool handled = false;
+    };
 
-class EventDispatcher {
-    template <typename T> using EventFn = std::function<bool(T&)>;
+    class EventDispatcher
+    {
+        template<typename T>
+        using EventFn = std::function<bool(T&)>;
 
-public:
-    EventDispatcher(Event& event) : m_Event(event) {}
+    public:
+        EventDispatcher(Event& event) : m_Event(event) {}
 
-    template <typename T> bool Dispatch(EventFn<T> func) {
-        if (m_Event.GetEventType() == T::GetStaticType() && !m_Event.handled) {
-            m_Event.handled = func(*(T*)&m_Event);
-            return true;
+        template<typename T>
+        bool Dispatch(EventFn<T> func)
+        {
+            if (m_Event.GetEventType() == T::GetStaticType() && !m_Event.handled)
+            {
+                m_Event.handled = func(*(T*)&m_Event);
+                return true;
+            }
+            return false;
         }
-        return false;
-    }
 
-private:
-    Event& m_Event;
-};
+    private:
+        Event& m_Event;
+    };
 
-inline std::ostream& operator<<(std::ostream& os, const Event& e) { return os << e.ToString(); }
+    inline std::ostream& operator<<(std::ostream& os, const Event& e) { return os << e.ToString(); }
 } // namespace wind

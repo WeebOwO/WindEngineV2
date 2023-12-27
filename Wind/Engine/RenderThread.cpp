@@ -5,71 +5,81 @@
 #include "Backend/Command.h"
 #include "Backend/SwapChain.h"
 
-#include "Renderer/View.h"
-#include "Renderer/SceneRenderer.h"
-#include "Renderer/RenderGraph/ResourceNode.h"
 #include "Renderer/RenderGraph/RenderGraph.h"
+#include "Renderer/RenderGraph/ResourceNode.h"
+#include "Renderer/SceneRenderer.h"
+#include "Renderer/View.h"
 
-namespace wind {
 
-void FrameParms::Init() {
-    auto device    = RuntimeUtils::GetVulkanDevice();
-    
-    computeEncoder = ref::Create<CommandEncoder>();
-    renderEncoder  = ref::Create<CommandEncoder>();
+namespace wind
+{
 
-    vk::FenceCreateInfo fenceCreateInfo{.flags = vk::FenceCreateFlagBits::eSignaled};
-    flightFence = device.createFence(fenceCreateInfo);
+    void FrameParms::Init()
+    {
+        auto device = RuntimeUtils::GetVulkanDevice();
 
-    imageAvailableSemaphore = device.createSemaphore({});
-    renderFinishedSemaphore = device.createSemaphore({});
+        computeEncoder = ref::Create<CommandEncoder>();
+        renderEncoder  = ref::Create<CommandEncoder>();
 
-    dynamicDescriptorAllocator = ref::Create<DescriptorAllocator>(device);
-}
+        vk::FenceCreateInfo fenceCreateInfo {.flags = vk::FenceCreateFlagBits::eSignaled};
+        flightFence = device.createFence(fenceCreateInfo);
 
-void FrameParms::Destroy() {
-    auto device = RuntimeUtils::GetVulkanDevice();
-    device.destroyFence(flightFence);
-    device.destroySemaphore(imageAvailableSemaphore);
-    device.destroySemaphore(renderFinishedSemaphore);
-}
+        imageAvailableSemaphore = device.createSemaphore({});
+        renderFinishedSemaphore = device.createSemaphore({});
 
-void FrameParms::ResetCommanEncoders() {
-    computeEncoder->Reset();
-    renderEncoder->Reset();
-}
-
-void RenderThread::Init() {
-    for (auto& data : m_frameParams) {
-        data.Init();
+        dynamicDescriptorAllocator = ref::Create<DescriptorAllocator>(device);
     }
-    m_renderGraph = scope::Create<RenderGraph>();
-}
 
-void RenderThread::Quit() {
-    auto device = RuntimeUtils::GetVulkanDevice();
-    device.waitIdle();
-    for (auto& data : m_frameParams) {
-        data.Destroy();
+    void FrameParms::Destroy()
+    {
+        auto device = RuntimeUtils::GetVulkanDevice();
+        device.destroyFence(flightFence);
+        device.destroySemaphore(imageAvailableSemaphore);
+        device.destroySemaphore(renderFinishedSemaphore);
     }
-}
 
-RenderGraph& RenderThread::BeginFrame(const Swapchain& swapchain) {
-    auto& frameData = GetCurrentFrameData();
+    void FrameParms::ResetCommanEncoders()
+    {
+        computeEncoder->Reset();
+        renderEncoder->Reset();
+    }
 
-    frameData.swapchainImageIndex =
-        swapchain.AcquireNextImage(frameData.flightFence, frameData.imageAvailableSemaphore)
-            .value();
-    frameData.ResetCommanEncoders();
+    void RenderThread::Init()
+    {
+        for (auto& data : m_frameParams)
+        {
+            data.Init();
+        }
+        m_renderGraph = scope::Create<RenderGraph>();
+    }
 
-    m_renderGraph->SetupSwapChain(swapchain);
-    m_renderGraph->SetupFrameData(frameData);
+    void RenderThread::Quit()
+    {
+        auto device = RuntimeUtils::GetVulkanDevice();
+        device.waitIdle();
+        for (auto& data : m_frameParams)
+        {
+            data.Destroy();
+        }
+    }
 
-    return *m_renderGraph;
-}
+    RenderGraph& RenderThread::BeginFrame(const Swapchain& swapchain)
+    {
+        auto& frameData = GetCurrentFrameData();
 
-void RenderThread::NextFrame() {
-    m_renderGraph->Exec();
-    m_frameNumber = (m_frameNumber + 1) % RenderConfig::MAX_FRAME_IN_FLIGHT;
-}
+        frameData.swapchainImageIndex =
+            swapchain.AcquireNextImage(frameData.flightFence, frameData.imageAvailableSemaphore).value();
+        frameData.ResetCommanEncoders();
+
+        m_renderGraph->SetupSwapChain(swapchain);
+        m_renderGraph->SetupFrameData(frameData);
+
+        return *m_renderGraph;
+    }
+
+    void RenderThread::NextFrame()
+    {
+        m_renderGraph->Exec();
+        m_frameNumber = (m_frameNumber + 1) % RenderConfig::MAX_FRAME_IN_FLIGHT;
+    }
 } // namespace wind

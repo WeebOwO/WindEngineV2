@@ -8,46 +8,46 @@
 #include "Renderer/MeshPass.h"
 #include "Scene/LightCaster.h"
 
-namespace wind {
-class GameObject;
+namespace wind
+{
+    class GameObject;
 
-struct LightSceneInfo final {
-    static constexpr size_t MaxDirectionalLights = 4;
+    struct LightSceneInfo final
+    {
+        static constexpr size_t MaxDirectionalLights = 4;
 
-    DirectionalLight        DirectionalLights[MaxDirectionalLights];
-    std::vector<PointLight> PointLights;
-    std::vector<SpotLight>  SpotLights;
+        DirectionalLight        DirectionalLights[MaxDirectionalLights];
+        std::vector<PointLight> PointLights;
+        std::vector<SpotLight>  SpotLights;
 
-    [[nodiscard]] auto GetPointLightsSize() const {
-        return (uint32_t)(PointLights.size() * sizeof(PointLight));
-    }
-    [[nodiscard]] auto GetSpotLightsSize() const {
-        return (uint32_t)(SpotLights.size() * sizeof(SpotLight));
-    }
-};
+        [[nodiscard]] auto GetPointLightsSize() const { return (uint32_t)(PointLights.size() * sizeof(PointLight)); }
+        [[nodiscard]] auto GetSpotLightsSize() const { return (uint32_t)(SpotLights.size() * sizeof(SpotLight)); }
+    };
 
-class Scene final {
-public:
-    using GameObjectMap = std::unordered_map<UUID, GameObject>;
-    
-    void Init();
+    class Scene final
+    {
+    public:
+        using GameObjectMap = std::unordered_map<UUID, GameObject>;
 
-    GameObject CreateGameObject(std::string name = {});
-    void       Update();
+        void Init();
 
-private:
-    struct GPUScene {};
+        GameObject CreateGameObject(std::string name = {});
+        void       Update();
 
-    friend class GameObject;
-    friend class SceneRenderer;
+    private:
+        struct GPUScene
+        {};
 
-    entt::registry m_registry;
-    LightSceneInfo m_lightSceneInfo;
+        friend class GameObject;
+        friend class SceneRenderer;
 
-    GameObjectMap m_gameObjectMap;
+        entt::registry m_registry;
+        LightSceneInfo m_lightSceneInfo;
 
-    std::array<MeshPass, MeshPassType::Count> m_meshPasses;
+        GameObjectMap m_gameObjectMap;
 
-    bool m_isDirty = true;
-};
+        std::array<MeshPass, MeshPassType::Count> m_meshPasses;
+
+        bool m_isDirty = true;
+    };
 } // namespace wind

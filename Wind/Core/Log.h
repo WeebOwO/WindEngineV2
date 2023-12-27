@@ -4,18 +4,20 @@
 
 #include <spdlog/spdlog.h>
 
-namespace wind {
-class Log {
-public:
-    static void Init();
+namespace wind
+{
+    class Log
+    {
+    public:
+        static void Init();
 
-    static Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
-    static Ref<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
+        static Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
+        static Ref<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 
-private:
-    static Ref<spdlog::logger> s_CoreLogger;
-    static Ref<spdlog::logger> s_ClientLogger;
-};
+    private:
+        static Ref<spdlog::logger> s_CoreLogger;
+        static Ref<spdlog::logger> s_ClientLogger;
+    };
 
 // Core log macros
 #define WIND_CORE_TRACE(...) ::wind::Log::GetCoreLogger()->trace(__VA_ARGS__)

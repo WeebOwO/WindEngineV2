@@ -1,53 +1,58 @@
 #pragma once
 
-#include "Engine/RenderConfig.h"
 #include "Backend/Command.h"
 #include "Backend/Descriptor.h"
+#include "Engine/RenderConfig.h"
 
-namespace wind {
-class SceneRenderer;
-class RenderGraph;
-class Swapchain;
 
-class FrameParms {
-public:
-    Ref<CommandEncoder> renderEncoder;
-    Ref<CommandEncoder> computeEncoder;
+namespace wind
+{
+    class SceneRenderer;
+    class RenderGraph;
+    class Swapchain;
 
-    vk::Semaphore imageAvailableSemaphore;
-    vk::Semaphore renderFinishedSemaphore;
-    vk::Fence     flightFence;
+    class FrameParms
+    {
+    public:
+        Ref<CommandEncoder> renderEncoder;
+        Ref<CommandEncoder> computeEncoder;
 
-    uint32_t swapchainImageIndex;
+        vk::Semaphore imageAvailableSemaphore;
+        vk::Semaphore renderFinishedSemaphore;
+        vk::Fence     flightFence;
 
-    Ref<DescriptorAllocator> dynamicDescriptorAllocator; // have a list of descriptor pool
+        uint32_t swapchainImageIndex;
 
-private:
-    friend class RenderThread;
-    void Init();
-    void Destroy();
+        Ref<DescriptorAllocator> dynamicDescriptorAllocator; // have a list of descriptor pool
 
-    void ResetCommanEncoders();
-};
+    private:
+        friend class RenderThread;
+        void Init();
+        void Destroy();
 
-class RenderThread {
-public:
-    enum class State {
-        Idle = 0,
-        Kick,
+        void ResetCommanEncoders();
     };
 
-    void Init();
-    void Quit();
+    class RenderThread
+    {
+    public:
+        enum class State
+        {
+            Idle = 0,
+            Kick,
+        };
 
-    RenderGraph& BeginFrame(const Swapchain& swapchain);
-    void         NextFrame();
+        void Init();
+        void Quit();
 
-    auto& GetCurrentFrameData() { return m_frameParams[m_frameNumber]; }
+        RenderGraph& BeginFrame(const Swapchain& swapchain);
+        void         NextFrame();
 
-private:
-    FrameParms           m_frameParams[RenderConfig::MAX_FRAME_IN_FLIGHT];
-    uint32_t                  m_frameNumber = 0;
-    Scope<RenderGraph>   m_renderGraph;
-};
+        auto& GetCurrentFrameData() { return m_frameParams[m_frameNumber]; }
+
+    private:
+        FrameParms         m_frameParams[RenderConfig::MAX_FRAME_IN_FLIGHT];
+        uint32_t           m_frameNumber = 0;
+        Scope<RenderGraph> m_renderGraph;
+    };
 } // namespace wind

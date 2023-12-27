@@ -2,56 +2,69 @@
 
 #include "std.h"
 
+#include "Backend/Buffer.h"
 #include "Core/UUID.h"
 #include "Resource/VertexFactory.h"
-#include "Backend/Buffer.h"
 
-namespace wind {
-class Material;
-class StaticMesh;
-class MeshSource;
-class MeshPass;
 
-enum MeshPassType : uint8_t { BasePass = 0, Count };
+namespace wind
+{
+    class Material;
+    class StaticMesh;
+    class MeshSource;
+    class MeshPass;
 
-template <typename T> class PerpassData {
-public:
-    T& operator[](MeshPassType pass) { return m_data[uint32_t(pass)]; }
-    void Clear(T&& val) {
-        for (int i = 0; i < MeshPassType::Count; ++i) {
-            m_data[i] = val;
+    enum MeshPassType : uint8_t
+    {
+        BasePass = 0,
+        Count
+    };
+
+    template<typename T>
+    class PerpassData
+    {
+    public:
+        T&   operator[](MeshPassType pass) { return m_data[uint32_t(pass)]; }
+        void Clear(T&& val)
+        {
+            for (int i = 0; i < MeshPassType::Count; ++i)
+            {
+                m_data[i] = val;
+            }
         }
-    }
 
-private:
-    std::array<T, MeshPassType::Count> m_data;
-};
+    private:
+        std::array<T, MeshPassType::Count> m_data;
+    };
 
-struct DrawMesh {
-    bool        isMerged; // if this merged, we get the mesh from scene merged vertexBuffer
-    uint32_t    firstVertex;
-    uint32_t    firstIndex;
-    uint32_t    indexCount;
-    uint32_t    vertexCount;
-    MeshSource* meshSource;
-};
+    struct DrawMesh
+    {
+        bool        isMerged; // if this merged, we get the mesh from scene merged vertexBuffer
+        uint32_t    firstVertex;
+        uint32_t    firstIndex;
+        uint32_t    indexCount;
+        uint32_t    vertexCount;
+        MeshSource* meshSource;
+    };
 
-struct MeshDrawCommand {
-    uint64_t               pipelineID;
-    DrawMesh          drawMesh;
-    Material*         materialProxy;
-    VertexFactoryType type;
-};
+    struct MeshDrawCommand
+    {
+        uint64_t          pipelineID;
+        DrawMesh          drawMesh;
+        Material*         materialProxy;
+        VertexFactoryType type;
+    };
 
-struct MeshPass {
-    using MaterialFilter = std::function<bool(const Material& material)>;
+    struct MeshPass
+    {
+        using MaterialFilter = std::function<bool(const Material& material)>;
 
-    void Clear();
+        void Clear();
 
-    MeshPassType             type;
-    std::vector<StaticMesh*> staticMeshes;
-    MaterialFilter           filter;
-};
+        MeshPassType             type;
+        std::vector<StaticMesh*> staticMeshes;
+        MaterialFilter           filter;
+    };
 
-MeshPassType Step(MeshPassType type);
+    MeshPassType Step(MeshPassType type);
 } // namespace wind

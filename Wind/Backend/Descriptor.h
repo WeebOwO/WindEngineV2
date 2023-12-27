@@ -4,58 +4,62 @@
 
 #include "VulkanHeader.h"
 
-namespace wind {
-class DescriptorLayoutCache {
-public:
-    struct DescriptorLayoutInfo {
-        std::vector<vk::DescriptorSetLayoutBinding> bindings;
-        bool                 operator==(const DescriptorLayoutInfo& other) const;
-        [[nodiscard]] size_t hash() const;
+namespace wind
+{
+    class DescriptorLayoutCache
+    {
+    public:
+        struct DescriptorLayoutInfo
+        {
+            std::vector<vk::DescriptorSetLayoutBinding> bindings;
+            bool                                        operator==(const DescriptorLayoutInfo& other) const;
+            [[nodiscard]] size_t                        hash() const;
+        };
+        vk::DescriptorSetLayout CreateDescriptorsetlayout(const vk::DescriptorSetLayoutCreateInfo layoutInfo);
+
+        void Init(vk::Device);
+        void CleanUp();
+
+    private:
+        struct DescriptorLayoutHash
+        {
+            std::size_t operator()(const DescriptorLayoutInfo& k) const { return k.hash(); }
+        };
+        using LayoutCache = std::unordered_map<DescriptorLayoutInfo, vk::DescriptorSetLayout, DescriptorLayoutHash>;
+
+        vk::Device  m_device;
+        LayoutCache m_layoutCache;
     };
-    vk::DescriptorSetLayout
-    CreateDescriptorsetlayout(const vk::DescriptorSetLayoutCreateInfo layoutInfo);
 
-    void Init(vk::Device);
-    void CleanUp();
+    class DescriptorAllocator
+    {
+    public:
+        struct PoolSizes
+        {
+            std::vector<std::pair<vk::DescriptorType, float>> sizes = {
+                {vk::DescriptorType::eSampler, 0.5f},
+                {vk::DescriptorType::eCombinedImageSampler, 4.f},
+                {vk::DescriptorType::eUniformBuffer, 2.f},
+                {vk::DescriptorType::eStorageBuffer, 2.f},
+                {vk::DescriptorType::eSampledImage, 2.f},
+                {vk::DescriptorType::eInputAttachment, 0.5f},
+                {vk::DescriptorType::eUniformBufferDynamic, 0.5f},
+                {vk::DescriptorType::eStorageBufferDynamic, 0.5f}};
+        };
+        DescriptorAllocator(const vk::Device& device, uint32_t descriptorBaseNum = 1000);
+        ~DescriptorAllocator();
 
-private:
-    struct DescriptorLayoutHash {
-        std::size_t operator()(const DescriptorLayoutInfo& k) const { return k.hash(); }
+        vk::DescriptorSet Allocate(const vk::DescriptorSetLayout& layout);
+
+    private:
+        const vk::Device&  m_device;
+        uint32_t           m_descriptorBaseNum;
+        vk::DescriptorPool GrabPool();
+
+        PoolSizes descriptorSizes;
+
+        vk::DescriptorPool              m_currentPool {nullptr};
+        std::vector<vk::DescriptorPool> m_usedPools;
+        std::vector<vk::DescriptorPool> m_freePools;
     };
-    using LayoutCache =
-        std::unordered_map<DescriptorLayoutInfo, vk::DescriptorSetLayout, DescriptorLayoutHash>;
-
-    vk::Device  m_device;
-    LayoutCache m_layoutCache;
-};
-
-class DescriptorAllocator {
-public:
-    struct PoolSizes {
-        std::vector<std::pair<vk::DescriptorType, float>> sizes = {
-            {vk::DescriptorType::eSampler, 0.5f},
-            {vk::DescriptorType::eCombinedImageSampler, 4.f},
-            {vk::DescriptorType::eUniformBuffer, 2.f},
-            {vk::DescriptorType::eStorageBuffer, 2.f},
-            {vk::DescriptorType::eSampledImage, 2.f},
-            {vk::DescriptorType::eInputAttachment, 0.5f},
-            {vk::DescriptorType::eUniformBufferDynamic, 0.5f},
-            {vk::DescriptorType::eStorageBufferDynamic, 0.5f}};
-    };
-    DescriptorAllocator(const vk::Device& device, uint32_t descriptorBaseNum = 1000);
-    ~DescriptorAllocator();
-
-    vk::DescriptorSet Allocate(const vk::DescriptorSetLayout& layout);
-
-private:
-    const vk::Device&  m_device;
-    uint32_t                m_descriptorBaseNum;
-    vk::DescriptorPool GrabPool();
-
-    PoolSizes descriptorSizes;
-
-    vk::DescriptorPool              m_currentPool{nullptr};
-    std::vector<vk::DescriptorPool> m_usedPools;
-    std::vector<vk::DescriptorPool> m_freePools;
-};
 } // namespace wind

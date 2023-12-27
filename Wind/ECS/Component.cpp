@@ -2,6 +2,5 @@
 
 #include "Resource/Mesh.h"
 
-namespace wind {
-    
-}; // namespace wind
+namespace wind
+{}; // namespace wind
