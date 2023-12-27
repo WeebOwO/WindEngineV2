@@ -9,9 +9,9 @@ namespace wind {
 class RenderGraphTexture : public RenderGraphResource {
 public:
     struct Desc {
-        uint32_t                 width;
-        uint32_t                 height;
-        uint32_t                 depth;
+        uint32_t            width;
+        uint32_t            height;
+        uint32_t            depth;
         vk::Format          format;
         vk::ImageLayout     layout    = vk::ImageLayout::eUndefined;
         vk::ImageUsageFlags usage     = vk::ImageUsageFlagBits::eColorAttachment;

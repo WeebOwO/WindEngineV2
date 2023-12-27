@@ -3,7 +3,6 @@
 #include <shaderc/shaderc.hpp>
 
 #include "Core/Log.h"
-#include "ECS/JobSystem.h"
 #include "Engine/RuntimeContext.h"
 #include "Resource/VertexFactory.h"
 
@@ -102,7 +101,6 @@ void PsoCache::CreatePredefinePSO() {
 void RuntimeContext::Init() {
     // Core engine part
     Log::Init();
-    JobSystem::Init();
     device = scope::Create<GPUDevice>();
     // init project path
     auto currentPath = std::filesystem::current_path();
@@ -131,7 +129,6 @@ void RuntimeContext::Quit() {
     shaderMap.reset(nullptr);
     guiContext->Quit(*device);
     psoCache->Destroy();
-    JobSystem::Quit();
 }
 
 void RuntimeContext::PostInit(const Window& window) {
