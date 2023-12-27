@@ -19,9 +19,9 @@
 #include "Renderer/View.h"
 
 // imgui part
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_vulkan.h"
+#include "Imgui/imgui.h"
+#include "Imgui/imgui_impl_glfw.h"
+#include "Imgui/imgui_impl_vulkan.h"
 
 namespace wind {
 Engine::Engine(Scope<Window> window) : m_window(std::move(window)) {

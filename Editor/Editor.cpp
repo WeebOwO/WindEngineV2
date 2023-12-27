@@ -1,7 +1,7 @@
 #include "std.h"
 
 #include <GLFW/glfw3.h>
-#include <imgui.h>
+#include <Imgui/imgui.h>
 
 #include "Engine/Window.h"
 #include "Engine/Engine.h"

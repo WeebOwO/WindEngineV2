@@ -1,6 +1,6 @@
 #include "SceneRenderer.h"
 
-#include <imgui.h>
+#include <Imgui/imgui.h>
 
 #include "View.h"
 #include "MeshPass.h"
