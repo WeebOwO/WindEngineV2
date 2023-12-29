@@ -13,7 +13,6 @@ namespace wind
         Buffer,
         Texture,
         Shader,
-        CommandEncoder,
         CommandBuffer,
         ShaderParamer,
         RenderPass,

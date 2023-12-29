@@ -15,7 +15,7 @@ class ResourceRegistry;
 class PassNode {
 public:
     PassNode(RenderGraph& rg) : renderGraph(rg) {}
-    virtual void Execute(ResourceRegistry& resourceRegistry, CommandEncoder& encoder) noexcept {}
+    virtual void Execute(ResourceRegistry& resourceRegistry, CommandBuffer& encoder) noexcept {}
 
 protected:
     std::unordered_set<RenderGraphHandle::Index> declareResources;
@@ -46,7 +46,7 @@ public:
     };
 
     RenderPassNode(RenderGraph& rg, const std::string& name, Scope<RenderGraphPassBase> pass);
-    virtual void Execute(ResourceRegistry& resourceRegistry, CommandEncoder& encoder) noexcept {
+    virtual void Execute(ResourceRegistry& resourceRegistry, CommandBuffer& encoder) noexcept {
         m_passBase->Execute(resourceRegistry, encoder);
     }
 

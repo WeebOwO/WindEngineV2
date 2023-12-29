@@ -4,7 +4,7 @@
 
 namespace wind
 {
-    CommandEncoder::CommandEncoder(RenderCommandQueueType queueType) : m_queueType(queueType)
+    CommandBuffer::CommandBuffer(RenderCommandQueueType queueType) : m_queueType(queueType)
     {
         auto queueIndices = device.GetQueueIndices();
         auto vkDevice     = device.GetVkDeviceHandle();
@@ -25,7 +25,7 @@ namespace wind
         m_nativeHandle = vkDevice.allocateCommandBuffers(allocateInfo).front();
     }
 
-    CommandEncoder::~CommandEncoder()
+    CommandBuffer::~CommandBuffer()
     {
         // wait command to finish job
         auto vkDevice = device.GetVkDeviceHandle();
@@ -35,30 +35,30 @@ namespace wind
 
     // reset the whole command pool, this is faster than reset the commandbuffer in multithread context
     // https://github.com/KhronosGroup/Vulkan-Samples/blob/main/samples/performance/command_buffer_usage/README.adoc
-    void CommandEncoder::Reset() { device.GetVkDeviceHandle().resetCommandPool(m_cmdPool); }
+    void CommandBuffer::Reset() { device.GetVkDeviceHandle().resetCommandPool(m_cmdPool); }
 
-    void CommandEncoder::Begin()
+    void CommandBuffer::Begin()
     {
         vk::CommandBufferBeginInfo beginInfo {.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit};
         m_nativeHandle.begin(beginInfo);
     }
 
-    vk::CommandBuffer CommandEncoder::Finish()
+    vk::CommandBuffer CommandBuffer::Finish()
     {
         m_nativeHandle.end();
         return m_nativeHandle;
     }
 
-    ImmCommandEncoder::ImmCommandEncoder()
+    ImmCommandBuffer::ImmCommandBuffer()
     {
         m_handle = device.GetBackUpCommandBuffer();
         vk::CommandBufferBeginInfo beginInfo {.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit};
         m_handle.begin(beginInfo);
     }
 
-    void ImmCommandEncoder::PushTask(const TaskFunc& func) { m_tasks.push_back(func); }
+    void ImmCommandBuffer::PushTask(const TaskFunc& func) { m_tasks.push_back(func); }
 
-    void ImmCommandEncoder::Submit()
+    void ImmCommandBuffer::Submit()
     {
         for (const auto& func : m_tasks)
         {

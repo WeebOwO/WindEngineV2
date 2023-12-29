@@ -163,7 +163,7 @@ namespace wind
                 [&](RenderGraph::Builder& builder, PresentPassData& data) {
                     // present pass don't need to declare render pass
                 },
-                [&](ResourceRegistry& resourceRegistry, PresentPassData& data, CommandEncoder& encoder) {
+                [&](ResourceRegistry& resourceRegistry, PresentPassData& data, CommandBuffer& encoder) {
                     encoder.BeginRendering(resourceRegistry.GetPresentRenderingInfo());
                     encoder.RenderUI(); // render ui in the final pass
                     encoder.EndRendering();

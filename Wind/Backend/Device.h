@@ -10,7 +10,7 @@ namespace wind
 {
 
     class VkAllocator;
-    class CommandEncoder;
+    class CommandBuffer;
 
     struct QueueIndices
     {

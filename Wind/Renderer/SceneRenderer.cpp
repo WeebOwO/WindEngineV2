@@ -43,7 +43,7 @@ namespace wind
         m_viewPort.setWidth(width).setHeight(height).setX(offsetX).setY(offsetY).setMinDepth(0.0).setMaxDepth(1.0);
     }
 
-    void SceneRenderer::DrawMesh(CommandEncoder& encoder)
+    void SceneRenderer::DrawMesh(CommandBuffer& encoder)
     {
         auto                renderer = g_runtimeContext.renderer.get();
         for (const auto& meshDrawCommand : m_cacheMeshDrawCommands[BasePass])
@@ -98,7 +98,7 @@ namespace wind
 
                     builder.DeclareRenderPass(renderDesc);
                 },
-                [&](ResourceRegistry& resourceRegistry, ColorPassData& data, CommandEncoder& encoder) {
+                [&](ResourceRegistry& resourceRegistry, ColorPassData& data, CommandBuffer& encoder) {
                     encoder.BeginRendering(resourceRegistry.GetRenderingInfo());
                     DrawMesh(encoder);
                     encoder.EndRendering();

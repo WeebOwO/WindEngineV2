@@ -19,11 +19,11 @@ namespace wind
         General
     };
 
-    class CommandEncoder : public RHIResource<RHIResourceType::CommandEncoder>
+    class CommandBuffer : public RHIResource<RHIResourceType::CommandBuffer>
     {
     public:
-        CommandEncoder(RenderCommandQueueType queueType = RenderCommandQueueType::General);
-        ~CommandEncoder();
+        CommandBuffer(RenderCommandQueueType queueType = RenderCommandQueueType::General);
+        ~CommandBuffer();
 
         void              Begin();
         void              Reset();
@@ -76,13 +76,13 @@ namespace wind
     };
 
     // always alloc from stack, try not to use this from heap memory
-    class ImmCommandEncoder : public RHIResource<RHIResourceType::CommandBuffer>
+    class ImmCommandBuffer : public RHIResource<RHIResourceType::CommandBuffer>
     {
     public:
         using TaskFunc = std::function<void(const vk::CommandBuffer&)>;
 
-        ImmCommandEncoder();
-        ~ImmCommandEncoder() = default;
+        ImmCommandBuffer();
+        ~ImmCommandBuffer() = default;
 
         void PushTask(const TaskFunc& func);
         void CopyBuffer();

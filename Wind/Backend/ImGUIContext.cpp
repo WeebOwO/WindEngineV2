@@ -69,7 +69,7 @@ namespace wind
 
         ImGui_ImplVulkan_Init(&initInfo, nullptr);
 
-        ImmCommandEncoder taskEncoder;
+        ImmCommandBuffer taskEncoder;
         taskEncoder.PushTask([](const vk::CommandBuffer& buffer) {
             VkCommandBuffer Cbuffer = (VkCommandBuffer)buffer;
             ImGui_ImplVulkan_CreateFontsTexture(Cbuffer);

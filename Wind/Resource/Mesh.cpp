@@ -21,11 +21,10 @@ namespace wind
         vertexUploadBuffer.WriteData(meshSource.vertices.data(), vertexBufferByteSize, 0);
         indexUploadBuffer.WriteData(meshSource.indices.data(), indexBufferByteSize, 0);
 
-        ImmCommandEncoder copyEncoder;
+        ImmCommandBuffer copyEncoder;
 
         copyEncoder.PushTask([&](const vk::CommandBuffer& command) {
             vk::BufferCopy bufferCopy {.srcOffset = 0, .dstOffset = 0, .size = vertexBufferByteSize};
-
             command.copyBuffer(
                 vertexUploadBuffer.GetNativeHandle(), meshSource.vertexBuffer->GetNativeHandle(), bufferCopy);
 

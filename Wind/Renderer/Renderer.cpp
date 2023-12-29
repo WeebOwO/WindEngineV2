@@ -1,5 +1,6 @@
 #include "Renderer.h"
 
+#include "Backend/Device.h"
 #include "Material.h"
 #include "PsoCache.h"
 
@@ -15,8 +16,8 @@ namespace wind
     void FrameParms::Init(vk::Device device)
     {
 
-        computeEncoder = ref::Create<CommandEncoder>();
-        renderEncoder  = ref::Create<CommandEncoder>();
+        computeEncoder = ref::Create<CommandBuffer>();
+        renderEncoder  = ref::Create<CommandBuffer>();
 
         vk::FenceCreateInfo fenceCreateInfo {.flags = vk::FenceCreateFlagBits::eSignaled};
         flightFence = device.createFence(fenceCreateInfo);

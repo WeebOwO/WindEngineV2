@@ -3,12 +3,10 @@
 #include "Core/Service.h"
 #include "PsoCache.h"
 
-
 #include "Backend/Command.h"
 #include "Backend/Descriptor.h"
 #include "Backend/Device.h"
 #include "Engine/RenderConfig.h"
-
 
 #include "RenderGraph/RenderGraph.h"
 
@@ -21,8 +19,8 @@ namespace wind
     class FrameParms
     {
     public:
-        Ref<CommandEncoder> renderEncoder;
-        Ref<CommandEncoder> computeEncoder;
+        Ref<CommandBuffer> renderEncoder;
+        Ref<CommandBuffer> computeEncoder;
 
         vk::Semaphore imageAvailableSemaphore;
         vk::Semaphore renderFinishedSemaphore;
@@ -63,7 +61,7 @@ namespace wind
         template<typename... Args>
         uint64_t CachePso(Args&&... args)
         {
-            return m_psoCache->CachePso(args...);
+            return m_psoCache->CachePso(std::forward<Args>(args)...);
         }
 
         auto GetPso(uint64_t id) { return m_psoCache->GetPso(id); }

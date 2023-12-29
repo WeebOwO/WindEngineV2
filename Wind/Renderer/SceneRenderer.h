@@ -27,7 +27,7 @@ namespace wind
         void InitView(View& view); // Dispatch MeshPass
 
         void BuildMeshDrawCommand(const MeshPass& meshPass);
-        void DrawMesh(CommandEncoder& encoder);
+        void DrawMesh(CommandBuffer& encoder);
 
         Scene*      m_renderScene;
         FrameParms* m_framedata;
