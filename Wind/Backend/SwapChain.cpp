@@ -203,7 +203,7 @@ namespace wind
                                    .signalSemaphoreCount = 1,
                                    .pSignalSemaphores    = &imageFinishSemaphre};
 
-        m_device.GetGraphicsQueue().submit(submitInfo, signalFence); // render finish
+        m_device.GetMainQueue().submit(submitInfo, signalFence); // render finish
 
         vk::PresentInfoKHR presentInfo {.waitSemaphoreCount = 1,
                                         .pWaitSemaphores    = &imageFinishSemaphre,
@@ -211,7 +211,7 @@ namespace wind
                                         .pSwapchains        = &m_swapchain,
                                         .pImageIndices      = &imageIndex};
 
-        auto presentResult = m_device.GetGraphicsQueue().presentKHR(presentInfo);
+        auto presentResult = m_device.GetMainQueue().presentKHR(presentInfo);
     }
 
     void Swapchain::CleanUpSwapChain()

@@ -92,4 +92,21 @@ namespace wind
         vk::CommandBuffer     m_handle;
         std::vector<TaskFunc> m_tasks;
     };
+
+    class CommandBufferManager
+    {
+    public:
+        void Init(GPUDevice* device, uint32_t numThreads);
+        void Quit();
+
+        void ResetPool(uint32_t frameIndex);
+
+        CommandBuffer* GetCommandBuffer(uint32_t frameIndex, uint32_t threadIndex, bool begin);
+
+    private:
+        GPUDevice* m_device {nullptr};
+        
+        std::vector<vk::CommandPool> m_commandPools;
+        std::vector<uint8_t>         m_usedBUffers;
+    };
 } // namespace wind

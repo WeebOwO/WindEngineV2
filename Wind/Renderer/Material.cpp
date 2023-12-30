@@ -26,7 +26,6 @@ namespace wind
     void MaterialManager::InitDefaultMaterial(ShaderMap& shaderMap)
     {
         // default lit
-       
         Material::Desc desc {.debugName    = "default_lit",
                              .ShadingModel = Material::ShadingModel::Lit,
                              .blendMode    = Material::BlendMode::Opaque,

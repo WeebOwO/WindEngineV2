@@ -49,7 +49,7 @@ namespace wind
         }
 
         m_renderGraph = scope::Create<RenderGraph>();
-
+        
         // init the shader map
         m_shaderMap = scope::Create<ShaderMap>();
         m_shaderMap->CacheRasterShader(RasterShader::Create("BasePassShader", "Triangle.vert.spv", "Triangle.frag.spv"));

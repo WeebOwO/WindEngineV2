@@ -1,6 +1,6 @@
 #include "RuntimeContext.h"
 
-#include "std.h"
+#include "lua.h"
 #include <shaderc/shaderc.hpp>
 
 #include "Core/Log.h"
@@ -33,8 +33,15 @@ namespace wind
         // init project path
         auto currentPath = std::filesystem::current_path();
 
-        pathManager.projectPath = currentPath.parent_path().parent_path().parent_path().parent_path();
+        pathManager.projectPath = WORK_DIR;
         pathManager.shaderPath  = pathManager.projectPath.append("Shaders");
+        pathManager.asssetPath  = pathManager.projectPath.append("Assets");
+
+        // init the lua virutal machine
+        luaState = luaL_newstate();
+        if(luaState == NULL) {
+            WIND_CORE_ERROR("Fail to create lua machine");
+        } 
     }
 
     void RuntimeContext::Quit()
@@ -42,6 +49,7 @@ namespace wind
         device->WaitIdle();
         renderer->Quit();
         guiContext->Quit(*device);
+        lua_close(luaState);
     }
 
     void RuntimeContext::PostInit(const Window& window)

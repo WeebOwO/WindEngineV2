@@ -1,6 +1,7 @@
 #include "Command.h"
 
 #include "Device.h"
+#include "Engine/RenderConfig.h"
 
 namespace wind
 {
@@ -9,8 +10,9 @@ namespace wind
         auto queueIndices = device.GetQueueIndices();
         auto vkDevice     = device.GetVkDeviceHandle();
 
-        uint32_t queueIndex = queueType == RenderCommandQueueType::Compute ? queueIndices.computeQueueIndex.value() :
-                                                                             queueIndices.graphicsQueueIndex.value();
+        uint32_t queueIndex = queueType == RenderCommandQueueType::AsyncCompute ?
+                                  queueIndices.asyncComputeQueueIndex.value() :
+                                  queueIndices.mainQueueIndex.value();
 
         vk::CommandPoolCreateInfo poolCreateInfo {.queueFamilyIndex = queueIndex};
 
@@ -66,5 +68,11 @@ namespace wind
         }
         // this submit may cause gpu cpu stall
         device.SubmitBackUpCommandBuffer(m_handle);
+    }
+
+    void CommandBufferManager::Init(GPUDevice* device, uint32_t numThreads) {
+        m_device = device;
+        const uint32_t totalPoolCount = numThreads * RenderConfig::MAX_FRAME_IN_FLIGHT;
+        // create init command buffer
     }
 } // namespace wind

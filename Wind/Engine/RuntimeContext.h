@@ -1,6 +1,11 @@
 #pragma once
 
-#include "std.h"
+extern "C"
+{
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h" 
+}
 
 #include "Backend/ImGuiContext.h"
 #include "Backend/VulkanHeader.h"
@@ -18,18 +23,16 @@ namespace vk
 namespace wind
 {
     // manage runtime resource and system
-    class RasterShader;
-    class ComputeShader;
     class GPUDevice;
-    class MaterialManager;
     class Scene;
-    class Engine;
     class Renderer;
 
     struct PathManager
     {
         std::filesystem::path projectPath;
         std::filesystem::path shaderPath;
+        std::filesystem::path configPath;
+        std::filesystem::path asssetPath;
     };
 
     struct RuntimeContext
@@ -38,10 +41,11 @@ namespace wind
         void PostInit(const Window& window);
         void Quit();
 
-        Scope<GPUDevice>    device;
-        Scope<ImGUIContext> guiContext;
-        Scope<Renderer>     renderer;
-        Scene*              activeScene;
+        Scope<GPUDevice>    device      = nullptr;
+        Scope<ImGUIContext> guiContext  = nullptr;
+        Scope<Renderer>     renderer    = nullptr;
+        lua_State*          luaState    = nullptr;
+        Scene*              activeScene = nullptr;
         PathManager         pathManager;
     };
 

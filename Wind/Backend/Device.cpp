@@ -128,23 +128,28 @@ namespace wind
 
         auto queueProperties = m_physicalDevice.getQueueFamilyProperties();
 
+        auto isMainQueue = [](vk::QueueFlags flag) {
+            return flag & vk::QueueFlagBits::eGraphics && flag & vk::QueueFlagBits::eCompute &&
+                   flag & vk::QueueFlagBits::eTransfer;
+        };
+
         for (uint32_t i = 0; const auto& queueFamily : queueProperties)
         {
-            if (queueFamily.queueCount > 0 && queueFamily.queueFlags & vk::QueueFlagBits::eGraphics)
+            if (queueFamily.queueCount > 0 && isMainQueue(queueFamily.queueFlags))
             {
-                m_queueIndices.graphicsQueueIndex = i;
+                m_queueIndices.mainQueueIndex = i;
             }
 
-            if (queueFamily.queueCount > 0 && queueFamily.queueFlags & vk::QueueFlagBits::eCompute)
+            if (queueFamily.queueCount > 0 && queueFamily.queueFlags & vk::QueueFlagBits::eCompute &&
+                m_queueIndices.mainQueueIndex.has_value() && i != m_queueIndices.mainQueueIndex)
             {
-                if (m_queueIndices.graphicsQueueIndex.has_value() && i != m_queueIndices.graphicsQueueIndex)
-                {
-                    m_queueIndices.asyncComputeQueueIndex = i;
-                }
-                else
-                {
-                    m_queueIndices.computeQueueIndex = i;
-                }
+                m_queueIndices.asyncComputeQueueIndex = i;
+            }
+
+            if (queueFamily.queueCount > 0 && queueFamily.queueFlags & vk::QueueFlagBits::eTransfer &&
+                m_queueIndices.mainQueueIndex.has_value() && i != m_queueIndices.mainQueueIndex)
+            {
+                m_queueIndices.transferQueueIndex = i;
             }
 
             if (m_queueIndices.IsComplete())
@@ -158,8 +163,8 @@ namespace wind
         // Create Device
         std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
 
-        std::unordered_set<uint32_t> uniqueQueueIndices {m_queueIndices.graphicsQueueIndex.value(),
-                                                         m_queueIndices.computeQueueIndex.value(),
+        std::unordered_set<uint32_t> uniqueQueueIndices {m_queueIndices.mainQueueIndex.value(),
+                                                         m_queueIndices.transferQueueIndex.value(),
                                                          m_queueIndices.asyncComputeQueueIndex.value()};
 
         vk::PhysicalDeviceDynamicRenderingFeaturesKHR dynamic_rendering = {};
@@ -186,9 +191,9 @@ namespace wind
         m_device = m_physicalDevice.createDeviceUnique(deviceCreateInfo);
         VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_device);
         // Get queue
-        m_graphicsQueue     = m_device->getQueue(m_queueIndices.graphicsQueueIndex.value(), 0);
-        m_computeQueue      = m_device->getQueue(m_queueIndices.computeQueueIndex.value(), 0);
+        m_mainQueue         = m_device->getQueue(m_queueIndices.mainQueueIndex.value(), 0);
         m_asyncComputeQueue = m_device->getQueue(m_queueIndices.asyncComputeQueueIndex.value(), 0);
+        m_transferQueue     = m_device->getQueue(m_queueIndices.transferQueueIndex.value(), 0);
     }
 
     void GPUDevice::InitAllocator() { m_allocator = scope::Create<VkAllocator>(*this); }
@@ -231,7 +236,7 @@ namespace wind
 
     void GPUDevice::InitBackupCommandBuffer()
     {
-        vk::CommandPoolCreateInfo poolCreateInfo {.queueFamilyIndex = m_queueIndices.graphicsQueueIndex.value()};
+        vk::CommandPoolCreateInfo poolCreateInfo {.queueFamilyIndex = m_queueIndices.mainQueueIndex.value()};
 
         m_backupCommandPool = m_device->createCommandPool(poolCreateInfo);
 
@@ -251,7 +256,7 @@ namespace wind
         buffer.end();
 
         vk::SubmitInfo submitInfo {.commandBufferCount = 1, .pCommandBuffers = &buffer};
-        m_graphicsQueue.submit(submitInfo, m_backupCommandfence);
+        m_mainQueue.submit(submitInfo, m_backupCommandfence);
 
         auto result = m_device->waitForFences(m_backupCommandfence, true, std::numeric_limits<float>::max());
         if (result != vk::Result::eSuccess)

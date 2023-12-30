@@ -12,20 +12,28 @@
 #include "Resource/Mesh.h"
 #include "Scene/Scene.h"
 // renderer part
-#include "Renderer/Renderer.h"
 #include "Renderer/Material.h"
 #include "Renderer/RenderGraph/RenderGraphPass.h"
 #include "Renderer/RenderGraph/ResourceRegistry.h"
+#include "Renderer/Renderer.h"
 #include "Renderer/SceneRenderer.h"
 #include "Renderer/View.h"
-
 // imgui part
 #include "Imgui/imgui.h"
 #include "Imgui/imgui_impl_glfw.h"
 #include "Imgui/imgui_impl_vulkan.h"
 
 namespace wind
-{
+{   
+    static void ScriptTest() {
+        auto luaState = g_runtimeContext.luaState;
+        std::string code = "a=11+7";
+        int r = luaL_dostring(luaState, code.c_str());
+        lua_getglobal(luaState, "a");
+        float cpp_a = (float)lua_tonumber(luaState, -1);
+        WIND_CORE_INFO("Script result is {}", cpp_a);
+    };
+
     Engine::Engine(Scope<Window> window) : m_window(std::move(window))
     {
         Init();
@@ -69,6 +77,7 @@ namespace wind
 #ifdef TRACY_ENABLE
         WIND_CORE_INFO("Start Tracy");
 #endif
+        ScriptTest();
         LoadScene();
         while (!glfwWindowShouldClose(m_window->GetWindow()))
         {
@@ -115,7 +124,7 @@ namespace wind
 
     void Engine::RenderTick(float delta)
     {
-        
+
         ZoneScopedN("RenderTick");
         // imgui start part
         ImGui_ImplVulkan_NewFrame();

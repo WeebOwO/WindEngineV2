@@ -8,20 +8,17 @@
 
 namespace wind
 {
-
     class VkAllocator;
-    class CommandBuffer;
 
     struct QueueIndices
     {
-        std::optional<uint32_t> graphicsQueueIndex;
-        std::optional<uint32_t> computeQueueIndex;
+        std::optional<uint32_t> mainQueueIndex;
         std::optional<uint32_t> asyncComputeQueueIndex;
+        std::optional<uint32_t> transferQueueIndex;
 
         bool IsComplete()
         {
-            return graphicsQueueIndex.has_value() && computeQueueIndex.has_value() &&
-                   asyncComputeQueueIndex.has_value();
+            return mainQueueIndex.has_value() && asyncComputeQueueIndex.has_value() && transferQueueIndex.has_value();
         }
     };
 
@@ -34,9 +31,9 @@ namespace wind
         void WaitIdle();
         operator vk::Device() { return *m_device; }
 
-        vk::Queue GetGraphicsQueue() const noexcept { return m_graphicsQueue; }
-        vk::Queue GetComputeQueue() const noexcept { return m_computeQueue; }
-        vk::Queue GetAsyncComputeQueue() const noexcept { return m_asyncComputeQueue; };
+        vk::Queue GetMainQueue() const noexcept { return m_mainQueue; }
+        vk::Queue GetAsyncComputeQueue() const noexcept { return m_asyncComputeQueue; }
+        vk::Queue GetTransferComputeQueue() const noexcept { return m_transferQueue; };
 
         auto GetQueueIndices() const noexcept { return m_queueIndices; }
 
@@ -62,7 +59,7 @@ namespace wind
         // block style submit
         vk::CommandBuffer GetBackUpCommandBuffer();
         void              SubmitBackUpCommandBuffer(const vk::CommandBuffer& buffer);
-
+        
     private:
         void InitAllocator();
         void CreateInstance();
@@ -76,9 +73,9 @@ namespace wind
         uint32_t     m_alignSize;
         QueueIndices m_queueIndices;
 
-        vk::Queue m_graphicsQueue;
-        vk::Queue m_computeQueue;
-        vk::Queue m_asyncComputeQueue;
+        vk::Queue m_mainQueue;         // can perform the general task (graphics, compute, copy)
+        vk::Queue m_asyncComputeQueue; // perform the async compute task
+        vk::Queue m_transferQueue;     // transfer queue
 
         vk::UniqueInstance       m_vkInstance;
         vk::PhysicalDevice       m_physicalDevice;
@@ -94,9 +91,9 @@ namespace wind
         Scope<VkAllocator> m_allocator;
         bool               m_enableDebug {true};
 
+        // main queue backup command buffer which do some imm task
         vk::CommandPool   m_backupCommandPool;
         vk::CommandBuffer m_backupCommandBuffer;
-
-        vk::Fence m_backupCommandfence;
+        vk::Fence         m_backupCommandfence;
     };
 } // namespace wind

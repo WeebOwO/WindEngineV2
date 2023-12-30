@@ -55,8 +55,8 @@ namespace wind
         initInfo.Instance              = device.GetVkInstance();
         initInfo.PhysicalDevice        = device.GetVkPhysicalDevice();
         initInfo.Device                = vkdevice;
-        initInfo.Queue                 = device.GetGraphicsQueue();
-        initInfo.QueueFamily           = device.GetQueueIndices().graphicsQueueIndex.value();
+        initInfo.Queue                 = device.GetMainQueue();
+        initInfo.QueueFamily           = device.GetQueueIndices().mainQueueIndex.value();
         initInfo.PipelineCache         = nullptr;
         initInfo.DescriptorPool        = m_imguiPool;
         initInfo.MinImageCount         = 3;

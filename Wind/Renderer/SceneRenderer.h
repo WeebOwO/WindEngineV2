@@ -11,7 +11,7 @@ namespace wind
 {
     class Scene;
     class View;
-
+    
     class SceneRenderer
     {
     public:
