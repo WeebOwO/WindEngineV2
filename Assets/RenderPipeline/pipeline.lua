@@ -21,7 +21,8 @@ function PipelineModule.PushVertexStream(stream)
     PipelineModule.vertex_inputs.vertex_streams = stream
 end
 
-function PipelineModule.PushPipeline(blendMode, shaders, depth, wireframe)
+function PipelineModule.PushPipeline(name, blendMode, shaders, depth, wireframe)
+    PipelineModule.name = name
     PipelineModule.pipeline.blendMode = blendMode
     PipelineModule.pipeline.shaders = shaders
     PipelineModule.pipeline.depth = depth

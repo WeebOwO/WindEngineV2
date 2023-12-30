@@ -31,7 +31,7 @@ local depth = {write=true, test=true}
 
 pipeline.PushVertexAttribute(vertexAttribute)
 pipeline.PushVertexStream(vertexStream)
-pipeline.PushPipeline(blendMode, shaders, depth)
+pipeline.PushPipeline("default_lit",blendMode, shaders, depth)
 pipeline.Build()
 
 return pipeline

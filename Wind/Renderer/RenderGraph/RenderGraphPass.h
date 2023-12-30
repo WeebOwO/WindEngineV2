@@ -8,6 +8,7 @@ namespace wind {
 enum class EPassType { Graphics, Compute, AsyncCompute };
 
 class ResourceRegistry;
+
 class RenderGraphPassBase {
 public:
     RenderGraphPassBase() = default;
