@@ -1,9 +1,9 @@
 #include "RuntimeContext.h"
 
-#include "lua.h"
 #include <shaderc/shaderc.hpp>
 
 #include "Core/Log.h"
+#include "Core/Config.h"
 #include "Engine/RuntimeContext.h"
 #include "Resource/VertexFactory.h"
 
@@ -30,13 +30,12 @@ namespace wind
         renderer = scope::Create<Renderer>(*device);
         renderer->Init();
 
-        // init project path
-        auto currentPath = std::filesystem::current_path();
-
-        pathManager.projectPath = WORK_DIR;
-        pathManager.shaderPath  = pathManager.projectPath.append("Shaders");
-        pathManager.asssetPath  = pathManager.projectPath.append("Assets");
-
+        // init project path        
+        const std::string projectDir = PROJECT_DIR;
+        pathManager.projectPath = PROJECT_DIR;
+        pathManager.shaderPath  = projectDir + "\\Shaders";
+        pathManager.asssetPath  = projectDir + "\\Assets";
+        pathManager.pipelinePath  = pathManager.asssetPath.string() + "\\RenderPipeline";
         // init the lua virutal machine
         luaState = luaL_newstate();
         if(luaState == NULL) {
@@ -56,6 +55,10 @@ namespace wind
     {
         guiContext = scope::Create<ImGUIContext>();
         guiContext->Init(*device, window);
+    }
+
+    std::filesystem::path RuntimeContext::GetPipelinePath(const std::string& name) {
+        return pathManager.pipelinePath.string() + "\\" + name;
     }
 
     std::filesystem::path GetPath(std::filesystem::path path) { return std::filesystem::path(); }

@@ -1,11 +1,6 @@
 #pragma once
 
-extern "C"
-{
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h" 
-}
+#include "Core/Script.h"
 
 #include "Backend/ImGuiContext.h"
 #include "Backend/VulkanHeader.h"
@@ -33,6 +28,7 @@ namespace wind
         std::filesystem::path shaderPath;
         std::filesystem::path configPath;
         std::filesystem::path asssetPath;
+        std::filesystem::path pipelinePath;
     };
 
     struct RuntimeContext
@@ -40,6 +36,8 @@ namespace wind
         void Init();
         void PostInit(const Window& window);
         void Quit();
+
+        std::filesystem::path GetPipelinePath(const std::string& name);
 
         Scope<GPUDevice>    device      = nullptr;
         Scope<ImGUIContext> guiContext  = nullptr;

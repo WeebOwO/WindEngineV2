@@ -1,5 +1,6 @@
 #include "Engine.h"
 
+#include "Core/Script.h"
 #include <tracy/Tracy.hpp>
 
 #include "Window.h"
@@ -25,13 +26,13 @@
 
 namespace wind
 {   
-    static void ScriptTest() {
-        auto luaState = g_runtimeContext.luaState;
-        std::string code = "a=11+7";
-        int r = luaL_dostring(luaState, code.c_str());
-        lua_getglobal(luaState, "a");
-        float cpp_a = (float)lua_tonumber(luaState, -1);
-        WIND_CORE_INFO("Script result is {}", cpp_a);
+    static void ScriptTest()
+    {
+        auto luaState     = g_runtimeContext.luaState;
+        auto pipelinePath = g_runtimeContext.GetPipelinePath("default_lit.lua").string();
+        if(lua::CheckLua(luaState, luaL_loadfile(luaState, pipelinePath.c_str()))) {
+            
+        }
     };
 
     Engine::Engine(Scope<Window> window) : m_window(std::move(window))

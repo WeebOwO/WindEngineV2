@@ -95,7 +95,7 @@ namespace wind
                         .sample     = 1,
                         .clearValue = clearValue,
                     };
-
+                    
                     builder.DeclareRenderPass(renderDesc);
                 },
                 [&](ResourceRegistry& resourceRegistry, ColorPassData& data, CommandBuffer& encoder) {
