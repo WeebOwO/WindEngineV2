@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-
 #include <cassert>
 #include <condition_variable>
 #include <functional>

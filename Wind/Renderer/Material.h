@@ -17,6 +17,7 @@ namespace wind
             UnLit = 0,
             Lit
         };
+
         enum class BlendMode : uint8_t
         {
             Opaque,
@@ -50,7 +51,7 @@ namespace wind
     private:
         Desc                           m_desc;
         std::string                    m_debugName;
-        RasterShader*                  m_rasterShader;
+        RasterShader*                  m_rasterShader;  
         BlendMode                      m_blendMode;
         ShadingModel                   m_shadingModel;
         std::vector<vk::DescriptorSet> m_descriptorSets;

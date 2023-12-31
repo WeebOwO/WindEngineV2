@@ -48,9 +48,12 @@ public:
     auto& GetBlackBoard() noexcept { return m_blackBoard; }
     bool  ContainPass(const std::string& passName) { return m_passNodes.contains(passName); }
 
+
+
 private:
     friend class RenderPassNode;
     friend class ResourceRegistry;
+    friend class Renderer;
 
     template <typename ResourceType>
     RenderGraphID<ResourceType> Create(const std::string&                 name,

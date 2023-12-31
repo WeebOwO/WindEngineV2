@@ -1,6 +1,7 @@
 #include "Texture.h"
 
 #include "Device.h"
+#include "Utils.h"
 
 namespace wind
 {
@@ -85,6 +86,8 @@ namespace wind
 
         m_allocatedImage = device.AllocateImage(imageCreateInfo, allocationInfo);
         CreateImageView(GetDefaultImageSubresourceRange());
+
+        m_defaultSampler = utils::CreateDefaultSampler();
     }
 
     Ref<GPUTexture> GPUTexture::Create(const Desc& desc) { return ref::Create<GPUTexture>(desc); }
@@ -92,6 +95,8 @@ namespace wind
     GPUTexture::~GPUTexture()
     {
         auto& device = g_runtimeContext.device;
+        if (m_defaultSampler)
+            device->GetVkDeviceHandle().destroySampler(m_defaultSampler);
         device->GetVkDeviceHandle().destroyImageView(m_defaultView);
         // use device allocator to destroy
         device->DestroyImage(m_allocatedImage);

@@ -28,11 +28,7 @@ namespace wind
 {   
     static void ScriptTest()
     {
-        auto luaState     = g_runtimeContext.luaState;
-        auto pipelinePath = g_runtimeContext.GetPipelinePath("default_lit.lua").string();
-        if(lua::CheckLua(luaState, luaL_loadfile(luaState, pipelinePath.c_str()))) {
-            
-        }
+        // we already test lua in previous commit
     };
 
     Engine::Engine(Scope<Window> window) : m_window(std::move(window))
@@ -125,7 +121,6 @@ namespace wind
 
     void Engine::RenderTick(float delta)
     {
-
         ZoneScopedN("RenderTick");
         // imgui start part
         ImGui_ImplVulkan_NewFrame();
@@ -174,6 +169,7 @@ namespace wind
                     // present pass don't need to declare render pass
                 },
                 [&](ResourceRegistry& resourceRegistry, PresentPassData& data, CommandBuffer& encoder) {
+                    // todo: add a pipeline barrier to make sure scene color is render finished
                     encoder.BeginRendering(resourceRegistry.GetPresentRenderingInfo());
                     encoder.RenderUI(); // render ui in the final pass
                     encoder.EndRendering();

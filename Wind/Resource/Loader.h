@@ -2,10 +2,13 @@
 
 #include "std.h"
 
+#include "nlohmann/json_fwd.hpp"
+
 #include "Core/Log.h"
 
 namespace wind::io
-{
+{   
+    // todo: move this part in io thread 
     class Scene;
 
     template<typename T>
@@ -34,4 +37,6 @@ namespace wind::io
     public:
         void LoadGLTFScene(Scene& scene, const std::string& filePath);
     };
+
+    nlohmann::json LoadJson(std::filesystem::path filePath);
 } // namespace wind::io

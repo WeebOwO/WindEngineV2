@@ -40,10 +40,10 @@ namespace wind
 
         static Ref<GPUTexture> Create(const Desc& desc);
 
-        vk::Image     GetVkImage() const { return m_allocatedImage.image; }
-        vk::ImageView GetView() const { return m_defaultView; }
-        Desc          GetDesc() const { return m_desc; }
-
+        vk::Image                 GetVkImage() const { return m_allocatedImage.image; }
+        vk::ImageView             GetView() const { return m_defaultView; }
+        Desc                      GetDesc() const { return m_desc; }
+        vk::Sampler               GetDefaultSampler() const noexcept { return m_defaultSampler; }
         vk::ImageSubresourceRange GetDefaultImageSubresourceRange() const;
         vk::ImageSubresourceRange GetImageSubresourceRange(uint32_t mip, uint32_t level) const;
 
@@ -52,9 +52,9 @@ namespace wind
     private:
         void CreateImageView(const vk::ImageSubresourceRange& range);
 
-        Desc           m_desc;
-        AllocatedImage m_allocatedImage;
-
+        Desc                       m_desc;
+        AllocatedImage             m_allocatedImage;
+        vk::Sampler                m_defaultSampler;
         vk::ImageView              m_defaultView;
         std::vector<vk::ImageView> m_cubeMapViews; // only useful when we create cubemap
     };

@@ -7,6 +7,8 @@
 #include "Engine/Engine.h"
 #include "Engine/EntryPoint.h"
 
+#include "Renderer/Renderer.h"
+
 class Editor : public wind::Application {
 public:
     Editor() {

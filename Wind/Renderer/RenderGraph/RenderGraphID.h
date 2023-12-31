@@ -36,7 +36,8 @@ private:
     Index                     m_index       = UNINITIALIZED;
 };
 
-template <typename Resource> class RenderGraphID : public RenderGraphHandle {
+template <typename Resource> 
+class RenderGraphID : public RenderGraphHandle {
 public:
     using RenderGraphHandle::RenderGraphHandle;
     RenderGraphID() noexcept = default;

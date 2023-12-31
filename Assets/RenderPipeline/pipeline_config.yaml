@@ -1,3 +1,0 @@
-# list our define pipeline
-pipelines : 
-  - "default_lit"

@@ -20,14 +20,18 @@ namespace wind
     class PipelineBuilder
     {
     public:
+        struct DepthState {
+            bool depthTest;
+            bool detphWrite;
+        };
+        
         static constexpr vk::ColorComponentFlags BLEND_ALL_FLAG =
             vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB |
             vk::ColorComponentFlagBits::eA;
 
         PipelineBuilder& SetInputAssemblyState(vk::PrimitiveTopology topology, bool primitiveRestartEnable);
         PipelineBuilder& SetVertexType(EVertexType vertexType); // will change this in future
-        PipelineBuilder&
-        SetRasterizationState(vk::PolygonMode polygonMode, vk::CullModeFlags cullMode, vk::FrontFace frontFace);
+        PipelineBuilder& SetRasterizationState(vk::PolygonMode polygonMode, vk::CullModeFlags cullMode, vk::FrontFace frontFace);
         PipelineBuilder& SetRenderState(const Material::Desc& blendMode,
                                         uint32_t              mrtCount = 1); // this part care about blend and
 

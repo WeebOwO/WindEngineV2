@@ -68,6 +68,8 @@ namespace wind
     {
         m_renderScene = g_runtimeContext.activeScene;
         InitView(view);
+        
+        auto& blackBoard = rg.GetBlackBoard();
 
         struct ColorPassData
         {
@@ -104,16 +106,15 @@ namespace wind
                     encoder.EndRendering();
                 },
                 EPassType::Graphics);
+            
+            blackBoard["output"] = colorPass->sceneColor; 
         }
-
-        return;
     }
 
     void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass)
     {
         auto                renderer = g_runtimeContext.renderer.get();
-        RenderGraphPassType graphPassType =
-            meshPass.type == MeshPassType::BasePass ? RenderGraphPassType::MeshPassMRT : RenderGraphPassType::MeshPass;
+        RenderGraphPassType graphPassType = meshPass.type == MeshPassType::BasePass ? RenderGraphPassType::MeshPassMRT : RenderGraphPassType::MeshPass;
         m_cacheMeshDrawCommands[meshPass.type].clear();
 
         for (auto meshProxy : meshPass.staticMeshes)
@@ -125,8 +126,7 @@ namespace wind
             meshDrawCommand.drawMesh.indexCount  = meshProxy->meshSource.indices.size();
             meshDrawCommand.materialProxy        = meshProxy->material;
 
-            meshDrawCommand.pipelineID =
-                renderer->CachePso(*meshProxy->material, VertexFactoryType::StaicMesh, graphPassType);
+            meshDrawCommand.pipelineID = renderer->CachePso(*meshProxy->material, VertexFactoryType::StaicMesh, graphPassType);
 
             m_cacheMeshDrawCommands[meshPass.type].push_back(meshDrawCommand);
         }

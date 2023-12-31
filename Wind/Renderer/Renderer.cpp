@@ -1,15 +1,24 @@
 #include "Renderer.h"
 
-#include "Backend/Device.h"
+#include "Backend/PipelineBuilder.h"
+
+#include "Resource/Loader.h"
+#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
+
 #include "Material.h"
 #include "PsoCache.h"
 
 #include "Backend/Command.h"
-#include "Backend/SwapChain.h"
+#include "Backend/Device.h"
 #include "Backend/RasterShader.h"
+#include "Backend/SwapChain.h"
 
-#include "Renderer/View.h"
+#include "RenderGraph/RenderGraphID.h"
+#include "RenderGraph/RenderGraphTexture.h"
 #include "RenderGraph/ResourceNode.h"
+
+#include "Core/Log.h"
 
 namespace wind
 {
@@ -49,10 +58,11 @@ namespace wind
         }
 
         m_renderGraph = scope::Create<RenderGraph>();
-        
+
         // init the shader map
         m_shaderMap = scope::Create<ShaderMap>();
-        m_shaderMap->CacheRasterShader(RasterShader::Create("BasePassShader", "Triangle.vert.spv", "Triangle.frag.spv"));
+        m_shaderMap->CacheRasterShader(
+            RasterShader::Create("BasePassShader", "Triangle.vert.spv", "Triangle.frag.spv"));
         m_shaderMap->CacheRasterShader(
             RasterShader::Create("CompositeShader", "FullScreen.vert.spv", "Composite.frag.spv"));
 
@@ -70,6 +80,15 @@ namespace wind
             data.Destroy(m_device);
         }
         m_psoCache->Destroy();
+    }
+
+    void Renderer::GeneratePSO(const std::string& assetPath) { PipelineBuilder builder; }
+
+    GPUTexture* Renderer::GetRenderGraphOutput()
+    {
+        auto&                             blackBoard = m_renderGraph->GetBlackBoard();
+        RenderGraphID<RenderGraphTexture> output(blackBoard["output"]);
+        return m_renderGraph->Get(output)->GetTexture();
     }
 
     RenderGraph& Renderer::BeginFrame(const Swapchain& swapchain)

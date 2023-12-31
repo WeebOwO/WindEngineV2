@@ -72,6 +72,7 @@ namespace wind
             vk::PipelineColorBlendAttachmentState {
                 .blendEnable    = blendEnable,
                 .colorWriteMask = BLEND_ALL_FLAG}); // todo : change this state with different blend mode
+
         m_blendStateInfo.setAttachments(m_attachmentState).setAttachmentCount(m_attachmentState.size());
 
         m_depthStencilState.setMinDepthBounds(0.0f)

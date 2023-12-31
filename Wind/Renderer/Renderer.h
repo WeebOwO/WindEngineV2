@@ -29,7 +29,7 @@ namespace wind
         uint32_t swapchainImageIndex;
 
         Ref<DescriptorAllocator> dynamicDescriptorAllocator; // have a list of descriptor pool
-        
+
     private:
         friend class Renderer;
         void Init(vk::Device device);
@@ -42,7 +42,7 @@ namespace wind
     {
     public:
         Renderer(GPUDevice& device) : m_device(device) {}
-     
+
         void Init() override;
         void Quit() override;
 
@@ -50,8 +50,9 @@ namespace wind
         RenderGraph& BeginFrame(const Swapchain& swapchain);
         void         NextFrame();
 
-        auto& GetCurrentFrameData() { return m_frameParams[m_frameNumber]; }
-        auto  GetMaterialManager() const noexcept { return m_materialManager.get(); }
+        auto&       GetCurrentFrameData() { return m_frameParams[m_frameNumber]; }
+        auto        GetMaterialManager() const noexcept { return m_materialManager.get(); }
+        GPUTexture* GetRenderGraphOutput();
 
         template<typename... Args>
         uint64_t CachePso(Args&&... args)
@@ -62,14 +63,19 @@ namespace wind
         auto GetPso(uint64_t id) { return m_psoCache->GetPso(id); }
 
     private:
-        GPUDevice&             m_device;
-        uint32_t               m_frameNumber = 0;
-        FrameParms             m_frameParams[RenderConfig::MAX_FRAME_IN_FLIGHT];
+        void GeneratePSO(const std::string& assetPath);
+
+        GPUDevice& m_device;
+        uint32_t   m_frameNumber = 0;
+        FrameParms m_frameParams[RenderConfig::MAX_FRAME_IN_FLIGHT];
 
         // own these resoruces
         Scope<MaterialManager> m_materialManager;
         Scope<RenderGraph>     m_renderGraph;
         Scope<ShaderMap>       m_shaderMap;
         Scope<PsoCache>        m_psoCache;
+
+        // predefine pipeline
+        vk::Pipeline m_gbufferPSO;
     };
 } // namespace wind

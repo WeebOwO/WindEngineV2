@@ -42,6 +42,7 @@ namespace wind
         void ReleaseRHI() override;
 
         void SetTexture(Ref<GPUTexture> texture);
+        auto GetTexture() const { return m_texture.get(); }
 
     private:
         friend class RenderPassNode;
