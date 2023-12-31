@@ -51,7 +51,7 @@ namespace wind
         basePass.type   = MeshPassType::BasePass;
         basePass.filter = [](const Material& material) {
             auto blendMode = material.GetBlendMode();
-            return blendMode == Material::BlendMode::Opaque;
+            return blendMode == BlendMode::Opaque;
         };
     }
 } // namespace wind

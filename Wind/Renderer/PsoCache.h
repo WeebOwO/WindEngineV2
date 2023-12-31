@@ -12,6 +12,7 @@ namespace wind
     public:
         PsoCache(GPUDevice& device, ShaderMap& shaderMap);
 
+        // use to cache mesh material pso
         uint64_t CachePso(const Material& material, VertexFactoryType vertextype, RenderGraphPassType graphPassType);
         vk::Pipeline GetPso(uint64_t pipelineStateID);
         vk::Pipeline GetPso(const std::string& name);

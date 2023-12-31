@@ -27,15 +27,15 @@ namespace wind
     {
         // default lit
         Material::Desc desc {.debugName    = "default_lit",
-                             .ShadingModel = Material::ShadingModel::Lit,
-                             .blendMode    = Material::BlendMode::Opaque,
+                             .ShadingModel = ShadingModel::Lit,
+                             .blendMode    = BlendMode::Opaque,
                              .rasterShader = shaderMap.GetRasterShader("BasePassShader").get()};
 
         m_materialCaches[desc.debugName] = Material::Create(desc);
 
         desc = {.debugName    = "default_unlit",
-                .ShadingModel = Material::ShadingModel::UnLit,
-                .blendMode    = Material::BlendMode::Opaque,
+                .ShadingModel = ShadingModel::UnLit,
+                .blendMode    = BlendMode::Opaque,
                 .rasterShader = shaderMap.GetRasterShader("BasePassShader").get()};
 
         m_materialCaches[desc.debugName] = Material::Create(desc);

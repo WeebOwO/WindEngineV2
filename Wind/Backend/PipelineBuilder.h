@@ -2,9 +2,8 @@
 
 #include "std.h"
 
+#include "RasterShader.h"
 #include "VulkanHeader.h"
-
-#include "Renderer/Material.h"
 
 namespace wind
 {
@@ -16,24 +15,46 @@ namespace wind
         StaticMesh
     };
 
+    struct DepthState
+    {
+        bool          depthTest;
+        bool          detphWrite;
+        vk::CompareOp compareOP;
+    };
+
+    struct StencilState
+    {
+        bool stencilTest;
+    };
+
+    struct BlendState
+    {
+        bool    blendEnable;
+        uint8_t mrtCount = 1;
+    };
+
+    struct RenderState
+    {
+        DepthState    depthState;
+        StencilState  setencilState;
+        BlendState    blendState;
+        RasterShader* rasterShader;
+    };
+
     // todo : add more options for different shader
     class PipelineBuilder
     {
     public:
-        struct DepthState {
-            bool depthTest;
-            bool detphWrite;
-        };
-        
         static constexpr vk::ColorComponentFlags BLEND_ALL_FLAG =
             vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB |
             vk::ColorComponentFlagBits::eA;
 
         PipelineBuilder& SetInputAssemblyState(vk::PrimitiveTopology topology, bool primitiveRestartEnable);
         PipelineBuilder& SetVertexType(EVertexType vertexType); // will change this in future
-        PipelineBuilder& SetRasterizationState(vk::PolygonMode polygonMode, vk::CullModeFlags cullMode, vk::FrontFace frontFace);
-        PipelineBuilder& SetRenderState(const Material::Desc& blendMode,
-                                        uint32_t              mrtCount = 1); // this part care about blend and
+        PipelineBuilder&
+        SetRasterizationState(vk::PolygonMode polygonMode, vk::CullModeFlags cullMode, vk::FrontFace frontFace);
+
+        PipelineBuilder& SetRenderState(const RenderState& renderState); // this part care about blend
 
         vk::Pipeline Build();
 

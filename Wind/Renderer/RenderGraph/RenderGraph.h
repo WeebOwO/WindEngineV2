@@ -98,7 +98,7 @@ RenderGraphPass<Data>& RenderGraph::AddPass(const std::string& name, Setup setup
     Builder builder = AddPassInternal(name, std::move(pass));
     setup(builder, const_cast<Data&>(rawPtr->GetData()));
     m_dirty = true;
-    return *pass;
+    return *rawPtr;
 }
 
 template <typename ResourceType>

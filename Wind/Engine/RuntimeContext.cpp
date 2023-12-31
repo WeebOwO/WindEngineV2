@@ -16,6 +16,8 @@
 #include "Renderer/Material.h"
 #include "Renderer/Renderer.h"
 
+#include "Resource/Mesh.h"
+
 namespace wind
 {
     RuntimeContext g_runtimeContext;

@@ -62,11 +62,13 @@ namespace wind
         m_layout = shader.GetPipelineLayout();
     }
 
-    PipelineBuilder& PipelineBuilder::SetRenderState(const Material::Desc& desc, uint32_t mrtCount)
+    PipelineBuilder& PipelineBuilder::SetRenderState(const RenderState& renderState)
     {
-        bool blendEnable      = desc.blendMode != Material::BlendMode::Opaque;
-        bool depthWriteEnable = desc.blendMode == Material::BlendMode::Opaque;
+        bool blendEnable      = renderState.blendState.blendEnable;
+        bool depthWriteEnable = renderState.depthState.detphWrite;
+        bool depthTest        = renderState.depthState.depthTest;
 
+        uint8_t mrtCount  = renderState.blendState.mrtCount;
         m_attachmentState = std::vector<vk::PipelineColorBlendAttachmentState>(
             mrtCount,
             vk::PipelineColorBlendAttachmentState {
@@ -81,8 +83,9 @@ namespace wind
             .setDepthTestEnable(true)
             .setStencilTestEnable(false)
             .setDepthCompareOp(vk::CompareOp::eLessOrEqual);
-        if (desc.rasterShader != nullptr)
-            SetShaderState(*desc.rasterShader);
+            
+        if (renderState.rasterShader != nullptr)
+            SetShaderState(*renderState.rasterShader);
         return *this;
     }
 

@@ -1,10 +1,22 @@
 #include "PsoCache.h"
 
-#include "Core/Log.h"
 #include "Backend/PipelineBuilder.h"
+#include "Core/Log.h"
 
 namespace wind
 {
+
+    static RenderState PopRenderStateFromMaterial(const Material::Desc& desc)
+    {
+        bool depthTest  = desc.blendMode != BlendMode::Opaque;
+        bool depthWrite = desc.blendMode != BlendMode::Opaque;
+
+        return RenderState {.depthState    = {.depthTest = depthTest, .detphWrite = depthWrite},
+                            .setencilState = {.stencilTest = false},
+                            .blendState    = {.blendEnable = desc.blendMode != BlendMode::Opaque},
+                            .rasterShader  = desc.rasterShader};
+    }
+
     uint64_t
     PsoCache::CachePso(const Material& material, VertexFactoryType vertextype, RenderGraphPassType graphPassType)
     {
@@ -26,10 +38,16 @@ namespace wind
 
         PipelineBuilder builder;
 
+        // create render state base on material
+        auto desc = material.GetMaterialDesc();
+
+        bool depthTest  = desc.blendMode != BlendMode::Opaque;
+        bool depthWrite = desc.blendMode != BlendMode::Opaque;
+
         builder.SetInputAssemblyState(vk::PrimitiveTopology::eTriangleList, false)
             .SetVertexType(EVertexType::StaticMesh)
             .SetRasterizationState(vk::PolygonMode::eFill, vk::CullModeFlagBits::eNone, vk::FrontFace::eClockwise)
-            .SetRenderState(material.GetMaterialDesc());
+            .SetRenderState(PopRenderStateFromMaterial(material.GetMaterialDesc()));
 
         m_pipelineCacheMaterial[stateID] = builder.Build();
 
@@ -63,16 +81,16 @@ namespace wind
     {
         // this part use to create postprocess pso
         PipelineBuilder builder;
-        
+
         Material::Desc desc {.debugName    = "full_screen_composite",
-                             .ShadingModel = Material::ShadingModel::UnLit,
-                             .blendMode    = Material::BlendMode::Opaque,
+                             .ShadingModel = ShadingModel::UnLit,
+                             .blendMode    = BlendMode::Opaque,
                              .rasterShader = shaderMap.GetRasterShader("CompositeShader").get()};
 
         builder.SetInputAssemblyState(vk::PrimitiveTopology::eTriangleList, false)
             .SetRasterizationState(vk::PolygonMode::eFill, vk::CullModeFlagBits::eNone, vk::FrontFace::eClockwise)
             .SetVertexType(EVertexType::NoVertex)
-            .SetRenderState(desc);
+            .SetRenderState(PopRenderStateFromMaterial(desc));
 
         m_pipelineCachePredefine[desc.debugName] = builder.Build();
     }
