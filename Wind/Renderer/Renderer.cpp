@@ -86,8 +86,8 @@ namespace wind
 
     GPUTexture* Renderer::GetRenderGraphOutput()
     {
-        auto&                             blackBoard = m_renderGraph->GetBlackBoard();
-        RenderGraphID<RenderGraphTexture> output(blackBoard["output"]);
+        auto& blackBoard = m_renderGraph->GetBlackBoard();
+        auto  output     = blackBoard.Get<RenderGraphTexture>("output");
         return m_renderGraph->Get(output)->GetTexture();
     }
 

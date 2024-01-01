@@ -6,7 +6,6 @@
 #include "Renderer.h"
 #include "View.h"
 
-
 #include "RenderGraph/RenderGraphPass.h"
 #include "RenderGraph/RenderGraphResource.h"
 #include "RenderGraph/RenderGraphTexture.h"
@@ -45,7 +44,7 @@ namespace wind
 
     void SceneRenderer::DrawMesh(CommandBuffer& encoder)
     {
-        auto                renderer = g_runtimeContext.renderer.get();
+        auto renderer = g_runtimeContext.renderer.get();
         for (const auto& meshDrawCommand : m_cacheMeshDrawCommands[BasePass])
         {
             auto pso = renderer->GetPso(meshDrawCommand.pipelineID);
@@ -68,7 +67,7 @@ namespace wind
     {
         m_renderScene = g_runtimeContext.activeScene;
         InitView(view);
-        
+
         auto& blackBoard = rg.GetBlackBoard();
 
         struct ColorPassData
@@ -87,9 +86,10 @@ namespace wind
             auto& colorPass = rg.AddPass<ColorPassData>(
                 "LightingPass",
                 [&](RenderGraph::Builder& builder, ColorPassData& data) {
-                    data.sceneColor = builder.CreateTexture(
-                        "SceneColor",
-                        utils::GetRenderTargetDesc(m_viewPortWidth, m_viewPortHeight, vk::Format::eR16G16B16A16Sfloat));
+
+                    auto colorDesc = utils::GetRenderTargetDesc(m_viewPortWidth, m_viewPortHeight, vk::Format::eR16G16B16A16Sfloat);
+                    colorDesc.usage |= vk::ImageUsageFlagBits::eSampled;
+                    data.sceneColor = builder.CreateTexture("SceneColor", colorDesc);
 
                     RenderPassNode::RenderDesc renderDesc {
                         .attchments = {.color = {data.sceneColor}, .depth = {}, .stencil = {}},
@@ -97,7 +97,7 @@ namespace wind
                         .sample     = 1,
                         .clearValue = clearValue,
                     };
-                    
+
                     builder.DeclareRenderPass(renderDesc);
                 },
                 [&](ResourceRegistry& resourceRegistry, ColorPassData& data, CommandBuffer& encoder) {
@@ -106,15 +106,16 @@ namespace wind
                     encoder.EndRendering();
                 },
                 EPassType::Graphics);
-            
-            blackBoard["output"] = colorPass->sceneColor; 
+
+            blackBoard["output"] = colorPass->sceneColor;
         }
     }
 
     void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass)
     {
         auto                renderer = g_runtimeContext.renderer.get();
-        RenderGraphPassType graphPassType = meshPass.type == MeshPassType::BasePass ? RenderGraphPassType::MeshPassMRT : RenderGraphPassType::MeshPass;
+        RenderGraphPassType graphPassType =
+            meshPass.type == MeshPassType::BasePass ? RenderGraphPassType::MeshPassMRT : RenderGraphPassType::MeshPass;
         m_cacheMeshDrawCommands[meshPass.type].clear();
 
         for (auto meshProxy : meshPass.staticMeshes)
@@ -126,7 +127,8 @@ namespace wind
             meshDrawCommand.drawMesh.indexCount  = meshProxy->meshSource.indices.size();
             meshDrawCommand.materialProxy        = meshProxy->material;
 
-            meshDrawCommand.pipelineID = renderer->CachePso(*meshProxy->material, VertexFactoryType::StaicMesh, graphPassType);
+            meshDrawCommand.pipelineID =
+                renderer->CachePso(*meshProxy->material, VertexFactoryType::StaicMesh, graphPassType);
 
             m_cacheMeshDrawCommands[meshPass.type].push_back(meshDrawCommand);
         }

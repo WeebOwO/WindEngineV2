@@ -7,11 +7,12 @@ namespace wind
     class SceneRenderer;
     class Window;
     class Scene;
+    class Renderer;
 
     class Engine
     {
     public:
-        using ImGuiCallBack = std::function<void(Engine&)>;
+        using ImGuiCallBack = std::function<void(Renderer&)>;
         Engine(Scope<Window> window); // here use unique ptr to transfer ownership from editor to engine
         ~Engine();
 

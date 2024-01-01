@@ -1,11 +1,7 @@
 #pragma once
 
-#include "std.h"
-
 #include "Backend/Buffer.h"
-#include "Core/UUID.h"
 #include "Resource/VertexFactory.h"
-
 
 namespace wind
 {
@@ -54,7 +50,7 @@ namespace wind
         Material*         materialProxy;
         VertexFactoryType type;
     };
-
+    
     struct MeshPass
     {
         using MaterialFilter = std::function<bool(const Material& material)>;

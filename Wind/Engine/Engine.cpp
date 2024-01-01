@@ -137,8 +137,6 @@ namespace wind
         ImGui::SetNextWindowSize(viewport->Size);
         ImGui::SetNextWindowViewport(viewport->ID);
 
-        m_imguiCallback(*this);
-
         auto viewportOffset = ImGui::GetCursorPos(); // includes tab bar
         auto viewportSize   = ImGui::GetContentRegionAvail();
 
@@ -154,10 +152,9 @@ namespace wind
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
         }
-
+        auto& blackBoard = renderGraph.GetBlackBoard();
         if (!renderGraph.ContainPass("PresentPass"))
         {
-            auto& blackBoard = renderGraph.GetBlackBoard();
             struct PresentPassData
             {
                 RenderGraphID<RenderGraphTexture> sceneColor;
@@ -171,6 +168,7 @@ namespace wind
                 [&](ResourceRegistry& resourceRegistry, PresentPassData& data, CommandBuffer& encoder) {
                     // todo: add a pipeline barrier to make sure scene color is render finished
                     encoder.BeginRendering(resourceRegistry.GetPresentRenderingInfo());
+                    m_imguiCallback(*g_runtimeContext.renderer);
                     encoder.RenderUI(); // render ui in the final pass
                     encoder.EndRendering();
                 },

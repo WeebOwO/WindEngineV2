@@ -90,6 +90,17 @@ namespace wind
         m_defaultSampler = utils::CreateDefaultSampler();
     }
 
+    void GPUTexture::MarkUseByImgui(const ImVec2& size,
+                                    const ImVec2& uv0,
+                                    const ImVec2& uv1,
+                                    const ImVec4& tint_col,
+                                    const ImVec4& border_colc)
+    {
+        if (!m_imguiSet) 
+            m_imguiSet = ImGui_ImplVulkan_AddTexture(m_defaultSampler, m_defaultView, (VkImageLayout)m_desc.layout);
+        ImGui::Image((ImTextureID)m_imguiSet, size, uv0, uv1, tint_col, border_colc);
+    }
+
     Ref<GPUTexture> GPUTexture::Create(const Desc& desc) { return ref::Create<GPUTexture>(desc); }
 
     GPUTexture::~GPUTexture()

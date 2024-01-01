@@ -1,4 +1,4 @@
-set_project("WindVK")
+set_project("WindEngine")
 
 add_rules("mode.debug", "mode.release")
 

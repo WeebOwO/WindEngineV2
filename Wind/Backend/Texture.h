@@ -4,6 +4,9 @@
 #include "RHIResource.h"
 #include "VulkanHeader.h"
 
+#include "Imgui/imgui.h"
+#include "Imgui/imgui_impl_vulkan.h"
+
 namespace wind
 {
 
@@ -47,6 +50,12 @@ namespace wind
         vk::ImageSubresourceRange GetDefaultImageSubresourceRange() const;
         vk::ImageSubresourceRange GetImageSubresourceRange(uint32_t mip, uint32_t level) const;
 
+        void MarkUseByImgui(const ImVec2& size,
+                            const ImVec2& uv0,
+                            const ImVec2& uv1,
+                            const ImVec4& tint_col   = ImVec4(1, 1, 1, 1),
+                            const ImVec4& border_col = ImVec4(0, 0, 0, 0));
+                            
         operator vk::Image() { return m_allocatedImage.image; }
 
     private:
@@ -57,6 +66,7 @@ namespace wind
         vk::Sampler                m_defaultSampler;
         vk::ImageView              m_defaultView;
         std::vector<vk::ImageView> m_cubeMapViews; // only useful when we create cubemap
+        vk::DescriptorSet          m_imguiSet;
     };
 } // namespace wind
 
