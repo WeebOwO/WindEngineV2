@@ -6,13 +6,22 @@
 
 namespace wind {
 
+void PassNode::InitResources()
+{
+    auto resources = renderGraph.m_resources;
+    // init all the resources 
+    for(auto handle : outputResources)
+    {
+        resources[handle]->InitRHI(); 
+    }
+}
+    
 RenderPassNode::RenderPassNode(RenderGraph& rg, const std::string& name,
                                Scope<RenderGraphPassBase> pass)
     : PassNode(rg), m_debugName(name), m_passBase(std::move(pass)) {}
 
 void RenderPassNode::DeclareRenderTarget(const RenderDesc& desc) {
-    bool writeDepth = false, writeStencil = false;
-
+    
     for (auto attachment : desc.attchments.color) {
         if (attachment) {
             auto                        texture = renderGraph.Get(attachment);

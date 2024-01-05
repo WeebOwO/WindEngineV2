@@ -8,113 +8,120 @@
 #include "RenderGraphTexture.h"
 #include "ResourceNode.h"
 
-namespace wind {
-class RenderGraphPassBase;
-class Swapchain;
-class FrameParms;
+namespace wind
+{
+    class RenderGraphPassBase;
+    class Swapchain;
+    class FrameParms;
 
-class RenderGraph {
-public:
-    struct Builder {
+    class RenderGraph
+    {
     public:
-        Builder(RenderGraph& graph, PassNode* node) : m_graph(graph), m_node(node) {}
+        struct Builder
+        {
+        public:
+            Builder(RenderGraph& graph, PassNode* node) : m_graph(graph), m_node(node) {}
 
-        RenderGraphID<RenderGraphTexture> CreateTexture(const std::string&             name,
-                                                        const RenderGraphTexture::Desc desc) {
-            return m_graph.Create<RenderGraphTexture>(name, desc);
+            RenderGraphID<RenderGraphTexture> CreateTexture(const std::string&             name,
+                                                            const RenderGraphTexture::Desc desc)
+            {
+                return m_graph.Create<RenderGraphTexture>(name, desc);
+            };
+
+            void DeclareRenderPass(const RenderPassNode::RenderDesc& renderDesc)
+            {
+                // only call this function when you add renderpass
+                static_cast<RenderPassNode*>(m_node)->DeclareRenderTarget(renderDesc);
+            }
+
+        private:
+            RenderGraph& m_graph;
+            PassNode*    m_node;
         };
 
-        void DeclareRenderPass(const RenderPassNode::RenderDesc& renderDesc) {
-            // only call this function when you add renderpass
-            static_cast<RenderPassNode*>(m_node)->DeclareRenderTarget(renderDesc);
-        }
+        RenderGraph();
+        ~RenderGraph();
+
+        template<typename Data, typename Setup, typename Execute>
+        RenderGraphPass<Data>& AddPass(const std::string& name, Setup setup, Execute&& execute, PassType passType);
+
+        void SetupSwapChain(const Swapchain& swapchain);
+        void SetupFrameData(FrameParms& frameData);
+
+        void Compile();
+        void Exec();
+
+        auto& GetBlackBoard() noexcept { return m_blackBoard; }
+        bool  ContainPass(const std::string& passName) { return m_passNodes.contains(passName); }
 
     private:
-        RenderGraph& m_graph;
-        PassNode*    m_node;
+        friend class PassNode;
+        friend class RenderPassNode;
+        friend class ResourceRegistry;
+        friend class Renderer;
+        
+        template<typename ResourceType>
+        RenderGraphID<ResourceType> Create(const std::string& name, const typename ResourceType::Desc& desc) noexcept;
+
+        template<typename ResourceType>
+        ResourceType* Get(RenderGraphID<ResourceType> resourceHandle)
+        {
+            if (resourceHandle.IsInitialized())
+            {
+                return static_cast<ResourceType*>(m_resources[resourceHandle.m_index]);
+            }
+            return nullptr;
+        }
+
+        Builder AddPassInternal(const std::string& name, Scope<RenderGraphPassBase> pass);
+        
+        // present pass ralated
+        vk::RenderingInfo GetPresentRenderingInfo() const noexcept;
+
+        void SwapchainStartTrans();
+        void SwapchainEndTrans();
+
+        const Swapchain* m_swapchain;
+
+        bool m_dirty = false;
+
+        Blackboard m_blackBoard;
+
+        std::unordered_map<std::string, Scope<PassNode>>     m_passNodes;
+        std::unordered_map<std::string, Scope<ResourceNode>> m_resourceNodes;
+
+        std::vector<RenderGraphResource*> m_resources;
+
+        FrameParms* m_currentFrameData {nullptr};
     };
 
-    RenderGraph();
-
-    template <typename Data, typename Setup, typename Execute>
-    RenderGraphPass<Data>& AddPass(const std::string& name, Setup setup, Execute&& execute,
-                                   EPassType passType);
-
-    void SetupSwapChain(const Swapchain& swapchain);
-    void SetupFrameData(FrameParms& frameData);
-
-    void Exec();
-
-    auto& GetBlackBoard() noexcept { return m_blackBoard; }
-    bool  ContainPass(const std::string& passName) { return m_passNodes.contains(passName); }
-
-private:
-    friend class RenderPassNode;
-    friend class ResourceRegistry;
-    friend class Renderer;
-
-    template <typename ResourceType>
-    RenderGraphID<ResourceType> Create(const std::string&                 name,
-                                       const typename ResourceType::Desc& desc) noexcept;
-
-    template <typename ResourceType> ResourceType* Get(RenderGraphID<ResourceType> resourceHandle) {
-        if constexpr (std::is_same_v<ResourceType, RenderGraphTexture>) {
-            return &m_textures[resourceHandle.m_index];
-        }
-        return nullptr;
+    template<typename Data, typename Setup, typename Execute>
+    RenderGraphPass<Data>&
+    RenderGraph::AddPass(const std::string& name, Setup setup, Execute&& execute, PassType passType)
+    {
+        auto    pass = scope::Create<RenderGraphPassConcrete<Data, Execute>>(std::forward<Execute>(execute), passType);
+        auto    rawPtr  = pass.get();
+        Builder builder = AddPassInternal(name, std::move(pass));
+        setup(builder, const_cast<Data&>(rawPtr->GetData()));
+        m_dirty = true;
+        return *rawPtr;
     }
-    
-    Builder AddPassInternal(const std::string& name, Scope<RenderGraphPassBase> pass);
-    void    Compile();
 
-    // present pass ralated
-    vk::RenderingInfo GetPresentRenderingInfo() const noexcept;
-
-    void SwapchainStartTrans();
-    void SwapchainEndTrans();
-
-    const Swapchain* m_swapchain;
-
-    bool m_dirty = false;
-
-    Blackboard m_blackBoard;
-
-    std::unordered_map<std::string, Scope<PassNode>>     m_passNodes;
-    std::unordered_map<std::string, Scope<ResourceNode>> m_resourceNodes;
-
-    std::vector<RenderGraphTexture> m_textures;
-    
-    FrameParms* m_currentFrameData{nullptr};
-};
-
-template <typename Data, typename Setup, typename Execute>
-RenderGraphPass<Data>& RenderGraph::AddPass(const std::string& name, Setup setup, Execute&& execute,
-                                            EPassType passType) {
-    auto pass = scope::Create<RenderGraphPassConcrete<Data, Execute>>(
-        std::forward<Execute>(execute), passType);
-    auto rawPtr = pass.get(); 
-    Builder builder = AddPassInternal(name, std::move(pass));
-    setup(builder, const_cast<Data&>(rawPtr->GetData()));
-    m_dirty = true;
-    return *rawPtr;
-}
-
-template <typename ResourceType>
-RenderGraphID<ResourceType> RenderGraph::Create(const std::string&                 name,
-                                                const typename ResourceType::Desc& desc) noexcept {
-    if constexpr (std::is_same_v<ResourceType, RenderGraphTexture>) {
+    template<typename ResourceType>
+    RenderGraphID<ResourceType> RenderGraph::Create(const std::string&                 name,
+                                                    const typename ResourceType::Desc& desc) noexcept
+    {
         RenderGraphHandle handle;
-        if (m_resourceNodes.contains(name)) {
+        if (m_resourceNodes.contains(name))
+        {
             handle = m_resourceNodes[name]->resourceHandle;
-        } else {
-            handle                = RenderGraphHandle(m_textures.size());
-            m_resourceNodes[name] = scope::Create<ResourceNode>(*this, handle);
-            m_textures.push_back(ResourceType(desc));
         }
-
+        else
+        {
+            handle                = RenderGraphHandle(m_resources.size());
+            m_resourceNodes[name] = scope::Create<ResourceNode>(*this, handle);
+            m_resources.push_back(new ResourceType(desc));
+        }
         return RenderGraphID<ResourceType>(handle);
     }
-
-    return {};
-}
 } // namespace wind

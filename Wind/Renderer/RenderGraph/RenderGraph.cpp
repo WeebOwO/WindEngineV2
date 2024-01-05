@@ -1,11 +1,9 @@
 #include "RenderGraph.h"
 
-#include "ResourceNode.h"
+#include "PassNode.h"
 #include "ResourceRegistry.h"
 
 #include "Core/Log.h"
-
-#include "Engine/RuntimeContext.h"
 
 #include "Backend/Command.h"
 #include "Backend/SwapChain.h"
@@ -15,7 +13,15 @@
 namespace wind
 {
 
-    RenderGraph::RenderGraph() {}
+    RenderGraph::RenderGraph() = default;
+    
+    RenderGraph::~RenderGraph()
+    {
+        for(auto resource : m_resources)
+        {
+            delete resource;
+        }
+    }
 
     void RenderGraph::SetupSwapChain(const Swapchain& swapchain) { m_swapchain = &swapchain; }
     void RenderGraph::SetupFrameData(FrameParms& frameData) { m_currentFrameData = &frameData; }
@@ -51,7 +57,19 @@ namespace wind
         return Builder {*this, rawPtr};
     }
 
-    void RenderGraph::Compile() { m_dirty = false; }
+    void RenderGraph::Compile()
+    {
+        // only compile the graph when graph is change
+        if (!m_dirty)
+            return;
+
+        for(auto& [name, node] : m_passNodes)
+        {
+            node->InitResources();
+        }
+        
+        m_dirty = false;
+    }
 
     vk::RenderingInfo RenderGraph::GetPresentRenderingInfo() const noexcept
     {

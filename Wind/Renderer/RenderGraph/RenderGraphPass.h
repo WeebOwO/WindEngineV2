@@ -5,7 +5,7 @@
 #include "Backend/Command.h"
 
 namespace wind {
-enum class EPassType { Graphics, Compute, AsyncCompute };
+enum class PassType { Graphics, Compute, AsyncCompute };
 
 class ResourceRegistry;
 
@@ -16,14 +16,14 @@ public:
 
     virtual void Execute(ResourceRegistry&, CommandBuffer&) noexcept {}
 
-    EPassType passType;
+    PassType passType;
 };
 
 template <typename Data> 
 class RenderGraphPass : public RenderGraphPassBase {
 public:
     void Execute(ResourceRegistry&, CommandBuffer&) noexcept override {}
-    RenderGraphPass(EPassType type) { passType = type; }
+    RenderGraphPass(PassType type) { passType = type; }
     virtual ~RenderGraphPass() {}
 
     const Data& GetData() const noexcept { return m_data; }
@@ -37,7 +37,7 @@ template <typename Data, typename ExecuteCallBack>
 class RenderGraphPassConcrete : public RenderGraphPass<Data> {
 public:
     explicit RenderGraphPassConcrete(ExecuteCallBack&& callback,
-                                     EPassType         type = EPassType::Graphics)
+                                     PassType         type = PassType::Graphics)
         : RenderGraphPass<Data>(type), m_execCallBack(std::move(callback)) {}
 
     void Execute(ResourceRegistry& resourceRegistry, CommandBuffer& encoder) noexcept override { 

@@ -105,7 +105,7 @@ namespace wind
                     DrawMesh(encoder);
                     encoder.EndRendering();
                 },
-                EPassType::Graphics);
+                PassType::Graphics);
 
             blackBoard["output"] = colorPass->sceneColor;
         }

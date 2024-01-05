@@ -19,8 +19,13 @@ namespace wind
         PassNode(RenderGraph& rg) : renderGraph(rg) {}
         virtual void Execute(ResourceRegistry& resourceRegistry, CommandBuffer& encoder) noexcept {}
 
+        void InitResources();
+        
     protected:
-        std::unordered_set<RenderGraphHandle::Index> declareResources;
+        std::vector<RenderGraphHandle>               dependResources;
+        std::vector<RenderGraphHandle>               outputResources;
+
+        std::vector<RenderGraphHandle>               edges; // link to resources
         RenderGraph&                                 renderGraph;
     };
 
@@ -60,13 +65,13 @@ namespace wind
 
         void DeclareRenderTarget(const RenderDesc& desc);
         auto GetRenderingInfo() const { return m_renderingInfo; }
-
+    
     private:
         std::string                              m_debugName;
         std::vector<vk::RenderingAttachmentInfo> m_colorAttachmentInfos;
         vk::RenderingAttachmentInfo              m_depthAttachmentInfo;
         vk::RenderingAttachmentInfo              m_stencilAttachmentInfo;
         vk::RenderingInfo                        m_renderingInfo {};
-        Scope<RenderGraphPassBase>               m_passBase;
+        Scope<RenderGraphPassBase>               m_passBase; // this attach to execute lamda
     };
 } // namespace wind

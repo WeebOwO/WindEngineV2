@@ -172,9 +172,10 @@ namespace wind
                     encoder.RenderUI(); // render ui in the final pass
                     encoder.EndRendering();
                 },
-                EPassType::Graphics);
+                PassType::Graphics);
         };
 
+        renderGraph.Compile();
         g_runtimeContext.renderer->NextFrame(); // will do all the render job and increase frame counter
     }
 

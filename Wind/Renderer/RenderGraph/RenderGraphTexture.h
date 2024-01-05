@@ -28,10 +28,10 @@ namespace wind
         };
 
         auto GetDesc() { return m_desc; }
-
-        RenderGraphTexture() = default;
+        
         RenderGraphTexture(const Desc& desc);
-
+        virtual ~RenderGraphTexture();
+        
         vk::Image     GetImage() const;
         vk::ImageView GetImageView() const;
 
