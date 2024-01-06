@@ -78,6 +78,9 @@ namespace wind
         // present pass ralated
         vk::RenderingInfo GetPresentRenderingInfo() const noexcept;
 
+        void InitGraphResource(RenderGraphHandle handle);
+        void FreeGrahpResource(RenderGraphHandle handle);
+
         void SwapchainStartTrans();
         void SwapchainEndTrans();
 

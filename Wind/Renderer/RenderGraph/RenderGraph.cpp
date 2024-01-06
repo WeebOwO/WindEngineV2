@@ -14,10 +14,10 @@ namespace wind
 {
 
     RenderGraph::RenderGraph() = default;
-    
+
     RenderGraph::~RenderGraph()
     {
-        for(auto resource : m_resources)
+        for (auto resource : m_resources)
         {
             delete resource;
         }
@@ -63,11 +63,11 @@ namespace wind
         if (!m_dirty)
             return;
 
-        for(auto& [name, node] : m_passNodes)
+        for (auto& [name, node] : m_passNodes)
         {
             node->InitResources();
         }
-        
+
         m_dirty = false;
     }
 
@@ -111,4 +111,13 @@ namespace wind
                                        .layerCount     = 1});
     }
 
+    void RenderGraph::InitGraphResource(RenderGraphHandle handle)
+    {
+        m_resources[handle.m_index]->InitRHI();
+    }
+
+    void RenderGraph::FreeGrahpResource(RenderGraphHandle handle)
+    {
+        m_resources[handle.m_index]->ReleaseRHI();
+    }
 } // namespace wind

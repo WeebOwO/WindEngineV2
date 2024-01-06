@@ -24,7 +24,6 @@ namespace wind
 {
     void FrameParms::Init(vk::Device device)
     {
-
         computeEncoder = ref::Create<CommandBuffer>();
         renderEncoder  = ref::Create<CommandBuffer>();
 

@@ -9,9 +9,7 @@ namespace wind
 
     RenderGraphTexture::RenderGraphTexture(const Desc& desc) :
         RenderGraphResource(RenderGraphResourceType::Texture), m_desc(desc)
-    {
-        InitRHI();
-    }
+    {}
 
     void RenderGraphTexture::SetTexture(Ref<GPUTexture> texture) { m_texture = texture; }
 

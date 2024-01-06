@@ -19,7 +19,7 @@ namespace wind
         PassNode(RenderGraph& rg) : renderGraph(rg) {}
         virtual void Execute(ResourceRegistry& resourceRegistry, CommandBuffer& encoder) noexcept {}
 
-        void InitResources();
+        virtual void InitResources() = 0;
         
     protected:
         std::vector<RenderGraphHandle>               dependResources;
@@ -65,8 +65,11 @@ namespace wind
 
         void DeclareRenderTarget(const RenderDesc& desc);
         auto GetRenderingInfo() const { return m_renderingInfo; }
-    
+
+        void InitResources() override;
+        
     private:
+        RenderDesc                               m_renderDesc {};
         std::string                              m_debugName;
         std::vector<vk::RenderingAttachmentInfo> m_colorAttachmentInfos;
         vk::RenderingAttachmentInfo              m_depthAttachmentInfo;
