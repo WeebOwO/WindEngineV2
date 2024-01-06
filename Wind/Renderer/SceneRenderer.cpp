@@ -80,35 +80,32 @@ namespace wind
 
         vk::Rect2D renderArea = {.offset = {.x = 0, .y = 0},
                                  .extent = {.width = m_viewPortWidth, .height = m_viewPortHeight}};
+        
+        auto& colorPass = rg.AddPass<ColorPassData>(
+            "LightingPass",
+            [&](RenderGraph::Builder& builder, ColorPassData& data) {
 
-        if (!rg.ContainPass("LightingPass"))
-        {
-            auto& colorPass = rg.AddPass<ColorPassData>(
-                "LightingPass",
-                [&](RenderGraph::Builder& builder, ColorPassData& data) {
+                auto colorDesc = utils::GetRenderTargetDesc(m_viewPortWidth, m_viewPortHeight, vk::Format::eR16G16B16A16Sfloat);
+                colorDesc.usage |= vk::ImageUsageFlagBits::eSampled;
+                data.sceneColor = builder.CreateTexture("SceneColor", colorDesc);
 
-                    auto colorDesc = utils::GetRenderTargetDesc(m_viewPortWidth, m_viewPortHeight, vk::Format::eR16G16B16A16Sfloat);
-                    colorDesc.usage |= vk::ImageUsageFlagBits::eSampled;
-                    data.sceneColor = builder.CreateTexture("SceneColor", colorDesc);
+                RenderPassNode::RenderDesc renderDesc {
+                    .attchments = {.color = {data.sceneColor}, .depth = {}, .stencil = {}},
+                    .renderArea = renderArea,
+                    .sample     = 1,
+                    .clearValue = clearValue,
+                };
 
-                    RenderPassNode::RenderDesc renderDesc {
-                        .attchments = {.color = {data.sceneColor}, .depth = {}, .stencil = {}},
-                        .renderArea = renderArea,
-                        .sample     = 1,
-                        .clearValue = clearValue,
-                    };
+                builder.DeclareRenderPass(renderDesc);
+            },
+            [&](ResourceRegistry& resourceRegistry, ColorPassData& data, CommandBuffer& encoder) {
+                encoder.BeginRendering(resourceRegistry.GetRenderingInfo());
+                DrawMesh(encoder);
+                encoder.EndRendering();
+            },
+            PassType::Graphics);
 
-                    builder.DeclareRenderPass(renderDesc);
-                },
-                [&](ResourceRegistry& resourceRegistry, ColorPassData& data, CommandBuffer& encoder) {
-                    encoder.BeginRendering(resourceRegistry.GetRenderingInfo());
-                    DrawMesh(encoder);
-                    encoder.EndRendering();
-                },
-                PassType::Graphics);
-
-            blackBoard["output"] = colorPass->sceneColor;
-        }
+        blackBoard["output"] = colorPass->sceneColor;
     }
 
     void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass)

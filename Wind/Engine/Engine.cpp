@@ -153,28 +153,26 @@ namespace wind
             ImGui::RenderPlatformWindowsDefault();
         }
         auto& blackBoard = renderGraph.GetBlackBoard();
-        if (!renderGraph.ContainPass("PresentPass"))
+       
+        struct PresentPassData
         {
-            struct PresentPassData
-            {
-                RenderGraphID<RenderGraphTexture> sceneColor;
-            };
-
-            renderGraph.AddPass<PresentPassData>(
-                "PresentPass",
-                [&](RenderGraph::Builder& builder, PresentPassData& data) {
-                    // present pass don't need to declare render pass
-                },
-                [&](ResourceRegistry& resourceRegistry, PresentPassData& data, CommandBuffer& encoder) {
-                    // todo: add a pipeline barrier to make sure scene color is render finished
-                    encoder.BeginRendering(resourceRegistry.GetPresentRenderingInfo());
-                    m_imguiCallback(*g_runtimeContext.renderer);
-                    encoder.RenderUI(); // render ui in the final pass
-                    encoder.EndRendering();
-                },
-                PassType::Graphics);
+            RenderGraphID<RenderGraphTexture> sceneColor;
         };
 
+        renderGraph.AddPass<PresentPassData>(
+            "PresentPass",
+            [&](RenderGraph::Builder& builder, PresentPassData& data) {
+                // present pass don't need to declare render pass
+            },
+            [&](ResourceRegistry& resourceRegistry, PresentPassData& data, CommandBuffer& encoder) {
+                // todo: add a pipeline barrier to make sure scene color is render finished
+                encoder.BeginRendering(resourceRegistry.GetPresentRenderingInfo());
+                m_imguiCallback(*g_runtimeContext.renderer);
+                encoder.RenderUI(); // render ui in the final pass
+                encoder.EndRendering();
+            },
+            PassType::Graphics);
+        
         renderGraph.Compile();
         g_runtimeContext.renderer->NextFrame(); // will do all the render job and increase frame counter
     }

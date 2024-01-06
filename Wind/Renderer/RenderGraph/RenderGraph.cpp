@@ -51,6 +51,11 @@ namespace wind
 
     RenderGraph::Builder RenderGraph::AddPassInternal(const std::string& name, Scope<RenderGraphPassBase> pass)
     {
+        // maybe not good for the result
+        if(m_passNodes.contains(name))
+        {
+            return Builder {*this, m_passNodes[name].get()};
+        }
         Scope<PassNode> node   = scope::Create<RenderPassNode>(*this, name, std::move(pass));
         auto            rawPtr = node.get();
         m_passNodes[name]      = std::move(node);
