@@ -27,16 +27,16 @@ namespace wind
             uint8_t layer = 0;
         };
 
-        auto GetDesc() { return m_desc; }
+        auto GetDesc() const noexcept { return m_desc; }
         
-        RenderGraphTexture(const Desc& desc);
-        virtual ~RenderGraphTexture();
+        RenderGraphTexture(const Desc& desc) noexcept;
+        virtual ~RenderGraphTexture() noexcept;
         
-        vk::Image     GetImage() const;
-        vk::ImageView GetImageView() const;
+        vk::Image     GetImage() const noexcept;
+        vk::ImageView GetImageView() const noexcept;
 
-        auto GetUsage() const { return m_desc.usage; }
-        auto GetLayout() const { return m_desc.layout; }
+        auto GetUsage() const noexcept { return m_desc.usage; }
+        auto GetLayout() const noexcept { return m_desc.layout; }
 
         void InitRHI() override;
         void ReleaseRHI() override;

@@ -54,7 +54,7 @@ namespace wind
         auto& GetBlackBoard() noexcept { return m_blackBoard; }
         bool  ContainPass(const std::string& passName) { return m_passNodes.contains(passName); }
 
-        void MarkAsDirty() {m_dirty = true;}
+        void MarkAsDirty();
         
     private:
         friend class PassNode;
@@ -88,7 +88,7 @@ namespace wind
 
         const Swapchain* m_swapchain;
 
-        bool m_dirty = true;
+        bool m_dirty = false;
 
         Blackboard m_blackBoard;
 
