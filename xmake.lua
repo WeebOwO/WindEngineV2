@@ -9,5 +9,4 @@ add_includedirs("3rdParty/")
 set_languages("c++20")
 set_runtimes("MD")
 
-includes("Editor/")
-includes("Wind/")
+includes("Editor/", "Wind/")

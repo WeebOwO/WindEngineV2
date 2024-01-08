@@ -31,7 +31,7 @@ namespace wind
 
         for (const auto& availableFormat : surfaceFormats)
         {
-            if (availableFormat.format == vk::Format::eR8G8B8A8Srgb &&
+            if (availableFormat.format == vk::Format::eR8G8B8A8Unorm &&
                 availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear)
             {
                 m_surfaceFormat = availableFormat;

@@ -15,6 +15,7 @@ namespace wind
             uint32_t            width;
             uint32_t            height;
             uint32_t            depth;
+            TextureViewType     type;
             vk::Format          format;
             vk::ImageLayout     layout    = vk::ImageLayout::eUndefined;
             vk::ImageUsageFlags usage     = vk::ImageUsageFlagBits::eColorAttachment;
@@ -26,7 +27,7 @@ namespace wind
             uint8_t level = 0;
             uint8_t layer = 0;
         };
-        
+
         RenderGraphTexture(const Desc& desc) noexcept;
         virtual ~RenderGraphTexture() noexcept;
 
@@ -41,13 +42,13 @@ namespace wind
 
         void SetTexture(Ref<GPUTexture> texture);
         auto GetTexture() const { return m_texture.get(); }
-        
+
     private:
         friend class RenderPassNode;
         Desc            m_desc;
         Ref<GPUTexture> m_texture;
     };
-    
+
 } // namespace wind
 
 namespace wind::utils

@@ -1,7 +1,7 @@
 #include "SceneRenderer.h"
 
+#include "Backend/Texture.h"
 #include "Renderer/RenderGraph/PassNode.h"
-#include <Imgui/imgui.h>
 
 #include "MeshPass.h"
 #include "Renderer.h"
@@ -90,6 +90,7 @@ namespace wind
                     .width = m_viewPortWidth,
                     .height = m_viewPortHeight,
                     .depth = 1,
+                    .type = TextureViewType::Texture2D,
                     .format = vk::Format::eR8G8B8A8Srgb,
                     .layout = vk::ImageLayout::eColorAttachmentOptimal,
                     .usage = vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eSampled

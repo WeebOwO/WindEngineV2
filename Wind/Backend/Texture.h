@@ -9,6 +9,16 @@
 
 namespace wind
 {
+    enum class TextureViewType
+    {
+        Texture1D,
+        Texture2D,
+        Texture2DArray,
+        Texture3D,
+        CubeMap,
+        CubeMapArray
+    };
+
     struct GPUTexture : public RHIResource<RHIResourceType::Texture>
     {
     public:
@@ -31,7 +41,7 @@ namespace wind
 
         static Ref<GPUTexture> Create(const vk::ImageCreateInfo& createInfo);
 
-        void          CreateImageView(const vk::ImageSubresourceRange& range, vk::ImageViewType viewType);
+        void          CreateDefaultImageView(const vk::ImageSubresourceRange& range, vk::ImageViewType viewType);
         vk::ImageView GetView() const { return m_defaultView; } // need to make sure you call CreateImageView before
 
         vk::Image                 GetVkImage() const { return m_allocatedImage.image; }
@@ -54,7 +64,7 @@ namespace wind
         vk::Sampler                m_defaultSampler;
         vk::ImageView              m_defaultView;
         std::vector<vk::ImageView> m_cubeMapViews; // only useful when we create cubemap
-        vk::DescriptorSet          m_imguiSet;
+        vk::DescriptorSet          m_imguiSet;     // only useful when need to sample by imgui context
     };
 } // namespace wind
 
@@ -66,5 +76,5 @@ namespace wind::utils
     vk::AccessFlags        ImageUsageToAccessFlags(vk::ImageUsageFlagBits usage);
     vk::PipelineStageFlags ImageUsageToPipelineStage(vk::ImageUsageFlagBits usage);
 
-    uint32_t CalculateImageMipLevelCount(const GPUTexture::Desc& desc);
+    uint32_t CalculateImageMipLevelCount(uint32_t width, uint32_t height, uint32_t depth = 1);
 } // namespace wind::utils

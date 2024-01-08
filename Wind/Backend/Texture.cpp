@@ -7,14 +7,14 @@ namespace wind
 {
     static bool IsIntegerBasedFormat(vk::Format format) { return false; };
 
-    void GPUTexture::CreateImageView(const vk::ImageSubresourceRange& range, vk::ImageViewType viewType)
-    {
-        vk::ImageViewCreateInfo viewCreateInfo {.image            = m_allocatedImage.image,
-                                                .viewType         = viewType,
-                                                .format           = m_desc.format,
-                                                .subresourceRange = range};
+    void GPUTexture::CreateDefaultImageView(const vk::ImageSubresourceRange& range, vk::ImageViewType viewType)
+    {   
+        auto vkDevice = device.GetVkDeviceHandle();
+    
+        vk::ImageViewCreateInfo viewCreateInfo {
+            .image = m_allocatedImage.image, .viewType = viewType, .format = m_desc.format, .subresourceRange = range};
 
-        m_defaultView = device.GetVkDeviceHandle().createImageView(viewCreateInfo);
+        m_defaultView = vkDevice.createImageView(viewCreateInfo);
     }
 
     // Get ImageSubresourceRange interface
@@ -34,18 +34,16 @@ namespace wind
 
     GPUTexture::GPUTexture(const vk::ImageCreateInfo& createInfo)
     {
-        // init our GPUTextureDesc 
-        m_desc = Desc {
-            .width = createInfo.extent.width,
-            .height = createInfo.extent.height,
-            .depth = createInfo.extent.depth,
-            .mipCount = createInfo.mipLevels,
-            .layerCount = createInfo.arrayLayers,
-            .format = createInfo.format,
-            .usage = createInfo.usage,
-            .sampleCount = createInfo.samples,
-            .layout = createInfo.initialLayout
-        };
+        // init our GPUTextureDesc
+        m_desc = Desc {.width       = createInfo.extent.width,
+                       .height      = createInfo.extent.height,
+                       .depth       = createInfo.extent.depth,
+                       .mipCount    = createInfo.mipLevels,
+                       .layerCount  = createInfo.arrayLayers,
+                       .format      = createInfo.format,
+                       .usage       = createInfo.usage,
+                       .sampleCount = createInfo.samples,
+                       .layout      = createInfo.initialLayout};
 
         VmaAllocationCreateInfo allocationInfo {
             .flags = VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT, .usage = VMA_MEMORY_USAGE_AUTO, .priority = 1.0f};
@@ -60,12 +58,15 @@ namespace wind
                                     const ImVec4& tint_col,
                                     const ImVec4& border_colc)
     {
-        if (!m_imguiSet) 
+        if (!m_imguiSet)
             m_imguiSet = ImGui_ImplVulkan_AddTexture(m_defaultSampler, m_defaultView, (VkImageLayout)m_desc.layout);
         ImGui::Image((ImTextureID)m_imguiSet, size, uv0, uv1, tint_col, border_colc);
     }
 
-    Ref<GPUTexture> GPUTexture::Create(const vk::ImageCreateInfo& createInfo) { return ref::Create<GPUTexture>(createInfo); }
+    Ref<GPUTexture> GPUTexture::Create(const vk::ImageCreateInfo& createInfo)
+    {
+        return ref::Create<GPUTexture>(createInfo);
+    }
 
     GPUTexture::~GPUTexture()
     {
@@ -80,9 +81,9 @@ namespace wind
 
 namespace wind::utils
 {
-    uint32_t CalculateImageMipLevelCount(const GPUTexture::Desc& desc)
+    uint32_t CalculateImageMipLevelCount(uint32_t width, uint32_t height, uint32_t depth)
     {
-        return (uint32_t)std::floor(std::log2(std::max(desc.width, desc.height))) + 1;
+        return (uint32_t)std::floor(std::log2(std::max({width, height, depth}))) + 1;
     }
 
     vk::ImageAspectFlags ImageFormatToImageAspect(vk::Format format)
