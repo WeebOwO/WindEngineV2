@@ -1,10 +1,12 @@
 #include "RenderGraphTexture.h"
 
+#include <regex>
+
 #include "Backend/Texture.h"
 
 namespace wind
 {
-    vk::Image     RenderGraphTexture::GetImage() const noexcept{ return m_texture->GetVkImage(); }
+    vk::Image     RenderGraphTexture::GetImage() const noexcept { return m_texture->GetVkImage(); }
     vk::ImageView RenderGraphTexture::GetImageView() const noexcept { return m_texture->GetView(); }
 
     RenderGraphTexture::RenderGraphTexture(const Desc& desc) noexcept :
@@ -15,23 +17,29 @@ namespace wind
 
     void RenderGraphTexture::InitRHI()
     {
-        // todo: if someone call this twice, we need to check the new desc same with old
-        GPUTexture::Desc desc {.width      = m_desc.width,
-                               .height     = m_desc.height,
-                               .depth      = m_desc.depth,
-                               .mipCount   = 1,
-                               .layerCount = 1,
-                               .viewType   = TextureViewType::Texture2D,
-                               .format     = m_desc.format,
-                               .usage      = m_desc.usage};
-        if (m_desc.useMipmap)
-        {
-            desc.mipCount = utils::CalculateImageMipLevelCount(desc);
-        }
-        m_texture = GPUTexture::Create(desc);
+        // todo: if someone call this twice, we need to check the new desc is same with old ? 
+        vk::ImageCreateInfo createInfo {
+            .imageType     = vk::ImageType::e2D,
+            .format        = m_desc.format,
+            .extent        = {.width = m_desc.width, .height = m_desc.height, .depth = m_desc.depth},
+            .mipLevels     = 1,
+            .arrayLayers   = 1,
+            .samples       = vk::SampleCountFlagBits::e1,
+            .usage         = m_desc.usage,
+            .initialLayout = {}};
+
+        m_texture = GPUTexture::Create(createInfo);
+        // todo: current only support 2d image, this is suck
+        m_texture->CreateImageView(
+            vk::ImageSubresourceRange {.aspectMask     = utils::ImageFormatToImageAspect(m_desc.format),
+                                       .baseMipLevel   = 0,
+                                       .levelCount     = 1,
+                                       .baseArrayLayer = 0,
+                                       .layerCount     = 1},
+            vk::ImageViewType::e2D);
     }
 
-    RenderGraphTexture::~RenderGraphTexture() { ReleaseRHI(); }
+    RenderGraphTexture::~RenderGraphTexture() noexcept { ReleaseRHI(); }
 
     void RenderGraphTexture::ReleaseRHI() { m_texture.reset(); }
 

@@ -26,12 +26,10 @@ namespace wind
             uint8_t level = 0;
             uint8_t layer = 0;
         };
-
-        auto GetDesc() const noexcept { return m_desc; }
         
         RenderGraphTexture(const Desc& desc) noexcept;
         virtual ~RenderGraphTexture() noexcept;
-        
+
         vk::Image     GetImage() const noexcept;
         vk::ImageView GetImageView() const noexcept;
 
@@ -43,12 +41,13 @@ namespace wind
 
         void SetTexture(Ref<GPUTexture> texture);
         auto GetTexture() const { return m_texture.get(); }
-
+        
     private:
         friend class RenderPassNode;
         Desc            m_desc;
         Ref<GPUTexture> m_texture;
     };
+    
 } // namespace wind
 
 namespace wind::utils

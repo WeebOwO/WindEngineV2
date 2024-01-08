@@ -13,6 +13,14 @@ namespace wind
     class RenderGraph;
     class ResourceRegistry;
 
+    struct AttachmentInfo
+    {
+        RenderGraphID<RenderGraphTexture> texture;
+        vk::AttachmentLoadOp              loadop;
+        vk::AttachmentStoreOp             storeop;
+        vk::ClearValue                    clearValue {};
+    };
+
     class PassNode
     {
     public:
@@ -20,13 +28,13 @@ namespace wind
         virtual void Execute(ResourceRegistry& resourceRegistry, CommandBuffer& encoder) noexcept {}
 
         virtual void InitResources() = 0;
-        
-    protected:
-        std::vector<RenderGraphHandle>               dependResources;
-        std::vector<RenderGraphHandle>               outputResources;
 
-        std::vector<RenderGraphHandle>               edges; // link to resources
-        RenderGraph&                                 renderGraph;
+    protected:
+        std::vector<RenderGraphHandle> dependResources;
+        std::vector<RenderGraphHandle> outputResources;
+
+        std::vector<RenderGraphHandle> edges; // link to resources
+        RenderGraph&                   renderGraph;
     };
 
     class RenderPassNode : public PassNode
@@ -37,28 +45,24 @@ namespace wind
             static constexpr size_t MAX_ATTACHMENT_COUNT = RenderConfig::MRT_MAX_COUNT;
             union
             {
-                RenderGraphID<RenderGraphTexture> array[MAX_ATTACHMENT_COUNT];
+                AttachmentInfo array[MAX_ATTACHMENT_COUNT];
                 struct
                 {
-                    RenderGraphID<RenderGraphTexture> color[MAX_ATTACHMENT_COUNT - 2];
-                    RenderGraphID<RenderGraphTexture> depth;
-                    RenderGraphID<RenderGraphTexture> stencil;
+                    AttachmentInfo color[MAX_ATTACHMENT_COUNT - 2];
+                    AttachmentInfo depth;
+                    AttachmentInfo stencil;
                 };
             };
         };
 
         struct RenderDesc
         {
-            Attachments           attchments;
-            vk::Rect2D            renderArea;
-            uint8_t               sample;
-            vk::ClearValue        clearValue;
-            vk::AttachmentLoadOp  loadop  = vk::AttachmentLoadOp::eLoad;
-            vk::AttachmentStoreOp storeop = vk::AttachmentStoreOp::eStore;
+            Attachments attchments;
+            vk::Rect2D  renderArea;
         };
 
         RenderPassNode(RenderGraph& rg, const std::string& name, Scope<RenderGraphPassBase> pass);
-        virtual void Execute(ResourceRegistry& resourceRegistry, CommandBuffer& encoder) noexcept
+        void Execute(ResourceRegistry& resourceRegistry, CommandBuffer& encoder) noexcept override
         {
             m_passBase->Execute(resourceRegistry, encoder);
         }
@@ -67,7 +71,7 @@ namespace wind
         auto GetRenderingInfo() const { return m_renderingInfo; }
 
         void InitResources() override;
-        
+
     private:
         RenderDesc                               m_renderDesc {};
         std::string                              m_debugName;

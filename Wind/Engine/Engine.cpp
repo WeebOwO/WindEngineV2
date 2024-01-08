@@ -13,21 +13,20 @@
 #include "Resource/Mesh.h"
 #include "Scene/Scene.h"
 // renderer part
+#include "Renderer/View.h"
 #include "Renderer/Material.h"
-#include "Renderer/RenderGraph/RenderGraphPass.h"
-#include "Renderer/RenderGraph/ResourceRegistry.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/SceneRenderer.h"
-#include "Renderer/View.h"
+#include "Renderer/RenderGraph/RenderGraphPass.h"
+#include "Renderer/RenderGraph/ResourceRegistry.h"
 // imgui part
 #include "Imgui/imgui.h"
 #include "Imgui/imgui_impl_glfw.h"
 #include "Imgui/imgui_impl_vulkan.h"
 
 namespace wind
-{   
-    static void ScriptTest()
-    {
+{
+    static void ScriptTest() {
         // we already test lua in previous commit
     };
 
@@ -153,7 +152,7 @@ namespace wind
             ImGui::RenderPlatformWindowsDefault();
         }
         auto& blackBoard = renderGraph.GetBlackBoard();
-       
+
         struct PresentPassData
         {
             RenderGraphID<RenderGraphTexture> sceneColor;
@@ -172,7 +171,7 @@ namespace wind
                 encoder.EndRendering();
             },
             PassType::Graphics);
-        
+
         renderGraph.Compile();
         g_runtimeContext.renderer->NextFrame(); // will do all the render job and increase frame counter
     }

@@ -42,7 +42,7 @@ namespace wind
     class Renderer : public Service<Renderer>
     {
     public:
-        Renderer(GPUDevice& device) : m_device(device) {}
+        Renderer(GPUDevice& device, RenderConfig config) : m_device(device), m_renderConfig(config) {}
 
         void Init() override;
         void Quit() override;
@@ -65,6 +65,8 @@ namespace wind
 
     private:
         void GeneratePSO(const std::string& assetPath);
+
+        RenderConfig m_renderConfig;
 
         GPUDevice& m_device;
         uint32_t   m_frameNumber = 0;

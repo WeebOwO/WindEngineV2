@@ -10,27 +10,25 @@ namespace wind
         PassNode(rg), m_debugName(name), m_passBase(std::move(pass))
     {}
 
-    void RenderPassNode::DeclareRenderTarget(const RenderDesc& desc)
-    {
-        m_renderDesc = desc;
-    }
+    void RenderPassNode::DeclareRenderTarget(const RenderDesc& desc) { m_renderDesc = desc; }
 
-    void RenderPassNode::InitResources() 
+    void RenderPassNode::InitResources()
     {
         auto desc = m_renderDesc;
-        
+
         // create the renderinginfo for vulkan
         for (auto attachment : desc.attchments.color)
         {
-            if (attachment)
+            if (attachment.texture)
             {
-                renderGraph.InitGraphResource(attachment);
-                auto                        texture = renderGraph.Get(attachment);
+                renderGraph.InitGraphResource(attachment.texture);
+                auto                        texture = renderGraph.Get(attachment.texture);
+             
                 vk::RenderingAttachmentInfo attachmentInfo {.imageView   = texture->GetImageView(),
                                                             .imageLayout = texture->GetLayout(),
-                                                            .loadOp      = desc.loadop,
-                                                            .storeOp     = desc.storeop,
-                                                            .clearValue  = desc.clearValue};
+                                                            .loadOp      = attachment.loadop,
+                                                            .storeOp     = attachment.storeop,
+                                                            .clearValue  = attachment.clearValue};
                 m_colorAttachmentInfos.push_back(attachmentInfo);
             }
         }
@@ -38,30 +36,32 @@ namespace wind
         if (!m_colorAttachmentInfos.empty())
         {
             m_renderingInfo.setColorAttachments(m_colorAttachmentInfos)
-                           .setColorAttachmentCount(m_colorAttachmentInfos.size());
+                .setColorAttachmentCount(m_colorAttachmentInfos.size());
         }
 
-        if (desc.attchments.depth)
+        if (desc.attchments.depth.texture)
         {
-            renderGraph.InitGraphResource(desc.attchments.depth);
-            auto texture          = renderGraph.Get(desc.attchments.depth);
+            renderGraph.InitGraphResource(desc.attchments.depth.texture);
+            auto texture          = renderGraph.Get(desc.attchments.depth.texture);
+          
             m_depthAttachmentInfo = vk::RenderingAttachmentInfo {.imageView   = texture->GetImageView(),
                                                                  .imageLayout = texture->GetLayout(),
-                                                                 .loadOp      = desc.loadop,
-                                                                 .storeOp     = desc.storeop,
-                                                                 .clearValue  = desc.clearValue};
+                                                                 .loadOp      = desc.attchments.depth.loadop,
+                                                                 .storeOp     = desc.attchments.depth.storeop,
+                                                                 .clearValue  = desc.attchments.depth.clearValue};
             m_renderingInfo.setPDepthAttachment(&m_depthAttachmentInfo);
         }
 
-        if (desc.attchments.stencil)
+        if (desc.attchments.stencil.texture)
         {
-            renderGraph.InitGraphResource(desc.attchments.stencil);
-            auto texture            = renderGraph.Get(desc.attchments.depth);
+            renderGraph.InitGraphResource(desc.attchments.stencil.texture);
+            auto texture            = renderGraph.Get(desc.attchments.depth.texture);
+          
             m_stencilAttachmentInfo = vk::RenderingAttachmentInfo {.imageView   = texture->GetImageView(),
                                                                    .imageLayout = texture->GetLayout(),
-                                                                   .loadOp      = desc.loadop,
-                                                                   .storeOp     = desc.storeop,
-                                                                   .clearValue  = desc.clearValue};
+                                                                   .loadOp      = desc.attchments.depth.loadop,
+                                                                   .storeOp     = desc.attchments.depth.storeop,
+                                                                   .clearValue  = desc.attchments.depth.clearValue};
             m_renderingInfo.setPStencilAttachment(&m_stencilAttachmentInfo);
         }
 

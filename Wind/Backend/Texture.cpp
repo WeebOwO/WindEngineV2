@@ -5,49 +5,12 @@
 
 namespace wind
 {
-    static vk::ImageType GetImageType(TextureViewType viewType)
-    {
-        if (viewType == TextureViewType::Texture2D || viewType == TextureViewType::Texture2DArray ||
-            viewType == TextureViewType::CubeMap)
-        {
-            return vk::ImageType::e2D;
-        }
-        if (viewType == TextureViewType::Texture3D)
-        {
-            return vk::ImageType::e3D;
-        }
-        return vk::ImageType::e1D;
-    };
-
-    static vk::ImageViewType GetImageViewType(TextureViewType viewtype)
-    {
-        switch (viewtype)
-        {
-            case TextureViewType::Texture1D:
-                return vk::ImageViewType::e1D;
-            case TextureViewType::Texture2D:
-                return vk::ImageViewType::e2D;
-                break;
-            case TextureViewType::Texture2DArray:
-                return vk::ImageViewType::e2DArray;
-                break;
-            case TextureViewType::Texture3D:
-                return vk::ImageViewType::e3D;
-                break;
-            case TextureViewType::CubeMap:
-                return vk::ImageViewType::eCube;
-            case TextureViewType::CubeMapArray:
-                return vk::ImageViewType::eCubeArray;
-        }
-        return {};
-    }
-
     static bool IsIntegerBasedFormat(vk::Format format) { return false; };
 
-    void GPUTexture::CreateImageView(const vk::ImageSubresourceRange& range)
+    void GPUTexture::CreateImageView(const vk::ImageSubresourceRange& range, vk::ImageViewType viewType)
     {
         vk::ImageViewCreateInfo viewCreateInfo {.image            = m_allocatedImage.image,
-                                                .viewType         = GetImageViewType(m_desc.viewType),
+                                                .viewType         = viewType,
                                                 .format           = m_desc.format,
                                                 .subresourceRange = range};
 
@@ -69,24 +32,25 @@ namespace wind
                                           .layerCount     = m_desc.layerCount};
     }
 
-    GPUTexture::GPUTexture(const Desc& desc) : m_desc(desc)
+    GPUTexture::GPUTexture(const vk::ImageCreateInfo& createInfo)
     {
-        vk::Extent3D extent3D {.width = desc.width, .height = desc.height, .depth = desc.depth};
-
-        vk::ImageCreateInfo imageCreateInfo {.imageType   = GetImageType(desc.viewType),
-                                             .format      = desc.format,
-                                             .extent      = extent3D,
-                                             .mipLevels   = desc.mipCount,
-                                             .arrayLayers = 1,
-                                             .samples     = desc.sampleCount,
-                                             .usage       = desc.usage};
+        // init our GPUTextureDesc 
+        m_desc = Desc {
+            .width = createInfo.extent.width,
+            .height = createInfo.extent.height,
+            .depth = createInfo.extent.depth,
+            .mipCount = createInfo.mipLevels,
+            .layerCount = createInfo.arrayLayers,
+            .format = createInfo.format,
+            .usage = createInfo.usage,
+            .sampleCount = createInfo.samples,
+            .layout = createInfo.initialLayout
+        };
 
         VmaAllocationCreateInfo allocationInfo {
             .flags = VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT, .usage = VMA_MEMORY_USAGE_AUTO, .priority = 1.0f};
 
-        m_allocatedImage = device.AllocateImage(imageCreateInfo, allocationInfo);
-        CreateImageView(GetDefaultImageSubresourceRange());
-
+        m_allocatedImage = device.AllocateImage(createInfo, allocationInfo);
         m_defaultSampler = utils::CreateDefaultSampler();
     }
 
@@ -101,7 +65,7 @@ namespace wind
         ImGui::Image((ImTextureID)m_imguiSet, size, uv0, uv1, tint_col, border_colc);
     }
 
-    Ref<GPUTexture> GPUTexture::Create(const Desc& desc) { return ref::Create<GPUTexture>(desc); }
+    Ref<GPUTexture> GPUTexture::Create(const vk::ImageCreateInfo& createInfo) { return ref::Create<GPUTexture>(createInfo); }
 
     GPUTexture::~GPUTexture()
     {

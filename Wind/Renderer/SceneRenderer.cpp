@@ -1,5 +1,6 @@
 #include "SceneRenderer.h"
 
+#include "Renderer/RenderGraph/PassNode.h"
 #include <Imgui/imgui.h>
 
 #include "MeshPass.h"
@@ -72,7 +73,7 @@ namespace wind
 
         struct ColorPassData
         {
-            RenderGraphID<RenderGraphTexture> sceneColor;
+            AttachmentInfo sceneColor;
         };
 
         vk::ClearValue clearValue {.color =
@@ -80,21 +81,29 @@ namespace wind
 
         vk::Rect2D renderArea = {.offset = {.x = 0, .y = 0},
                                  .extent = {.width = m_viewPortWidth, .height = m_viewPortHeight}};
-        
+
         auto& colorPass = rg.AddPass<ColorPassData>(
             "LightingPass",
             [&](RenderGraph::Builder& builder, ColorPassData& data) {
-
-                auto colorDesc = utils::GetRenderTargetDesc(m_viewPortWidth, m_viewPortHeight, vk::Format::eR16G16B16A16Sfloat);
-                colorDesc.usage |= vk::ImageUsageFlagBits::eSampled;
-                data.sceneColor = builder.CreateTexture("SceneColor", colorDesc);
+                // set the data
+                RenderGraphTexture::Desc desc {
+                    .width = m_viewPortWidth,
+                    .height = m_viewPortHeight,
+                    .depth = 1,
+                    .format = vk::Format::eR8G8B8A8Srgb,
+                    .layout = vk::ImageLayout::eColorAttachmentOptimal,
+                    .usage = vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eSampled
+                };
+                
+                data.sceneColor = AttachmentInfo {
+                    .texture = builder.CreateTexture(
+                        "SceneColor", desc),
+                    .loadop     = vk::AttachmentLoadOp::eLoad,
+                    .storeop    = vk::AttachmentStoreOp::eStore,
+                    .clearValue = clearValue};
 
                 RenderPassNode::RenderDesc renderDesc {
-                    .attchments = {.color = {data.sceneColor}, .depth = {}, .stencil = {}},
-                    .renderArea = renderArea,
-                    .sample     = 1,
-                    .clearValue = clearValue,
-                };
+                    .attchments = {.color = {data.sceneColor}, .depth = {}, .stencil = {}}, .renderArea = renderArea};
 
                 builder.DeclareRenderPass(renderDesc);
             },
@@ -105,7 +114,7 @@ namespace wind
             },
             PassType::Graphics);
 
-        blackBoard["output"] = colorPass->sceneColor;
+        blackBoard["output"] = colorPass->sceneColor.texture;
     }
 
     void SceneRenderer::BuildMeshDrawCommand(const MeshPass& meshPass)

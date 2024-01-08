@@ -1,5 +1,6 @@
 #include "RuntimeContext.h"
 
+#include "Engine/RenderConfig.h"
 #include <shaderc/shaderc.hpp>
 
 #include "Core/Log.h"
@@ -29,7 +30,8 @@ namespace wind
         device = scope::Create<GPUDevice>();
 
         // init the renderer
-        renderer = scope::Create<Renderer>(*device);
+        RenderConfig config;
+        renderer = scope::Create<Renderer>(*device, config);
         renderer->Init();
 
         // init project path        

@@ -9,17 +9,6 @@
 
 namespace wind
 {
-
-    enum class TextureViewType
-    {
-        Texture1D,
-        Texture2D,
-        Texture2DArray,
-        Texture3D,
-        CubeMap,
-        CubeMapArray
-    };
-
     struct GPUTexture : public RHIResource<RHIResourceType::Texture>
     {
     public:
@@ -30,7 +19,6 @@ namespace wind
             uint32_t                depth;
             uint32_t                mipCount;
             uint32_t                layerCount;
-            TextureViewType         viewType;
             vk::Format              format;
             vk::ImageUsageFlags     usage;
             vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;
@@ -38,13 +26,15 @@ namespace wind
         };
 
         GPUTexture() = default;
-        GPUTexture(const Desc& desc);
+        GPUTexture(const vk::ImageCreateInfo& createInfo);
         ~GPUTexture();
 
-        static Ref<GPUTexture> Create(const Desc& desc);
+        static Ref<GPUTexture> Create(const vk::ImageCreateInfo& createInfo);
+
+        void          CreateImageView(const vk::ImageSubresourceRange& range, vk::ImageViewType viewType);
+        vk::ImageView GetView() const { return m_defaultView; } // need to make sure you call CreateImageView before
 
         vk::Image                 GetVkImage() const { return m_allocatedImage.image; }
-        vk::ImageView             GetView() const { return m_defaultView; }
         Desc                      GetDesc() const { return m_desc; }
         vk::Sampler               GetDefaultSampler() const noexcept { return m_defaultSampler; }
         vk::ImageSubresourceRange GetDefaultImageSubresourceRange() const;
@@ -55,12 +45,10 @@ namespace wind
                             const ImVec2& uv1,
                             const ImVec4& tint_col   = ImVec4(1, 1, 1, 1),
                             const ImVec4& border_col = ImVec4(0, 0, 0, 0));
-                            
+
         operator vk::Image() { return m_allocatedImage.image; }
 
     private:
-        void CreateImageView(const vk::ImageSubresourceRange& range);
-
         Desc                       m_desc;
         AllocatedImage             m_allocatedImage;
         vk::Sampler                m_defaultSampler;
